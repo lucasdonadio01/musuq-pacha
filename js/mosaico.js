@@ -52,7 +52,10 @@ const Mosaico = (() => {
       const i = Math.floor(Math.random() * t.length);
       return { fondo: t[i].h, colores: t.filter((_, j) => j !== i) };
     }
-    const fondo = POZO[Math.floor(Math.random() * POZO.length)];
+    // el naranja chillón sale más seguido que el resto, a pedido
+    const fondo = (typeof ACENTO !== 'undefined' && Math.random() < 0.14)
+      ? ACENTO
+      : POZO[Math.floor(Math.random() * POZO.length)];
     const lf = Motor.luz(fondo.h), tf = Motor.tono(fondo.h);
     const neutro = tf.s < 0.18;
 

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MUSUQ PACHA · generador de símbolos</title>
 <meta name="description" content="Generador de símbolos en grilla para los pueblos originarios argentinos. Musuq Pacha, TIF UADE 2026.">
-<link rel="stylesheet" href="css/fuente.css?v=16">
-<link rel="stylesheet" href="css/app.css?v=16">
+<link rel="stylesheet" href="css/fuente.css?v=18">
+<link rel="stylesheet" href="css/app.css?v=18">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
 </defs></svg>
 
 <canvas id="fondo" aria-hidden="true"></canvas>
-<audio id="musica" src="audio/shasta.mp3?v=16" loop preload="auto"></audio>
+<audio id="musica" src="audio/shasta.mp3?v=18" loop preload="auto"></audio>
 
 <section id="portada">
   <canvas id="mosaico" aria-hidden="true"></canvas>
@@ -39,6 +39,23 @@
     <button class="boton boton--grande" id="entrar">empezar</button>
   </div>
 </section>
+
+<div class="overlay" id="exportar" hidden>
+  <div class="overlay__caja" role="dialog" aria-modal="true" aria-labelledby="tituloExport">
+    <h2 class="overlay__titulo" id="tituloExport">¿En qué formato lo bajás?</h2>
+    <div class="formatos">
+      <button class="formato" data-formato="9:16">
+        <span class="marco marco--historia"></span>
+        <b>Historia</b><i>9 : 16</i>
+      </button>
+      <button class="formato" data-formato="1:1">
+        <span class="marco marco--cuadrado"></span>
+        <b>Cuadrado</b><i>1 : 1</i>
+      </button>
+    </div>
+    <button class="boton" id="cancelarExport">cancelar</button>
+  </div>
+</div>
 
 <div id="cursor" aria-hidden="true" hidden><span><svg class="ic"><use href="#ic-pincel"/></svg></span></div>
 
@@ -127,12 +144,12 @@
 
 </main>
 
-<script src="js/pueblos.js?v=16"></script>
-<script src="js/mapa.js?v=16"></script>
-<script src="js/motor.js?v=16"></script>
-<script src="js/fondo.js?v=16"></script>
-<script src="js/simbolo.js?v=16"></script>
-<script src="js/mosaico.js?v=16"></script>
-<script src="js/app.js?v=16"></script>
+<script src="js/pueblos.js?v=18"></script>
+<script src="js/mapa.js?v=18"></script>
+<script src="js/motor.js?v=18"></script>
+<script src="js/fondo.js?v=18"></script>
+<script src="js/simbolo.js?v=18"></script>
+<script src="js/mosaico.js?v=18"></script>
+<script src="js/app.js?v=18"></script>
 </body>
 </html>

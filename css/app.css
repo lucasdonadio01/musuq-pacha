@@ -79,6 +79,33 @@ html, body {
 }
 .icono:hover { background: var(--toque); }
 
+/* ---------- overlay de descarga ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: var(--velo); backdrop-filter: blur(3px);
+}
+.overlay__caja {
+  background: var(--fondo); border: 1px solid var(--linea);
+  padding: 26px 26px 20px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  max-width: 420px; width: 100%;
+}
+.overlay__titulo { font: 500 16px/1.3 'Space Grotesk', sans-serif; letter-spacing: -.01em; }
+.formatos { display: flex; gap: 14px; }
+.formato {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 20px; background: none; color: var(--tinta);
+  border: 1px solid var(--linea); cursor: pointer;
+  transition: background 140ms, border-color 140ms;
+}
+.formato:hover { border-color: var(--tinta); background: var(--toque); }
+.formato b { font: 500 12.5px/1 'Space Grotesk', sans-serif; }
+.formato i { font: 300 10.5px/1 'Space Grotesk', sans-serif; font-style: normal; color: var(--suave); letter-spacing: .1em; }
+.marco { display: block; border: 1.5px solid currentColor; opacity: .55; }
+.marco--historia { width: 30px; height: 53px; }
+.marco--cuadrado { width: 44px; height: 44px; }
+
 /* ---------- taller ---------- */
 #taller {
   position: relative; z-index: 2;

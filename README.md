@@ -64,6 +64,11 @@ Mapuche sale rojo kelü + azul de witral + amarillo de michay. Medido sobre 40
 generaciones en crema: contraste mínimo 0,25 y promedio 0,50, sin un solo color flojo.
 Sobre un fondo oscuro la selección se invierte sola a las variantes claras.
 
+Hay además un **acento**, un naranja chillón que no es color documentado de ningún
+pueblo sino una decisión de diseño: entra en el sorteo del minijuego en poco menos de un
+tercio de las tiradas —la decisión sale de la semilla— y sale seguido como fondo en el
+mosaico de la portada. Si el símbolo va al informe, esto hay que aclararlo.
+
 **Todo lo que responde al mouse sigue a la tinta**, no a un negro fijo: `--toque`,
 `--toque-fuerte`, `--linea` y hasta el rojo del botón de vaciar se recalculan con el
 fondo, así que sobre un fondo oscuro los bordes y los hover no desaparecen.
@@ -106,6 +111,24 @@ entera de forma pareja, que no es el efecto.
 **Todo se compone en un solo lugar.** `Simbolo.componer()` dibuja la grilla de puntos,
 los píxeles con su sombra y las volantas de los costados, y la usan por igual la pantalla
 y el PNG. Lo que ves es exactamente lo que baja.
+
+## La descarga
+
+El botón de descargar abre un overlay con dos formatos: **historia 9:16** (1080 × 1920) y
+**cuadrado 1:1** (1080 × 1080). La imagen lleva al pie **MUSUQ PACHA** y el link del
+sitio. Dos cosas que hay que respetar si se toca:
+
+- El fondo se recorta del canvas WebGL **con la misma proporción que la imagen pedida**,
+  centrado en el lienzo. Si se estirara la ventana entera, el 9:16 bajado desde una
+  pantalla apaisada saldría deformado.
+- El símbolo **se compone directo en la medida pedida**, no se escala la composición de
+  pantalla. Por eso el modo de volanta lo decide la proporción del lienzo que se está
+  dibujando (vertical o cuadrado → al pie; apaisado → a los costados) y los dos formatos
+  salen bien sin un caso especial por cada uno.
+
+En vez del número de generación, la volanta muestra una **rareza en %**: es inventada,
+pero sale de la semilla —así que un símbolo siempre vale lo mismo— y la curva está
+sesgada hacia abajo para que un número alto se sienta un hallazgo.
 
 ## Mobile
 

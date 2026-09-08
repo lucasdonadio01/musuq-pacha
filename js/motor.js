@@ -71,7 +71,7 @@ const Motor = (() => {
      de tono. Si la paleta del pueblo no llega, la estira con variantes más
      profundas y más claras de esos mismos colores: siguen siendo el color del
      territorio, con otra saturación, y no colores traídos de otro lado. */
-  function paletaContra(colores, fondo, cuantos) {
+  function paletaContra(colores, fondo, cuantos, extras) {
     const lf = luz(fondo), tf = tono(fondo);
     const fondoNeutro = tf.s < 0.18;
     const MINIMO = 0.24;
@@ -86,6 +86,7 @@ const Motor = (() => {
       sumar(oscurecer(c.h, 0.42), c.n + ' profundo');
       sumar(oscurecer(c.h, -0.55), c.n + ' claro');
     }
+    for (const c of (extras || [])) sumar(c.h, c.n);
 
     /* El contraste ya lo garantiza el filtro, así que el puntaje no premia la
        luminancia extrema —si lo hiciera se quedaría con los cinco colores mas

@@ -149,8 +149,15 @@ const PALETA_VIVA = [
   { h: '#F66227', n: 'naranja' },
   { h: '#9B6FE0', n: 'violeta' },
   { h: '#90D850', n: 'verde lima' },
-  { h: '#DF8E28', n: 'naranja tostado' }
+  { h: '#DF8E28', n: 'naranja tostado' },
+  { h: '#FF5C16', n: 'naranja chillón' }
 ];
+
+/* Acento: no es un color documentado de ningún pueblo, es una decisión de
+   diseño para que algunas generaciones levanten. Entra en el sorteo del
+   minijuego en poco menos de un tercio de las tiradas, y la decisión sale de
+   la semilla, así que una misma semilla siempre da el mismo símbolo. */
+const ACENTO = { h: '#FF5C16', n: 'naranja chillón' };
 
 /* Ternas elegidas a mano. El mosaico de la portada las usa enteras cada tanto
    —uno de los tres como fondo y los otros dos como figura— para que la

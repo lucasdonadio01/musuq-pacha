@@ -287,14 +287,16 @@
   addEventListener('keydown', e => {
     if (taller.hidden || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
     const k = e.key.toLowerCase();
-    if (e.key === 'Escape') menu(false);
+    if (e.key === 'Escape') { menu(false); abrirExport(false); }
     if (TECLAS[k]) { elegirModo(TECLAS[k]); avisar(TECLAS[k]); }
     if (k === 'g') generar();
     if (e.key === 'Escape') Simbolo.seleccion.clear();
   });
 
   /* ---------- exportar ---------- */
-  function componerCuadro(W, H, ahora) {
+  const SITIO = 'lucasdonadio01.github.io/musuq-pacha';
+
+  function componerCuadro(W, H, ahora, conPie) {
     const cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     const c = cv.getContext('2d');
@@ -303,27 +305,47 @@
     c.fillStyle = fondo;
     c.fillRect(0, 0, W, H);
     try {
-      // recorto del canvas WebGL justo la ventana que ocupa el lienzo
-      c.drawImage(Fondo.lienzo, r.left * d, r.top * d, r.width * d, r.height * d, 0, 0, W, H);
+      // Del canvas WebGL se recorta una ventana con la misma proporción que la
+      // imagen pedida, centrada en el lienzo: si no, el fondo saldría estirado
+      // al bajar en 9:16 desde una pantalla apaisada.
+      const objetivo = W / H;
+      let sw = r.width * d, sh = r.height * d;
+      if (sw / sh > objetivo) sw = sh * objetivo; else sh = sw / objetivo;
+      const sx = r.left * d + (r.width * d - sw) / 2;
+      const sy = r.top * d + (r.height * d - sh) / 2;
+      c.drawImage(Fondo.lienzo, sx, sy, sw, sh, 0, 0, W, H);
     } catch (err) { /* sin WebGL queda el fondo plano */ }
-    const escala = W / r.width;
-    c.setTransform(escala, 0, 0, escala, 0, 0);
-    Simbolo.componer(c, r.width, r.height, ahora, { interfaz: false, tinta });
+    // el símbolo se compone directo en la medida pedida, así la composición se
+    // adapta al formato en vez de estirar la de pantalla
+    Simbolo.componer(c, W, H, ahora, { interfaz: false, tinta, pie: conPie ? SITIO : null });
     return cv;
   }
 
-  $('#png').addEventListener('click', () => {
-    const r = lienzo.getBoundingClientRect();
-    const W = 2000, H = Math.round(W * r.height / r.width);
-    componerCuadro(W, H, performance.now()).toBlob(b => {
+  const overlay = $('#exportar');
+  const abrirExport = abrir => { overlay.hidden = !abrir; };
+  $('#png').addEventListener('click', () => abrirExport(true));
+  $('#cancelarExport').addEventListener('click', () => abrirExport(false));
+  overlay.addEventListener('click', e => { if (e.target === overlay) abrirExport(false); });
+
+  $('.formatos').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    abrirExport(false);
+    bajar(b.dataset.formato);
+  });
+
+  function bajar(formato) {
+    const W = 1080;
+    const H = formato === '1:1' ? 1080 : 1920;
+    componerCuadro(W, H, performance.now(), true).toBlob(b => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(b);
-      a.download = 'musuq-pacha-' + pueblo.id + '-' + Simbolo.firmaSemilla + '.png';
+      a.download = 'musuq-pacha-' + pueblo.id + '-' + Simbolo.firmaSemilla + '-' + formato.replace(':', 'x') + '.png';
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      avisar('PNG guardado');
+      avisar('PNG guardado · ' + formato);
     }, 'image/png');
-  });
+  }
 
   /* ---------- portada ---------- */
   async function entrar() {

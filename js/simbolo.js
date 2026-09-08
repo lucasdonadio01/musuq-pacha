@@ -14,6 +14,14 @@ const Simbolo = (() => {
   let geo = { celda: 40, x0: 0, y0: 0, W: 0, H: 0 };
 
   const clave = (x, y) => x + ',' + y;
+
+  /* Rareza inventada pero estable: sale de la semilla, así que un símbolo
+     siempre vale lo mismo. La curva está sesgada hacia abajo —la mayoría anda
+     por debajo de 30— para que un número alto se sienta un hallazgo. */
+  const rareza = () => {
+    const r = ((figura.semilla >>> 7) % 100000) / 100000;
+    return Math.max(1, Math.round(Math.pow(r, 1.9) * 99));
+  };
   const espejadas = (gx, gy, espejo) => {
     const N = figura.lado;
     return espejo && gx !== N - 1 - gx ? [[gx, gy], [N - 1 - gx, gy]] : [[gx, gy]];
@@ -24,9 +32,15 @@ const Simbolo = (() => {
      lugar al pie. */
   function medirGeo(W, H) {
     const N = figura.lado;
-    const angosto = W < 620;
-    const celda = Math.min(W * (angosto ? 0.66 : 0.38), H * (angosto ? 0.56 : 0.66)) / N;
-    const sube = angosto ? Math.min(34, H * 0.06) : 0;
+    // manda la proporcion: un lienzo cuadrado o vertical lleva las volantas al
+    // pie, uno apaisado a los costados. Asi el PNG 9:16 y el 1:1 se componen
+    // solos, sin un caso especial por formato.
+    const angosto = W / H < 1.15;
+    // en un formato muy vertical (la historia 9:16) el simbolo se lleva mas
+    // ancho: con el 66 % quedaba nadando en el alto del cuadro
+    const anchoUtil = W / H < 0.8 ? 0.80 : 0.66;
+    const celda = Math.min(W * (angosto ? anchoUtil : 0.38), H * (angosto ? 0.56 : 0.66)) / N;
+    const sube = angosto ? H * 0.07 : 0;
     geo = { celda, x0: W / 2 - N * celda / 2, y0: H / 2 - N * celda / 2 - sube, W, H, angosto };
     return geo;
   }
@@ -98,7 +112,7 @@ const Simbolo = (() => {
       ctx.fillText(pueblo.nombre + ' · ' + pueblo.region, W / 2, base);
       ctx.globalAlpha = 0.6;
       ctx.font = '300 ' + cuerpo * 0.86 + 'px "Space Grotesk", system-ui, sans-serif';
-      ctx.fillText('generación ' + String(generacion).padStart(2, '0') + ' · semilla ' + figura.firmaSemilla,
+      ctx.fillText('rareza ' + rareza() + ' % · semilla ' + figura.firmaSemilla,
                    W / 2, base + cuerpo * 1.5);
       ctx.globalAlpha = 1;
     } else if (o.textos !== false) {
@@ -111,7 +125,7 @@ const Simbolo = (() => {
       const izq = [
         [pueblo.nombre, '500', 1],
         [pueblo.region, '300', 0.6],
-        ['generación ' + String(generacion).padStart(2, '0'), '300', 0.6],
+        ['rareza ' + rareza() + ' %', '300', 0.6],
         ['semilla ' + figura.firmaSemilla, '300', 0.6]
       ];
       const arranque = H / 2 - ((izq.length - 1) * salto) / 2;
@@ -134,6 +148,22 @@ const Simbolo = (() => {
       lineas.forEach((l, i) => ctx.fillText(l, W * 0.94, inicio + i * salto));
     }
 
+    // 5. el pie de marca va solo en la imagen que se descarga
+    if (o.pie) {
+      const cuerpo = Math.max(12, W * 0.026);
+      ctx.fillStyle = tinta;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.font = '500 ' + cuerpo + 'px "Space Grotesk", system-ui, sans-serif';
+      ctx.letterSpacing = '0.16em';                 // lo ignora quien no lo soporte
+      ctx.fillText('MUSUQ PACHA', W / 2, H - cuerpo * 2.6);
+      ctx.letterSpacing = '0px';
+      ctx.globalAlpha = 0.55;
+      ctx.font = '300 ' + cuerpo * 0.78 + 'px "Space Grotesk", system-ui, sans-serif';
+      ctx.fillText(o.pie, W / 2, H - cuerpo * 1.1);
+      ctx.globalAlpha = 1;
+    }
+
     return animando;
   }
 
@@ -147,10 +177,14 @@ const Simbolo = (() => {
     componer, celdaEn,
     generar(ahora, sem) {
       generacion++;
+      // la semilla se resuelve acá y no adentro del motor, así el acento y la
+      // rareza salen de ella: una misma semilla da siempre el mismo símbolo
+      const semilla = sem == null ? (Math.random() * 0xFFFFFFFF) >>> 0 : sem >>> 0;
       // los colores se eligen contra el fondo, no a ciegas: si no contrastan,
-      // el simbolo se pierde por mas que sean los del pueblo
-      paletaGen = Motor.paletaContra(pueblo.colores, fondo, 5);
-      figura.generar(ahora, sem, paletaGen);
+      // el símbolo se pierde por más que sean los del pueblo
+      const extras = (semilla % 100) < 28 && typeof ACENTO !== 'undefined' ? [ACENTO] : [];
+      paletaGen = Motor.paletaContra(pueblo.colores, fondo, 5, extras);
+      figura.generar(ahora, semilla, paletaGen);
     },
     limpiar(ahora) { figura.limpiar(ahora); seleccion.clear(); },
     pintar(gx, gy, hex, espejo) { figura.pintar(gx, gy, hex, espejo); },
