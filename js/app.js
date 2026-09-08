@@ -31,8 +31,12 @@
     raiz.setProperty('--fondo', hex);
     raiz.setProperty('--tinta', tinta);
     raiz.setProperty('--velo', `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.58)`);
-    raiz.setProperty('--linea', `rgba(${t[0]},${t[1]},${t[2]},0.18)`);
+    raiz.setProperty('--linea', `rgba(${t[0]},${t[1]},${t[2]},0.26)`);
     raiz.setProperty('--suave', `rgba(${t[0]},${t[1]},${t[2]},0.58)`);
+    raiz.setProperty('--toque', `rgba(${t[0]},${t[1]},${t[2]},0.09)`);
+    raiz.setProperty('--toque-fuerte', `rgba(${t[0]},${t[1]},${t[2]},0.16)`);
+    // el rojo del boton de vaciar tambien se adapta: sobre oscuro un bordo no se ve
+    raiz.setProperty('--peligro', claro ? '#C0392B' : '#FF7A68');
     // Los puntos del fondo se mezclan hacia el negro o el blanco, nunca con un
     // delta: sobre un rojo pleno sumar 24 no cambia nada y desaparecian.
     Fondo.paleta(hex, Simbolo.aHex(mezcla(rgb, claro ? [0, 0, 0] : [255, 255, 255], claro ? 0.16 : 0.22)));
@@ -150,6 +154,7 @@
     const b = e.currentTarget;
     musica.muted = !musica.muted;
     b.querySelector('use').setAttribute('href', musica.muted ? '#ic-mudo' : '#ic-sonido');
+    b.setAttribute('aria-pressed', String(musica.muted));
     b.setAttribute('title', musica.muted ? 'Activar música' : 'Silenciar música');
     b.setAttribute('aria-label', musica.muted ? 'Activar música' : 'Silenciar música');
   });
@@ -209,23 +214,57 @@
 
   lienzo.addEventListener('pointerdown', e => {
     pintando = true;
+    cursor.classList.add('apretado');
     actuar(e, true);
     // el capture va despues y protegido: si el puntero ya no esta activo tira
     try { lienzo.setPointerCapture(e.pointerId); } catch (_) { /* sin captura, igual pinta */ }
   });
   lienzo.addEventListener('pointermove', e => {
+    moverCursor(e);
     Simbolo.hover = celdaDe(e);
     if (pintando) actuar(e, false);
   });
-  ['pointerup', 'pointercancel'].forEach(ev => lienzo.addEventListener(ev, () => { pintando = false; }));
+  ['pointerup', 'pointercancel'].forEach(ev => lienzo.addEventListener(ev, () => {
+    pintando = false;
+    cursor.classList.remove('apretado');
+  }));
   lienzo.addEventListener('pointerleave', () => { Simbolo.hover = null; });
+
+  /* La ruedita pasa al color siguiente de la paleta del pueblo */
+  lienzo.addEventListener('wheel', e => {
+    e.preventDefault();
+    const cols = pueblo.colores;
+    let i = cols.findIndex(c => c.h.toLowerCase() === color.toLowerCase());
+    if (i < 0) i = 0;
+    i = (i + (e.deltaY > 0 ? 1 : -1) + cols.length) % cols.length;
+    elegirColor(cols[i].h, cols[i].n);
+    if (Simbolo.seleccion.size) Simbolo.recolorear(cols[i].h);
+    avisar(cols[i].n);
+  }, { passive: false });
+
+  /* ---------- cursor con la herramienta ----------
+     Sobre el lienzo el puntero del sistema se apaga y se dibuja el icono de la
+     herramienta, que crece al apretar. No se puede animar un cursor CSS, por
+     eso va como elemento. Solo con mouse: con dedo no hay puntero que seguir. */
+  const cursor = $('#cursor');
+  const ICONO = { pincel: '#ic-pincel', borrador: '#ic-borrador', seleccion: '#ic-seleccion', cuentagotas: '#ic-cuentagotas' };
+
+  function moverCursor(e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    document.body.classList.add('con-mouse');
+    cursor.hidden = false;
+    cursor.style.transform = 'translate3d(' + (e.clientX - 2) + 'px,' + (e.clientY - 20) + 'px,0)';
+  }
+  lienzo.addEventListener('pointerenter', moverCursor);
+  lienzo.addEventListener('pointerleave', () => { cursor.hidden = true; });
+  addEventListener('blur', () => { cursor.hidden = true; });
 
   /* ---------- controles ---------- */
   function elegirModo(m) {
     modo = m;
     [...$('#modos').children].forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modo === m)));
     if (m !== 'seleccion') Simbolo.seleccion.clear();
-    lienzo.style.cursor = m === 'seleccion' ? 'cell' : m === 'cuentagotas' ? 'copy' : 'crosshair';
+    cursor.querySelector('use').setAttribute('href', ICONO[m] || ICONO.pincel);
   }
 
   $('#modos').addEventListener('click', e => {

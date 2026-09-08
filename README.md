@@ -64,6 +64,10 @@ Mapuche sale rojo kelü + azul de witral + amarillo de michay. Medido sobre 40
 generaciones en crema: contraste mínimo 0,25 y promedio 0,50, sin un solo color flojo.
 Sobre un fondo oscuro la selección se invierte sola a las variantes claras.
 
+**Todo lo que responde al mouse sigue a la tinta**, no a un negro fijo: `--toque`,
+`--toque-fuerte`, `--linea` y hasta el rojo del botón de vaciar se recalculan con el
+fondo, así que sobre un fondo oscuro los bordes y los hover no desaparecen.
+
 Los seis colores documentados siguen estando enteros en la paleta de pintar: si querés
 usar la tiza sobre crema, podés. Y el cuentagotas (`I`) levanta cualquier variante que
 haya salido en el dibujo.
@@ -132,6 +136,8 @@ tabulación.
 - **Pueblo:** cambia la paleta, el fondo sugerido, la zona marcada en el mapa y genera
 - **`Q`** pincel · **`W`** borrador · **`E`** selección · **`I`** copiar color · **`G`** generar · `Esc` limpia la selección
 - Debajo del símbolo, centrados: **generar**, **descargar** y **vaciar** (en rojo, que es el único destructivo)
+- **La ruedita del mouse** pasa al color siguiente de la paleta del pueblo
+- Sobre el lienzo el puntero del sistema se apaga y se dibuja **el ícono de la herramienta**, que crece al apretar. Es un elemento y no un `cursor` de CSS porque un cursor no se puede animar. Solo con mouse: con dedo no hay puntero que seguir
 - Con **selección** marcás las celdas que querés y después tocás un color para cambiarlas todas juntas
 - **Fondo:** cualquier color. La tinta se invierte sola si el fondo es oscuro, y los puntos
   del PixelBlast se mezclan hacia el blanco o el negro (nunca con un delta: sobre un rojo

@@ -46,6 +46,12 @@ const Mosaico = (() => {
      diferencia de luminancia, y se sortean tres entre los mejores. Se toman los
      mejores seis y no el primero para que no salga siempre la misma dupla. */
   function combinacion() {
+    // cada tanto sale una terna entera de las elegidas a mano
+    if (typeof TRIOS !== 'undefined' && TRIOS.length && Math.random() < 0.18) {
+      const t = TRIOS[Math.floor(Math.random() * TRIOS.length)];
+      const i = Math.floor(Math.random() * t.length);
+      return { fondo: t[i].h, colores: t.filter((_, j) => j !== i) };
+    }
     const fondo = POZO[Math.floor(Math.random() * POZO.length)];
     const lf = Motor.luz(fondo.h), tf = Motor.tono(fondo.h);
     const neutro = tf.s < 0.18;

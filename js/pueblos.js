@@ -146,5 +146,19 @@ const PALETA_VIVA = [
   { h: '#FFB33F', n: 'ámbar' },
   { h: '#9C3A01', n: 'tierra quemada' },
   { h: '#D92F1B', n: 'rojo' },
-  { h: '#F66227', n: 'naranja' }
+  { h: '#F66227', n: 'naranja' },
+  { h: '#9B6FE0', n: 'violeta' },
+  { h: '#90D850', n: 'verde lima' },
+  { h: '#DF8E28', n: 'naranja tostado' }
+];
+
+/* Ternas elegidas a mano. El mosaico de la portada las usa enteras cada tanto
+   —uno de los tres como fondo y los otros dos como figura— para que la
+   combinación aparezca tal cual y no diluida entre todos los colores del pozo. */
+const TRIOS = [
+  [
+    { h: '#9B6FE0', n: 'violeta' },
+    { h: '#90D850', n: 'verde lima' },
+    { h: '#DF8E28', n: 'naranja tostado' }
+  ]
 ];
