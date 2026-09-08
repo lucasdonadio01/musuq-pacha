@@ -36,6 +36,7 @@ const Motor = (() => {
   const suave = t => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
 
   const clave = (x, y) => x + ',' + y;
+  const mod = (a, b) => ((a % b) + b) % b;
 
   const espejar = (celdas, N) => {
     const s = new Set();
@@ -293,7 +294,99 @@ const Motor = (() => {
     return L.s;
   }
 
-  const ESPECIES = [margarita, girasol, estrella, trebol, anillos, capullo, doble, espiga];
+  /* Flor calada, la del chart de tejido: un cuerpo macizo al que se le sacan
+     agujeros en retícula diagonal. El aire que queda es lo que dibuja los
+     pétalos, igual que en un patrón de punto cruz. */
+  function calada(R, N) {
+    const L = lienzo(N), c = L.c, radio = Math.floor(N / 2);
+    const rombo = R() < 0.55;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const dx = Math.abs(x - c), dy = Math.abs(y - c);
+      const cuerpo = rombo
+        ? dx + dy <= radio
+        : Math.max(dx, dy) + Math.min(dx, dy) * 0.34 <= radio;
+      if (cuerpo) L.poner(x, y);
+    }
+    const paso = 2 + Math.floor(R() * 2);
+    const corr = Math.floor(R() * paso);
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const dx = x - c, dy = y - c;
+      if (mod(dx + dy + corr, paso) === 0 && mod(dx - dy + corr, paso) === 0) L.s.delete(clave(x, y));
+    }
+    if (R() < 0.55) L.disco(c, c, 1); else L.s.delete(clave(c, c));
+    return L.s;
+  }
+
+  /* Rosa de ocho puntas: cuatro brazos rectos, cuatro diagonales y un rombo
+     alrededor. Es el motivo que aparece en casi todo tejido de punto. */
+  function rosa(R, N) {
+    const L = lienzo(N), c = L.c, radio = Math.floor(N / 2);
+    const grosor = N >= 11 ? 1 : 0;
+    for (let r = 0; r <= radio; r++) for (let g = -grosor; g <= grosor; g++) {
+      L.poner(c + r, c + g); L.poner(c - r, c + g);
+      L.poner(c + g, c + r); L.poner(c + g, c - r);
+    }
+    const diagonal = Math.max(1, Math.round(radio * (0.55 + R() * 0.3)));
+    for (let r = 1; r <= diagonal; r++) {
+      L.poner(c + r, c + r); L.poner(c - r, c + r);
+      L.poner(c + r, c - r); L.poner(c - r, c - r);
+    }
+    const aro = radio - (R() < 0.5 ? 0 : 1);
+    if (aro >= 2) for (let i = 0; i <= aro; i++) {
+      L.poner(c + i, c + (aro - i)); L.poner(c - i, c + (aro - i));
+      L.poner(c + i, c - (aro - i)); L.poner(c - i, c - (aro - i));
+    }
+    if (R() < 0.45) L.s.delete(clave(c, c));
+    return L.s;
+  }
+
+  /* Anillos cuadrados anidados */
+  function cuadrados(R, N) {
+    const L = lienzo(N), c = L.c, radio = Math.floor(N / 2);
+    const salto = R() < 0.5 ? 2 : 3;
+    const corr = Math.floor(R() * salto);
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const d = Math.max(Math.abs(x - c), Math.abs(y - c));
+      if (d <= radio && mod(d + corr, salto) === 0) L.poner(x, y);
+    }
+    return L.s;
+  }
+
+  /* Estrella de ocho puntas: la union de un rombo y un cuadrado, calada */
+  function estrellaOcho(R, N) {
+    const L = lienzo(N), c = L.c, radio = Math.floor(N / 2);
+    const brazo = Math.max(1, Math.round(radio * (0.5 + R() * 0.32)));
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const dx = Math.abs(x - c), dy = Math.abs(y - c);
+      if (dx + dy <= radio || Math.max(dx, dy) <= brazo) L.poner(x, y);
+    }
+    if (R() < 0.65) {
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+        const dx = Math.abs(x - c), dy = Math.abs(y - c);
+        if (Math.max(dx, dy) <= brazo - 1 && dx + dy <= radio - 2) L.s.delete(clave(x, y));
+      }
+      L.disco(c, c, R() < 0.5 ? 0.6 : 1.4);
+    }
+    return L.s;
+  }
+
+  /* Aspa: cruz en diagonal, con rombo exterior opcional */
+  function aspa(R, N) {
+    const L = lienzo(N), c = L.c, radio = Math.floor(N / 2);
+    const g = R() < 0.5 ? 0 : 1;
+    for (let r = 0; r <= radio; r++) for (let d = -g; d <= g; d++) {
+      L.poner(c + r + d, c + r); L.poner(c - r + d, c + r);
+      L.poner(c + r + d, c - r); L.poner(c - r + d, c - r);
+    }
+    if (R() < 0.6) for (let i = 0; i <= radio; i++) {
+      L.poner(c + i, c + (radio - i)); L.poner(c - i, c + (radio - i));
+      L.poner(c + i, c - (radio - i)); L.poner(c - i, c - (radio - i));
+    }
+    L.disco(c, c, R() < 0.5 ? 0.6 : 1.4);
+    return L.s;
+  }
+
+  const ESPECIES = [margarita, girasol, estrella, trebol, anillos, capullo, doble, espiga, calada, rosa];
   const flor = (R, N) => ESPECIES[Math.floor(R() * ESPECIES.length)](R, N);
 
   /* ---------- mandalas ----------
@@ -363,7 +456,7 @@ const Motor = (() => {
     return L.s;
   }
 
-  const TRAZAS = [octante, chakana, rombos, radios, dameroRadial];
+  const TRAZAS = [octante, chakana, rombos, radios, dameroRadial, cuadrados, estrellaOcho, aspa];
   const mandala = (R, N) => TRAZAS[Math.floor(R() * TRAZAS.length)](R, N);
 
   function calavera(R, N) {
@@ -527,7 +620,8 @@ const Motor = (() => {
      los mandalas se llevan la mitad del sorteo: son los que mejor leen como
      simbolo y los que mas variantes internas tienen. */
   const MENU = ['flor', 'flor', 'flor', 'flor', 'flor', 'flor',
-                'mandala', 'mandala', 'mandala', 'mandala', 'mandala',
+                'mandala', 'mandala', 'mandala', 'mandala',
+                'mandala', 'mandala', 'mandala', 'mandala',
                 'trama', 'trama', 'demonio', 'abstracto', 'calavera',
                 'animal', 'organico'];
 
@@ -542,10 +636,15 @@ const Motor = (() => {
       const R = dado(sem);
       const menu = familias && familias.length ? familias : MENU;
       familia = menu[Math.floor(R() * menu.length)];
+      // Piso de llenado: sin esto algunas variantes caen en una figura de tres
+      // celdas que en una baldosa chica se lee como un error. Primero se
+      // reintenta dentro de la misma familia —cambiar de familia al primer
+      // fallo desbalanceaba el sorteo, los mandalas flacos se volvian flores—
+      // y recién si no sale se cae a una flor.
+      const piso = Math.max(6, N * N * 0.11);
       let celdas = FAMILIAS[familia].armar(R, N);
-      // piso de llenado: sin esto algunas variantes caen en una figura de tres
-      // celdas que en una baldosa chica se lee como un error
-      if (celdas.size < Math.max(6, N * N * 0.11)) { familia = 'flor'; celdas = flor(R, N); }
+      for (let i = 0; i < 4 && celdas.size < piso; i++) celdas = FAMILIAS[familia].armar(R, N);
+      if (celdas.size < piso) { familia = 'flor'; celdas = flor(R, N); }
       // el espejo se fuerza acá y no en cada familia: así ninguna puede
       // devolver una figura torcida, por mas que se agregue una nueva despues
       celdas = espejar(celdas, N);

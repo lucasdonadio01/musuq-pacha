@@ -16,8 +16,9 @@ const Mosaico = (() => {
   const ENFRIA = 0.026;      // cuanto baja el calor por cuadro: es la cola del barrido
   // flores y mandalas se llevan la mayoria: son las que mas variantes tienen
   // y las que mejor leen a 7 celdas. Sin calaveras.
-  const MENU = ['flor', 'flor', 'flor', 'flor', 'mandala', 'mandala', 'mandala',
-                'mandala', 'trama', 'trama', 'demonio', 'abstracto'];
+  const MENU = ['flor', 'flor', 'flor', 'flor',
+                'mandala', 'mandala', 'mandala', 'mandala', 'mandala', 'mandala',
+                'trama', 'demonio', 'abstracto'];
 
   let cv, ctx, bloque, baldosas = [], indice = new Map();
   let raton = { x: -1, y: -1 };

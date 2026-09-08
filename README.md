@@ -72,10 +72,12 @@ haya salido en el dibujo.
 `espejar()` antes de devolverla, así ninguna familia puede sacar algo torcido por más
 que se agregue una nueva después. Medido: 60 generaciones seguidas, 0 asimétricas.
 
-**La variedad está adentro de las familias, no en el sorteo.** `flor` tiene **ocho
-especies** (margarita, girasol, estrella, trébol, anillos, capullo, doble y espiga) y
-`mandala` **cinco trazas** (octante, chakana, rombos anidados, radios y damero radial).
-Entre las dos se llevan el 65 % del sorteo, medido sobre 120 generaciones. `demonio` es
+**La variedad está adentro de las familias, no en el sorteo.** `flor` tiene **diez
+especies** (margarita, girasol, estrella, trébol, anillos, capullo, doble, espiga, más
+**calada** y **rosa**, que son las dos de chart de tejido: cuerpo macizo calado en
+retícula diagonal y rosa de ocho puntas) y `mandala` **ocho trazas** (octante, chakana,
+rombos anidados, radios, damero radial, cuadrados anidados, estrella de ocho y aspa).
+Medido sobre 150 generaciones: mandala 33 %, flor 31 %, trama 13 %. `demonio` es
 una careta de oni —cara ancha, barbilla en punta, cuernos de tres estilos, ojos rasgados
 y boca con colmillos— y sale poco a propósito.
 
@@ -85,8 +87,9 @@ octante y lo replica ocho veces; `trama` repite rombos y cruces (es la que mejor
 las baldosas chicas); `abstracto` arma emblemas de barras y columnas; `calavera`
 y `animal` son plantillas con variación. El menú tiene **pesos**: flores y mandalas se
 llevan la mayoría. Hay además un **piso de llenado**: si una variante cae en una figura
-de tres celdas se descarta y se genera una flor, porque en una baldosa chica eso se lee
-como un error y no como un símbolo. Todo sale de un `mulberry32` sembrado, así que **la semilla que se muestra
+de tres celdas se reintenta **dentro de la misma familia** hasta cuatro veces, y recién
+si no sale se cae a una flor. Cambiar de familia al primer fallo desbalanceaba el
+sorteo: los mandalas flacos se volvían flores y el porcentaje real no daba. Todo sale de un `mulberry32` sembrado, así que **la semilla que se muestra
 abajo del nombre del pueblo reproduce el símbolo exacto** — `Simbolo.generar(t, 0x2735CC9B)`
 devuelve el mismo dibujo. Es la firma única de cada generación.
 
