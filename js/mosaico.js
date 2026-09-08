@@ -11,7 +11,8 @@ const Mosaico = (() => {
   const CADA = 700;          // ms entre tandas
   const PORCION = 0.22;      // parte de las baldosas que cambia en cada tanda
   const CRUCE = 920;         // ms del cambio de color de fondo, igual que el viaje
-  const CRECE = 0.16;        // cuanto se agranda la baldosa bajo el cursor
+  const CRECE = 0.22;        // cuanto se agranda la baldosa bajo el cursor
+  const GRAVEDAD = 2600;     // px/s2 de la caida al entrar al juego
   const ENFRIA = 0.026;      // cuanto baja el calor por cuadro: es la cola del barrido
   // flores y mandalas se llevan la mayoria: son las que mas variantes tienen
   // y las que mejor leen a 7 celdas. Sin calaveras.
@@ -20,6 +21,7 @@ const Mosaico = (() => {
 
   let cv, ctx, bloque, baldosas = [], indice = new Map();
   let raton = { x: -1, y: -1 };
+  let cayendo = false, arranqueCaida = 0, ultimoCuadro = 0, finCaida = null;
   let cols = 0, filas = 0, tam = 100, ox = 0, oy = 0;
   let hueco = { c0: 0, f0: 0, cw: 0, fh: 0 };
   let raf = 0, reloj = 0, vivo = false;
@@ -140,46 +142,78 @@ const Mosaico = (() => {
     return indice.get(Math.floor((px - ox) / tam) + ',' + Math.floor((py - oy) / tam)) || null;
   };
 
+  /* Integra la caida: cada baldosa pega un salto corto y se desploma girando,
+     con su propio retraso. Cuando todas salieron de pantalla, se resuelve la
+     promesa que devolvio caer(). */
+  function fisica(ahora) {
+    const dt = Math.min(0.05, (ahora - ultimoCuadro) / 1000);
+    ultimoCuadro = ahora;
+    let quedan = false;
+    for (const b of baldosas) {
+      if (ahora - arranqueCaida < b.retraso) { quedan = true; continue; }
+      b.vy += GRAVEDAD * dt;
+      b.dx += b.vx * dt;
+      b.dy += b.vy * dt;
+      b.giro += b.vgiro * dt;
+      if (oy + b.f * tam + b.dy < innerHeight + tam * 1.5) quedan = true;
+    }
+    // tope de seguridad: la promesa se resuelve si o si
+    if (!quedan || ahora - arranqueCaida > 4000) {
+      cayendo = false;
+      const listo = finCaida; finCaida = null;
+      if (listo) listo();
+    }
+  }
+
   function pintar(ahora) {
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     const lado = tam - AIRE;
-    const encima = baldosaEn(raton.x, raton.y);
 
-    // El calor no cae solo en la baldosa de abajo del cursor: se reparte a las
-    // vecinas segun la distancia, y por eso el conjunto se levanta como una ola.
-    // Sube de golpe y baja despacio, asi un barrido deja estela.
-    for (const b of baldosas) {
-      let objetivo = 0;
-      if (encima) {
-        const d = Math.hypot(b.c - encima.c, b.f - encima.f);
-        const cerca = Math.max(0, 1 - d / 2.6);
-        objetivo = cerca * cerca;                  // caida marcada: el centro manda
+    if (cayendo) {
+      fisica(ahora);
+    } else {
+      // El calor no cae solo en la baldosa de abajo del cursor: se reparte a
+      // las vecinas segun la distancia, y por eso el conjunto se levanta como
+      // una ola. Sube de golpe y baja despacio, asi un barrido deja estela.
+      const encima = baldosaEn(raton.x, raton.y);
+      for (const b of baldosas) {
+        let objetivo = 0;
+        if (encima) {
+          const d = Math.hypot(b.c - encima.c, b.f - encima.f);
+          const cerca = Math.max(0, 1 - d / 2.6);
+          objetivo = cerca * cerca;                // caida marcada: el centro manda
+        }
+        b.calor = objetivo > b.calor
+          ? b.calor + (objetivo - b.calor) * 0.30
+          : Math.max(objetivo, b.calor - ENFRIA);
       }
-      b.calor = objetivo > b.calor
-        ? b.calor + (objetivo - b.calor) * 0.30
-        : Math.max(objetivo, b.calor - ENFRIA);
     }
 
     // las mas calientes se dibujan ultimas para que queden arriba de las vecinas
-    const orden = baldosas.slice().sort((a, b) => a.calor - b.calor);
+    const orden = cayendo ? baldosas : baldosas.slice().sort((a, b) => a.calor - b.calor);
     for (const b of orden) {
       const escala = 1 + CRECE * b.calor;
       const l = lado * escala;
       const x = ox + b.c * tam + (lado - l) / 2;
       const y = oy + b.f * tam + (lado - l) / 2;
       const celda = l / (LADO + 2);           // una celda de margen a cada lado
+      ctx.save();
+      if (cayendo) {
+        const cx = x + l / 2, cy = y + l / 2;
+        ctx.translate(cx + b.dx, cy + b.dy);
+        ctx.rotate(b.giro);
+        ctx.translate(-cx, -cy);
+      }
       ctx.fillStyle = Motor.aHex(fondoActual(b, ahora));
       if (b.calor > 0.02) {
-        ctx.save();
         ctx.shadowColor = 'rgba(0,0,0,' + (0.22 * b.calor).toFixed(3) + ')';
         ctx.shadowBlur = 18 * b.calor;
         ctx.shadowOffsetY = 5 * b.calor;
-        ctx.fillRect(x, y, l, l);
-        ctx.restore();
-      } else {
-        ctx.fillRect(x, y, l, l);
       }
+      ctx.fillRect(x, y, l, l);
+      ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
       b.motor.dibujar(ctx, x + celda, y + celda, celda, ahora, {});
+      ctx.restore();
     }
   }
 
@@ -217,6 +251,25 @@ const Mosaico = (() => {
     reloj = setInterval(tanda, CADA);
   }
 
+  /* Se sueltan todas las baldosas. Devuelve una promesa que se cumple cuando
+     la ultima salio de pantalla, para que quien entra al juego sepa cuando
+     puede sacar la portada de encima. */
+  function caer() {
+    if (cayendo) return Promise.resolve();
+    clearInterval(reloj);                        // que no se regeneren cayendo
+    raton = { x: -1, y: -1 };
+    cayendo = true;
+    arranqueCaida = ultimoCuadro = performance.now();
+    for (const b of baldosas) {
+      b.dx = 0; b.dy = 0; b.giro = 0; b.calor = 0;
+      b.vx = (Math.random() - 0.5) * 80;
+      b.vy = -40 - Math.random() * 110;           // salto corto antes del desplome
+      b.vgiro = (Math.random() - 0.5) * 4.4;
+      b.retraso = Math.random() * 380;
+    }
+    return new Promise(listo => { finCaida = listo; });
+  }
+
   function detener() {
     vivo = false;
     cancelAnimationFrame(raf);
@@ -225,5 +278,5 @@ const Mosaico = (() => {
     baldosas = [];
   }
 
-  return { iniciar, detener, get baldosas() { return baldosas; } };
+  return { iniciar, detener, caer, get baldosas() { return baldosas; } };
 })();

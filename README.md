@@ -21,7 +21,6 @@ pide la entrega offline del TP2.
 | `js/simbolo.js` | La figura del juego: fachada sobre una instancia del motor, más la geometría del lienzo, la selección y las volantas |
 | `js/mosaico.js` | La portada: una baldosa por instancia del motor, cambiando por tandas |
 | `js/fondo.js` | El **PixelBlast** de reactbits porteado a WebGL crudo: un fragment shader, sin three.js ni postprocessing |
-| `js/pixelswap.js` | El **Pixel Transition** de reactbits: grilla gruesa (12 columnas) donde cada celda aparece entera, no crece, escalonadas dentro de 0,4 s. Es el barrido que entra al generador |
 | `js/app.js` | La interfaz y la descarga |
 
 ## Las decisiones que importan
@@ -43,6 +42,12 @@ baldosas, con un desfasaje adentro de la tanda: siempre hay algo cambiando pero 
 cambia todo de golpe. Como es el mismo motor, **el morph de la portada es exactamente el
 del juego** y no pueden quedar desincronizados. El mosaico deja un marco alrededor por
 donde se ve el PixelBlast, y se detiene al entrar para no comer cuadros.
+**Al tocar "empezar" las baldosas se caen.** El juego se dibuja primero, abajo, con la
+portada todavía encima; recién ahí cada baldosa pega un salto corto y se desploma
+girando, con su propio retraso, hasta salir de pantalla. El cartel del centro no se cae:
+se va en opacidad. Cuando la última baldosa sale, la portada se saca del medio. El
+`caer()` devuelve una promesa, y tiene un tope de 4 s para que se cumpla sí o sí.
+
 **Al pasar el mouse** la baldosa crece y queda arriba de las vecinas, y **las vecinas
 crecen un poco también**, con una caída cuadrática por distancia: el conjunto se levanta
 como una ola. Mientras la tengas debajo del cursor **no se regenera**. El calor baja

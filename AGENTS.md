@@ -32,9 +32,12 @@ está en `git log` de ese repo. Los documentos del TIF y el tablero 3D siguen al
   de dejar los claros vacíos.
 - **El color de los puntos del fondo se mezcla hacia el blanco o el negro**, nunca con un
   delta fijo: sobre un rojo pleno sumar 24 a cada canal se satura y los puntos desaparecen.
-- **La transición de entrada tiene que ser gruesa.** El Pixel Transition de reactbits es
-  una grilla de 8 celdas donde cada celda aparece *entera* en 0,4 s. Una grilla fina de
-  celdas que crecen suave se lee como un fundido, y ya fue rechazada dos veces.
+- **La entrada al juego es una caída con gravedad**, no un barrido de píxeles. El taller
+  se muestra *antes* de soltar las baldosas, así lo que aparece atrás ya está dibujado.
+  El port del Pixel Transition de reactbits quedó en el historial (`js/pixelswap.js`), por
+  si vuelve a hacer falta: si vuelve, tiene que ser grueso —8 a 12 columnas, cada celda
+  aparece entera en 0,4 s—, porque una grilla fina que crece suave se lee como un fundido
+  y ya fue rechazada dos veces.
 - **La geometría del lienzo se calcula dentro del bucle de dibujo.** Un cuadro dibujado
   con el taller todavía oculto la dejaba en cero y después ningún click encontraba celda.
   El bucle ahora saltea los cuadros con el lienzo en cero.

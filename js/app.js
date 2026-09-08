@@ -255,14 +255,16 @@
   async function entrar() {
     if (entrar.yendo) return;
     entrar.yendo = true;
-    const colores = PALETA_VIVA.map(c => c.h).concat(pueblo.colores.map(c => c.h));
-    await PixelSwap.pantalla(async () => {
-      Mosaico.detener();                       // el mosaico deja de comer cuadros
-      portada.hidden = true;
-      taller.hidden = false;
-      dibujarMapa();
-      generar();
-    }, { colores });
+    // El juego se arma detrás mientras el mosaico sigue arriba: cuando las
+    // baldosas se caen, lo que queda abajo ya está dibujado y no aparece de
+    // golpe. El cartel del centro no se cae, se va en opacidad.
+    taller.hidden = false;
+    dibujarMapa();
+    generar();
+    portada.classList.add('portada--sale');
+    await Mosaico.caer();
+    portada.hidden = true;
+    Mosaico.detener();
     ondaDesdeElSimbolo();
     avisar('pintá con Q, borrá con W, seleccioná con E · G genera');
   }

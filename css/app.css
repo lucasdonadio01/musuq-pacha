@@ -26,7 +26,11 @@ html, body {
 [hidden] { display: none !important; }
 
 /* ---------- portada ---------- */
-#portada { position: relative; z-index: 2; height: 100%; }
+/* fija y por encima del taller: cuando el mosaico se cae, lo que se ve atrás
+   es el juego ya dibujado, no un hueco */
+#portada { position: fixed; inset: 0; z-index: 3; }
+.portada--sale { pointer-events: none; }
+.portada--sale .bloque { opacity: 0; }
 #mosaico { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: pointer; }
 
 /* El bloque del título ocupa baldosas enteras del mosaico: Mosaico le escribe
@@ -36,15 +40,13 @@ html, body {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 16px; padding: 18px; text-align: center;
   background: var(--tinta); color: var(--fondo);
+  transition: opacity 620ms ease;
 }
 .titulo {
   font-weight: 500; font-size: clamp(24px, 3.7vw, 58px);
   letter-spacing: -.03em; line-height: 1.02;
 }
-.ojo {
-  font-size: 10px; letter-spacing: .26em; text-transform: uppercase;
-  opacity: .55; max-width: 26ch;
-}
+.bajada { font-size: 14px; letter-spacing: .02em; opacity: .62; }
 .bloque .boton { border-color: currentColor; color: inherit; opacity: .9; }
 .bloque .boton:hover { background: var(--fondo); color: var(--tinta); opacity: 1; }
 
