@@ -17,9 +17,15 @@ const Simbolo = (() => {
     return espejo && gx !== N - 1 - gx ? [[gx, gy], [N - 1 - gx, gy]] : [[gx, gy]];
   };
 
+  /* En una pantalla angosta el símbolo se lleva mucho más ancho —no hay
+     volantas a los costados que lo aprieten— y sube un poco para dejarle
+     lugar al pie. */
   function medirGeo(W, H) {
-    const celda = Math.min(W * 0.38, H * 0.66) / figura.lado;
-    geo = { celda, x0: W / 2 - figura.lado * celda / 2, y0: H / 2 - figura.lado * celda / 2, W, H };
+    const N = figura.lado;
+    const angosto = W < 620;
+    const celda = Math.min(W * (angosto ? 0.66 : 0.38), H * (angosto ? 0.56 : 0.66)) / N;
+    const sube = angosto ? Math.min(34, H * 0.06) : 0;
+    geo = { celda, x0: W / 2 - N * celda / 2, y0: H / 2 - N * celda / 2 - sube, W, H, angosto };
     return geo;
   }
 
@@ -78,8 +84,22 @@ const Simbolo = (() => {
       }
     }
 
-    // 4. las volantas, como en las referencias
-    if (o.textos !== false) {
+    // 4. las volantas, como en las referencias. En pantalla angosta no entran
+    //    a los costados sin comerse el símbolo, así que van al pie en una línea.
+    if (o.textos !== false && g.angosto) {
+      const cuerpo = Math.max(11, W * 0.033);
+      const base = g.y0 + figura.lado * g.celda + cuerpo * 2.4;
+      ctx.fillStyle = tinta;
+      ctx.textBaseline = 'alphabetic';
+      ctx.textAlign = 'center';
+      ctx.font = '500 ' + cuerpo + 'px "Space Grotesk", system-ui, sans-serif';
+      ctx.fillText(pueblo.nombre + ' · ' + pueblo.region, W / 2, base);
+      ctx.globalAlpha = 0.6;
+      ctx.font = '300 ' + cuerpo * 0.86 + 'px "Space Grotesk", system-ui, sans-serif';
+      ctx.fillText('generación ' + String(generacion).padStart(2, '0') + ' · semilla ' + figura.firmaSemilla,
+                   W / 2, base + cuerpo * 1.5);
+      ctx.globalAlpha = 1;
+    } else if (o.textos !== false) {
       const cuerpo = Math.max(11, W * 0.0145);
       const salto = cuerpo * 1.5;
       ctx.fillStyle = tinta;

@@ -1,5 +1,5 @@
-/* MUSUQ PACHA · Símbolos — hoja de estilo unica.
-   La tinta y el velo se recalculan en JS segun el fondo elegido, asi que un
+/* MUSUQ PACHA · Símbolos — hoja de estilo única.
+   La tinta y el velo se recalculan en JS según el fondo elegido, así que un
    fondo oscuro invierte los textos solo. */
 
 :root {
@@ -22,8 +22,10 @@ html, body {
 }
 
 #fondo { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
-
+.defs { position: absolute; width: 0; height: 0; }
 [hidden] { display: none !important; }
+
+.ic { width: 18px; height: 18px; fill: currentColor; display: block; flex: none; }
 
 /* ---------- portada ---------- */
 /* fija y por encima del taller: cuando el mosaico se cae, lo que se ve atrás
@@ -50,21 +52,12 @@ html, body {
 .bloque .boton { border-color: currentColor; color: inherit; opacity: .9; }
 .bloque .boton:hover { background: var(--fondo); color: var(--tinta); opacity: 1; }
 
-/* ---------- pixel swap ---------- */
-.pxswap {
-  position: absolute; inset: 0; display: grid; pointer-events: none; z-index: 5;
-}
-.pxswap--fijo { position: fixed; z-index: 90; }
-.pxswap i {
-  display: block; transform: scale(0); transform-origin: center;
-  transition: transform 60ms linear;
-}
-
 /* ---------- botones ---------- */
 .boton {
+  display: inline-flex; align-items: center; gap: 7px;
   font: 400 12px/1 'Space Grotesk', sans-serif; letter-spacing: .06em;
   color: var(--tinta); background: none; border: 1px solid var(--linea);
-  padding: 9px 14px; cursor: pointer;
+  padding: 9px 13px; cursor: pointer;
   transition: background 140ms, border-color 140ms, color 140ms;
 }
 .boton:hover { border-color: var(--tinta); background: rgba(0, 0, 0, .05); }
@@ -73,9 +66,19 @@ html, body {
 .boton--fuerte:hover { background: var(--tinta); opacity: .85; }
 .boton--grande { padding: 13px 30px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
 .boton kbd {
-  font: inherit; font-size: 10px; opacity: .6; margin-left: 8px;
+  font: inherit; font-size: 10px; opacity: .6;
   border: 1px solid currentColor; padding: 1px 4px;
 }
+.icono {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; padding: 0;
+  background: none; border: 0; color: var(--tinta); cursor: pointer;
+}
+.icono:hover { background: rgba(0, 0, 0, .06); }
+
+/* el color de fondo se elige desde un botón, el input va invisible encima */
+#botonFondo { position: relative; overflow: hidden; }
+#botonFondo input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 /* ---------- taller ---------- */
 #taller {
@@ -88,12 +91,13 @@ html, body {
 
 .barra {
   grid-column: 1 / -1;
-  display: flex; align-items: baseline; gap: 14px;
-  padding: 16px 22px; border-bottom: 1px solid var(--linea);
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; border-bottom: 1px solid var(--linea);
   background: var(--velo);
 }
 .marca { font-weight: 500; letter-spacing: .16em; font-size: 13px; }
-.barra small { color: var(--suave); font-size: 11px; letter-spacing: .1em; }
+.barra__sub { color: var(--suave); font-size: 11px; letter-spacing: .1em; }
+.barra__volver, .barra__pueblo { display: none; }
 
 .rail {
   padding: 18px 18px 24px;
@@ -103,12 +107,13 @@ html, body {
 }
 .rail--izq { border-right: 1px solid var(--linea); }
 .rail--der { border-left: 1px solid var(--linea); }
+.menu__cerrar { display: none; }
 
 .rotulo {
   font-size: 9.5px; font-weight: 400; letter-spacing: .24em; text-transform: uppercase;
   color: var(--suave); margin-top: 8px;
 }
-.rotulo:first-child { margin-top: 0; }
+.rotulo:first-of-type { margin-top: 0; }
 
 /* lista de pueblos */
 .pueblos { list-style: none; display: flex; flex-direction: column; gap: 1px; }
@@ -122,9 +127,9 @@ html, body {
 .pueblos button[aria-pressed="true"] { background: rgba(0, 0, 0, .07); border-left-color: var(--tinta); }
 .pueblos .muestra { width: 22px; height: 22px; flex: 0 0 22px; }
 .pueblos b { display: block; font: 400 13.5px/1.2 'Space Grotesk', sans-serif; }
-.pueblos i { display: block; font-style: normal; font-size: 10.5px; color: var(--suave); letter-spacing: .02em; }
+.pueblos i { display: block; font-style: normal; font-size: 10.5px; color: var(--suave); }
 
-/* controles */
+/* herramientas */
 .segm { display: flex; }
 .segm button {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -134,56 +139,90 @@ html, body {
 }
 .segm button:last-child { border-right: 1px solid var(--linea); }
 .segm button:hover { background: rgba(0, 0, 0, .05); }
-.segm button svg { width: 18px; height: 18px; fill: currentColor; display: block; }
 .segm button small { font: 400 9px/1 'Space Grotesk', sans-serif; letter-spacing: .1em; opacity: .55; text-transform: uppercase; }
 .segm button[aria-pressed="true"] { background: var(--tinta); color: var(--fondo); border-color: var(--tinta); }
 .segm button[aria-pressed="true"] small { opacity: .7; }
 
-/* mapa del territorio */
-.mapa { display: block; margin: 2px 0 0; }
-.mapa__pie { font-size: 10.5px; color: var(--suave); letter-spacing: .02em; margin-top: 6px; }
-
-.paleta { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
-.paleta button {
+/* paleta: seis colores del pueblo y el + para cualquier otro */
+.paleta { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.paleta button, .paleta .mas {
   aspect-ratio: 1; border: 1px solid var(--linea); cursor: pointer; padding: 0;
   outline-offset: 2px;
 }
 .paleta button[aria-pressed="true"] { outline: 1.5px solid var(--tinta); }
+.paleta .mas {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; color: var(--suave);
+}
+.paleta .mas:hover { color: var(--tinta); }
+.paleta .mas input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.nota { min-height: 1.2em; }
+
+/* mapa del territorio */
+.mapa { display: block; margin: 2px 0 0; }
+.mapa__pie { font-size: 10.5px; color: var(--suave); margin-top: 6px; }
 
 .fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
 .fila span { color: var(--suave); }
-.fila input[type="color"] { width: 42px; height: 24px; padding: 0; border: 1px solid var(--linea); background: none; cursor: pointer; }
-.fila input[type="range"] { width: 108px; accent-color: var(--tinta); }
 .fila select {
   font: 300 12px 'Space Grotesk', sans-serif; color: var(--tinta);
   background: none; border: 1px solid var(--linea); padding: 3px 6px;
 }
-.fila input[type="checkbox"] { accent-color: var(--tinta); width: 14px; height: 14px; }
+.fila input[type="checkbox"] { accent-color: var(--tinta); width: 15px; height: 15px; }
 
-/* escena */
-.escena { position: relative; display: flex; align-items: center; justify-content: center; }
+.escena { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
 #lienzo { width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: none; }
 
 .acciones {
   grid-column: 1 / -1;
   display: flex; align-items: center; gap: 8px;
-  padding: 12px 22px; border-top: 1px solid var(--linea);
+  padding: 11px 18px; border-top: 1px solid var(--linea);
   background: var(--velo);
 }
 .acciones .sep { flex: 1; }
 .semilla {
   font-size: 10.5px; color: var(--suave); letter-spacing: .1em;
-  font-variant-numeric: tabular-nums; margin-left: 6px;
+  font-variant-numeric: tabular-nums; margin-left: 4px;
 }
-.estado { font-size: 11px; color: var(--suave); letter-spacing: .04em; min-width: 150px; text-align: right; }
+.estado { font-size: 11px; color: var(--suave); letter-spacing: .04em; text-align: right; }
 
-@media (max-width: 1040px) {
-  #taller { grid-template-columns: 1fr; grid-template-rows: auto minmax(280px, 1fr) auto auto; }
-  .rail { flex-direction: row; flex-wrap: wrap; align-items: center; border: 0; border-top: 1px solid var(--linea); }
-  .rail--izq { order: 3; }
-  .rail--der { order: 4; }
-  .pueblos { flex-direction: row; flex-wrap: wrap; }
-  .pueblos button { width: auto; }
-  .acciones { order: 5; flex-wrap: wrap; }
-  .escena { order: 2; }
+/* ---------- mobile ----------
+   Otra disposición, no la misma apretada: arriba el pueblo elegido y las
+   herramientas, el lienzo en el medio con todo el ancho, y las acciones abajo
+   como iconos. Los pueblos y el mapa pasan a un menú que se abre con la flecha. */
+@media (max-width: 760px) {
+  #taller { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+
+  .barra { order: 1; gap: 8px; padding: 8px 10px; }
+  .marca, .barra__sub { display: none; }
+  .barra__volver { display: inline-flex; }
+  .barra__pueblo { display: block; font-size: 15px; font-weight: 500; letter-spacing: -.01em; }
+
+  .rail--der {
+    order: 2; border: 0; border-bottom: 1px solid var(--linea);
+    padding: 10px; gap: 8px;
+  }
+  .rail--der .rotulo, .rail--der .nota { display: none; }
+  .segm button { padding: 11px 2px; }
+  .segm .ic { width: 21px; height: 21px; }
+  .segm button small { display: none; }
+  .paleta { gap: 6px; }
+
+  .escena { order: 3; }
+
+  .acciones { order: 4; justify-content: space-around; gap: 6px; padding: 8px 10px; }
+  .acciones .boton span, .acciones .boton kbd, .acciones .estado, .acciones .sep { display: none; }
+  .acciones .boton { padding: 11px 16px; }
+  .acciones .ic { width: 21px; height: 21px; }
+  .semilla { margin: 0; font-size: 10px; letter-spacing: .06em; }
+
+  /* el menú tapa la pantalla entera */
+  .rail--izq {
+    position: fixed; inset: 0; z-index: 20; display: none;
+    padding: 46px 20px 30px; border: 0;
+    background: var(--fondo);
+  }
+  .rail--izq.abierto { display: flex; }
+  .menu__cerrar { display: inline-flex; position: absolute; top: 8px; right: 8px; }
+  .rail--izq .pueblos button { padding: 11px 8px 11px 10px; }
 }

@@ -2,13 +2,28 @@
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MUSUQ PACHA · generador de símbolos</title>
 <meta name="description" content="Generador de símbolos en grilla para los pueblos originarios argentinos. Musuq Pacha, TIF UADE 2026.">
-<link rel="stylesheet" href="css/fuente.css?v=8">
-<link rel="stylesheet" href="css/app.css?v=8">
+<link rel="stylesheet" href="css/fuente.css?v=9">
+<link rel="stylesheet" href="css/app.css?v=9">
 </head>
 <body>
+
+<!-- Iconos de Material Symbols, definidos una vez y reusados con <use> -->
+<svg class="defs" aria-hidden="true"><defs>
+  <symbol id="ic-pincel" viewBox="0 -960 960 960"><path d="M240-120q-45 0-89-22t-71-58q26 0 53-20.5t27-59.5q0-50 35-85t85-35q50 0 85 35t35 85q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 23-5.5 42T220-202q5 2 10 2h10Zm230-160L360-470l358-358q11-11 27.5-11.5T774-828l54 54q12 12 12 28t-12 28L470-360Zm-190 80Z"/></symbol>
+  <symbol id="ic-borrador" viewBox="0 -960 960 960"><path d="M690-240h190v80H610l80-80Zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160H190Zm296-80 314-322-198-198-442 456 64 64h262Zm-6-240Z"/></symbol>
+  <symbol id="ic-seleccion" viewBox="0 -960 960 960"><path d="M440-120v-400h400v80H576l264 264-56 56-264-264v264h-80Zm-160 0v-80h80v80h-80Zm-80-640h-80q0-33 23.5-56.5T200-840v80Zm80 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80q33 0 56.5 23.5T840-760h-80ZM200-200v80q-33 0-56.5-23.5T120-200h80Zm-80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm640 0v-80h80v80h-80Z"/></symbol>
+  <symbol id="ic-cuentagotas" viewBox="0 -960 960 960"><path d="M120-120v-190l358-358-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-358 358H120Zm80-80h78l332-334-76-76-334 332v78Zm447-410 96-96-37-37-96 96 37 37Zm0 0-37-37 37 37Z"/></symbol>
+  <symbol id="ic-generar" viewBox="0 -960 960 960"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></symbol>
+  <symbol id="ic-vaciar" viewBox="0 -960 960 960"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></symbol>
+  <symbol id="ic-fondo" viewBox="0 -960 960 960"><path d="m247-904 57-56 343 343q23 23 23 57t-23 57L457-313q-23 23-57 23t-57-23L153-503q-23-23-23-57t23-57l190-191-96-96Zm153 153L209-560h382L400-751Zm303.5 447.5Q680-327 680-360q0-21 12.5-45t27.5-45q9-12 19-25t21-25q11 12 21 25t19 25q15 21 27.5 45t12.5 45q0 33-23.5 56.5T760-280q-33 0-56.5-23.5ZM80 0v-160h800V0H80Z"/></symbol>
+  <symbol id="ic-descargar" viewBox="0 -960 960 960"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></symbol>
+  <symbol id="ic-volver" viewBox="0 -960 960 960"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></symbol>
+  <symbol id="ic-cerrar" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></symbol>
+  <symbol id="ic-mas" viewBox="0 -960 960 960"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></symbol>
+</defs></svg>
 
 <canvas id="fondo" aria-hidden="true"></canvas>
 
@@ -23,50 +38,24 @@
 
 <main id="taller" hidden>
   <header class="barra">
+    <button class="icono barra__volver" id="volver" aria-label="Elegir pueblo">
+      <svg class="ic"><use href="#ic-volver"/></svg>
+    </button>
     <span class="marca">MUSUQ PACHA</span>
-    <small>generador de símbolos</small>
+    <small class="barra__sub">generador de símbolos</small>
+    <span class="barra__pueblo" id="puebloActual"></span>
   </header>
 
-  <aside class="rail rail--izq">
+  <aside class="rail rail--izq" id="menu">
+    <button class="icono menu__cerrar" id="cerrarMenu" aria-label="Cerrar">
+      <svg class="ic"><use href="#ic-cerrar"/></svg>
+    </button>
     <h2 class="rotulo">pueblo</h2>
     <ul class="pueblos" id="listaPueblos"></ul>
     <h2 class="rotulo">territorio</h2>
     <canvas class="mapa" id="mapa"></canvas>
     <p class="mapa__pie" id="mapaPie"></p>
-  </aside>
-
-  <section class="escena">
-    <canvas id="lienzo"></canvas>
-  </section>
-
-  <aside class="rail rail--der">
-    <h2 class="rotulo">herramienta</h2>
-    <div class="segm" id="modos">
-      <button data-modo="pincel" data-tecla="q" aria-pressed="true" title="Pincel (Q)" aria-label="Pincel">
-        <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M240-120q-45 0-89-22t-71-58q26 0 53-20.5t27-59.5q0-50 35-85t85-35q50 0 85 35t35 85q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T320-280q0-17-11.5-28.5T280-320q-17 0-28.5 11.5T240-280q0 23-5.5 42T220-202q5 2 10 2h10Zm230-160L360-470l358-358q11-11 27.5-11.5T774-828l54 54q12 12 12 28t-12 28L470-360Zm-190 80Z"/></svg>
-        <small>q</small>
-      </button>
-      <button data-modo="borrador" data-tecla="w" aria-pressed="false" title="Borrador (W)" aria-label="Borrador">
-        <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M690-240h190v80H610l80-80Zm-500 80-85-85q-23-23-23.5-57t22.5-58l440-456q23-24 56.5-24t56.5 23l199 199q23 23 23 57t-23 57L520-160H190Zm296-80 314-322-198-198-442 456 64 64h262Zm-6-240Z"/></svg>
-        <small>w</small>
-      </button>
-      <button data-modo="seleccion" data-tecla="e" aria-pressed="false" title="Selección (E)" aria-label="Selección">
-        <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M440-120v-400h400v80H576l264 264-56 56-264-264v264h-80Zm-160 0v-80h80v80h-80Zm-80-640h-80q0-33 23.5-56.5T200-840v80Zm80 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80h80v80h-80Zm160 0v-80q33 0 56.5 23.5T840-760h-80ZM200-200v80q-33 0-56.5-23.5T120-200h80Zm-80-80v-80h80v80h-80Zm0-160v-80h80v80h-80Zm0-160v-80h80v80h-80Zm640 0v-80h80v80h-80Z"/></svg>
-        <small>e</small>
-      </button>
-      <button data-modo="cuentagotas" data-tecla="i" aria-pressed="false" title="Copiar color (I)" aria-label="Copiar color">
-        <svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M120-120v-190l358-358-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-358 358H120Zm80-80h78l332-334-76-76-334 332v78Zm447-410 96-96-37-37-96 96 37 37Zm0 0-37-37 37 37Z"/></svg>
-        <small>i</small>
-      </button>
-    </div>
-
-    <h2 class="rotulo">colores del territorio</h2>
-    <div class="paleta" id="paleta"></div>
-    <p class="fila"><span id="notaColor">—</span></p>
-    <label class="fila"><span>color libre</span><input type="color" id="colorLibre" value="#B5654A"></label>
-
     <h2 class="rotulo">lienzo</h2>
-    <label class="fila"><span>fondo</span><input type="color" id="colorFondo" value="#F2EDE5"></label>
     <label class="fila"><span>grilla</span>
       <select id="lado">
         <option value="7">7 × 7</option>
@@ -78,22 +67,63 @@
     <label class="fila"><span>espejo al pintar</span><input type="checkbox" id="espejo" checked></label>
   </aside>
 
+  <section class="escena">
+    <canvas id="lienzo"></canvas>
+  </section>
+
+  <aside class="rail rail--der">
+    <h2 class="rotulo">herramienta</h2>
+    <div class="segm" id="modos">
+      <button data-modo="pincel" aria-pressed="true" title="Pincel (Q)" aria-label="Pincel">
+        <svg class="ic"><use href="#ic-pincel"/></svg><small>q</small>
+      </button>
+      <button data-modo="borrador" aria-pressed="false" title="Borrador (W)" aria-label="Borrador">
+        <svg class="ic"><use href="#ic-borrador"/></svg><small>w</small>
+      </button>
+      <button data-modo="seleccion" aria-pressed="false" title="Selección (E)" aria-label="Selección">
+        <svg class="ic"><use href="#ic-seleccion"/></svg><small>e</small>
+      </button>
+      <button data-modo="cuentagotas" aria-pressed="false" title="Copiar color (I)" aria-label="Copiar color">
+        <svg class="ic"><use href="#ic-cuentagotas"/></svg><small>i</small>
+      </button>
+    </div>
+
+    <h2 class="rotulo">colores del territorio</h2>
+    <div class="paleta" id="paleta">
+      <label class="mas" title="Cualquier color" aria-label="Cualquier color">
+        <svg class="ic"><use href="#ic-mas"/></svg>
+        <input type="color" id="colorLibre" value="#B5654A">
+      </label>
+    </div>
+    <p class="fila nota"><span id="notaColor">—</span></p>
+  </aside>
+
   <footer class="acciones">
-    <button class="boton boton--fuerte" id="generar">generar<kbd>G</kbd></button>
-    <button class="boton" id="limpiar">vaciar</button>
+    <button class="boton boton--fuerte" id="generar" title="Generar (G)">
+      <svg class="ic"><use href="#ic-generar"/></svg><span>generar</span><kbd>G</kbd>
+    </button>
+    <button class="boton" id="limpiar" title="Vaciar">
+      <svg class="ic"><use href="#ic-vaciar"/></svg><span>vaciar</span>
+    </button>
+    <label class="boton" id="botonFondo" title="Color de fondo">
+      <svg class="ic"><use href="#ic-fondo"/></svg><span>fondo</span>
+      <input type="color" id="colorFondo" value="#F2EDE5">
+    </label>
     <span class="semilla" id="semilla"></span>
     <span class="sep"></span>
-    <button class="boton" id="png">descargar PNG</button>
+    <button class="boton" id="png" title="Descargar PNG">
+      <svg class="ic"><use href="#ic-descargar"/></svg><span>descargar PNG</span>
+    </button>
     <span class="estado" id="estado" role="status" aria-live="polite"></span>
   </footer>
 </main>
 
-<script src="js/pueblos.js?v=8"></script>
-<script src="js/mapa.js?v=8"></script>
-<script src="js/motor.js?v=8"></script>
-<script src="js/fondo.js?v=8"></script>
-<script src="js/simbolo.js?v=8"></script>
-<script src="js/mosaico.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/pueblos.js?v=9"></script>
+<script src="js/mapa.js?v=9"></script>
+<script src="js/motor.js?v=9"></script>
+<script src="js/fondo.js?v=9"></script>
+<script src="js/simbolo.js?v=9"></script>
+<script src="js/mosaico.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>

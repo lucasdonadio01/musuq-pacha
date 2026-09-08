@@ -46,6 +46,14 @@ está en `git log` de ese repo. Los documentos del TIF y el tablero 3D siguen al
 - **Los heredoc de bash de más de ~7 KB se truncan** y la shell después reporta una
   comilla sin cerrar. Escribí los archivos largos por partes.
 
+- **La vista mobile es otra disposición, no la de escritorio apretada.** Un solo HTML:
+  `fondo` vive en la barra de acciones y `grilla` / `espejo` en el rail izquierdo para
+  que las dos vistas usen los mismos elementos sin mover nodos por JS. Los iconos son
+  símbolos de Material definidos una vez en un `<svg><defs>` y reusados con `<use>`.
+- **El modo de volanta lo decide el ancho del lienzo que se dibuja**, no un flag global:
+  por debajo de 620 px van al pie, por encima a los costados. Gracias a eso el PNG de
+  2000 px sale con volantas laterales aunque se exporte desde el teléfono.
+
 ## Al terminar
 
 Commiteá, y si hay algo que Lucas tiene que hacer a mano, dejalo escrito acá abajo.

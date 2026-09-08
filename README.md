@@ -85,6 +85,17 @@ entera de forma pareja, que no es el efecto.
 los píxeles con su sombra y las volantas de los costados, y la usan por igual la pantalla
 y el PNG. Lo que ves es exactamente lo que baja.
 
+## Mobile
+
+La vista angosta (≤ 760 px) **no es la de escritorio apretada**, es otra disposición:
+arriba el pueblo elegido con una flecha que abre el menú, debajo las herramientas y los
+colores como iconos, el lienzo en el medio con todo el ancho, y las acciones abajo sin
+texto. Los pueblos, el mapa y los ajustes del lienzo pasan a ese menú, que tapa la
+pantalla. **El símbolo también cambia**: se lleva el 66 % del ancho en vez del 38 %, y
+las volantas de los costados —que ahí lo aplastaban— se van al pie en dos líneas. Como
+la decisión se toma según el ancho del lienzo que se está dibujando, el PNG exportado
+(2000 px) conserva las volantas laterales aunque lo bajes desde el teléfono.
+
 ## Controles
 
 - **Pueblo:** cambia la paleta, el fondo sugerido, la zona marcada en el mapa y genera

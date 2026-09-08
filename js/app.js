@@ -82,19 +82,20 @@
   }
 
   function armarPaleta() {
-    const cont = $('#paleta');
-    cont.innerHTML = '';
+    const cont = $('#paleta'), mas = cont.querySelector('.mas');
+    [...cont.querySelectorAll('button')].forEach(b => b.remove());
     pueblo.colores.forEach(c => {
       const b = document.createElement('button');
       b.type = 'button';
       b.style.background = c.h;
+      b.dataset.hex = c.h;
       b.title = c.n;
       b.setAttribute('aria-pressed', String(c.h === color));
       b.addEventListener('click', () => {
         elegirColor(c.h, c.n);
         if (Simbolo.seleccion.size) Simbolo.recolorear(c.h);
       });
-      cont.appendChild(b);
+      cont.insertBefore(b, mas);
     });
     $('#notaColor').textContent = (pueblo.colores.find(c => c.h === color) || {}).n || 'color libre';
   }
@@ -103,7 +104,8 @@
     color = hex;
     $('#colorLibre').value = hex;
     $('#notaColor').textContent = nombre || 'color libre';
-    [...$('#paleta').children].forEach(b => b.setAttribute('aria-pressed', String(b.style.background === hex || b.title === nombre)));
+    [...$('#paleta').querySelectorAll('button')]
+      .forEach(b => b.setAttribute('aria-pressed', String(b.dataset.hex === hex)));
   }
 
   function elegirPueblo(p) {
@@ -114,6 +116,8 @@
     armarPueblos();
     armarPaleta();
     dibujarMapa();
+    $('#puebloActual').textContent = p.nombre;
+    menu(false);
     generar();
     avisar(p.nombre + ' · ' + p.bioma);
   }
@@ -123,6 +127,11 @@
     clearTimeout(avisar.t);
     avisar.t = setTimeout(() => { if (estado.textContent === txt) estado.textContent = ''; }, 3600);
   }
+
+  /* ---------- menú de pueblos (en mobile tapa la pantalla) ---------- */
+  const menu = abrir => $('#menu').classList.toggle('abierto', abrir);
+  $('#volver').addEventListener('click', () => menu(true));
+  $('#cerrarMenu').addEventListener('click', () => menu(false));
 
   /* ---------- bucle de dibujo ---------- */
   function cuadro(ahora) {
@@ -214,6 +223,7 @@
   addEventListener('keydown', e => {
     if (taller.hidden || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
     const k = e.key.toLowerCase();
+    if (e.key === 'Escape') menu(false);
     if (TECLAS[k]) { elegirModo(TECLAS[k]); avisar(TECLAS[k]); }
     if (k === 'g') generar();
     if (e.key === 'Escape') Simbolo.seleccion.clear();
@@ -277,6 +287,7 @@
   aplicarFondo(pueblo.fondo);
   armarPueblos();
   armarPaleta();
+  $('#puebloActual').textContent = pueblo.nombre;
   if (!Fondo.iniciar($('#fondo'))) $('#fondo').style.display = 'none';
   requestAnimationFrame(cuadro);
   Mosaico.iniciar($('#mosaico'), $('#bloque'));
