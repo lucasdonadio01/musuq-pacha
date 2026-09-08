@@ -9,6 +9,8 @@ const Simbolo = (() => {
   let pueblo = PUEBLOS[0];
   let generacion = 0;
   let seleccion = new Set(), hover = null;
+  let fondo = pueblo.fondo;        // contra que color se decide el contraste
+  let paletaGen = pueblo.colores;  // con que colores salio la ultima generacion
   let geo = { celda: 40, x0: 0, y0: 0, W: 0, H: 0 };
 
   const clave = (x, y) => x + ',' + y;
@@ -122,8 +124,9 @@ const Simbolo = (() => {
 
       ctx.textAlign = 'right';
       ctx.font = '300 ' + cuerpo + 'px "Space Grotesk", system-ui, sans-serif';
+      const nombres = paletaGen.concat(pueblo.colores);
       const usados = [...new Set(figura.grilla.values())]
-        .map(h => (pueblo.colores.find(c => c.h.toLowerCase() === h.toLowerCase()) || {}).n || h)
+        .map(h => (nombres.find(c => c.h.toLowerCase() === h.toLowerCase()) || {}).n || h)
         .slice(0, 6);
       const texto = pueblo.nota + ': ' + (usados.join(', ') || 'lienzo vacío');
       const lineas = envolver(ctx, texto, W * 0.21);
@@ -142,7 +145,13 @@ const Simbolo = (() => {
 
   return {
     componer, celdaEn,
-    generar(ahora, sem) { generacion++; figura.generar(ahora, sem, pueblo.colores); },
+    generar(ahora, sem) {
+      generacion++;
+      // los colores se eligen contra el fondo, no a ciegas: si no contrastan,
+      // el simbolo se pierde por mas que sean los del pueblo
+      paletaGen = Motor.paletaContra(pueblo.colores, fondo, 5);
+      figura.generar(ahora, sem, paletaGen);
+    },
     limpiar(ahora) { figura.limpiar(ahora); seleccion.clear(); },
     pintar(gx, gy, hex, espejo) { figura.pintar(gx, gy, hex, espejo); },
     borrar(gx, gy, espejo) { figura.borrar(gx, gy, espejo).forEach(k => seleccion.delete(k)); },
@@ -169,6 +178,7 @@ const Simbolo = (() => {
     set lado(v) { figura.lado = v; seleccion.clear(); },
     get pueblo() { return pueblo; },
     set pueblo(p) { pueblo = p; },
+    set fondo(h) { fondo = h; },
     get generacion() { return generacion; },
     get grilla() { return figura.grilla; },
     get seleccion() { return seleccion; },

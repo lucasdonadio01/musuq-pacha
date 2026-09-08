@@ -64,6 +64,67 @@ const Motor = (() => {
     return h.slice(0, 4) + '-' + h.slice(4);
   };
 
+  /* Elige con qué colores se dibuja una figura contra un fondo dado.
+     Filtra por contraste de luminancia —que es lo que dejaba afuera a la
+     arcilla rosada y a la tiza sobre un crema— y puntúa por complementariedad
+     de tono. Si la paleta del pueblo no llega, la estira con variantes más
+     profundas y más claras de esos mismos colores: siguen siendo el color del
+     territorio, con otra saturación, y no colores traídos de otro lado. */
+  function paletaContra(colores, fondo, cuantos) {
+    const lf = luz(fondo), tf = tono(fondo);
+    const fondoNeutro = tf.s < 0.18;
+    const MINIMO = 0.24;
+
+    const pozo = [], vistos = new Set();
+    const sumar = (h, n) => {
+      const k = h.toLowerCase();
+      if (!vistos.has(k)) { vistos.add(k); pozo.push({ h, n }); }
+    };
+    for (const c of colores) {
+      sumar(c.h, c.n);
+      sumar(oscurecer(c.h, 0.42), c.n + ' profundo');
+      sumar(oscurecer(c.h, -0.55), c.n + ' claro');
+    }
+
+    /* El contraste ya lo garantiza el filtro, así que el puntaje no premia la
+       luminancia extrema —si lo hiciera se quedaría con los cinco colores mas
+       oscuros y el simbolo saldria todo barro—. Manda el croma, para que la
+       figura tenga color, y despues la distancia de tono contra el fondo. */
+    const puntaje = c => {
+      const t = tono(c.h);
+      const dl = Math.min(Math.abs(luz(c.h) - lf), 0.45);
+      const lejos = (fondoNeutro || t.s < 0.18) ? 0.5 : distanciaTono(c.h, fondo) / 180;
+      return t.s * 1.0 + lejos * 0.8 + dl * 0.6;
+    };
+
+    let aptos = pozo.filter(c => Math.abs(luz(c.h) - lf) >= MINIMO);
+    if (aptos.length < cuantos) {
+      // fondo sin salida (un gris medio, por ejemplo): se toman los que mas se
+      // despeguen, aunque no lleguen al minimo
+      aptos = pozo.slice().sort((a, b) => Math.abs(luz(b.h) - lf) - Math.abs(luz(a.h) - lf));
+    }
+    /* Elección golosa con castigo por parecido: cada color que entra le baja el
+       puntaje a los que se le parecen en tono o en luminancia. Sin esto el
+       ranking por croma devolvía tres variantes del mismo ocre y la figura
+       quedaba monocroma. */
+    const meta = Math.max(cuantos, 4);
+    const quedan = aptos.slice().sort((a, b) => puntaje(b) - puntaje(a));
+    const elegidos = [];
+    while (elegidos.length < meta && quedan.length) {
+      let cual = 0, mejor = -Infinity;
+      quedan.forEach((c, i) => {
+        let p = puntaje(c);
+        for (const e of elegidos) {
+          const cerca = 1 - distanciaTono(c.h, e.h) / 180;
+          p -= cerca * 0.55 + Math.max(0, 0.25 - Math.abs(luz(c.h) - luz(e.h))) * 1.2;
+        }
+        if (p > mejor) { mejor = p; cual = i; }
+      });
+      elegidos.push(quedan.splice(cual, 1)[0]);
+    }
+    return elegidos;
+  }
+
   /* ---------- familias de patrones ----------
      Todas reciben (R, N) y devuelven un Set de "x,y". Al no depender de
      ninguna variable de instancia, sirven igual para el lienzo de 11 del juego
@@ -683,5 +744,5 @@ const Motor = (() => {
     };
   }
 
-  return { crear, aRgb, aHex, mezcla, oscurecer, luz, tono, distanciaTono, suave, firma, dado, FAMILIAS, NOMBRES, MENU };
+  return { crear, aRgb, aHex, mezcla, oscurecer, luz, tono, distanciaTono, paletaContra, suave, firma, dado, FAMILIAS, NOMBRES, MENU };
 })();

@@ -53,6 +53,21 @@ crecen un poco también**, con una caída cuadrática por distancia: el conjunto
 como una ola. Mientras la tengas debajo del cursor **no se regenera**. El calor baja
 despacio, así que un barrido deja varias grandes atrás. **Un click la regenera.**
 
+**Los colores de la generación se eligen contra el fondo, no a ciegas.**
+`Motor.paletaContra()` filtra los colores del pueblo por contraste de luminancia contra
+el fondo del lienzo —eso es lo que deja afuera a la arcilla rosada y a la tiza sobre un
+crema, que era donde el símbolo se perdía—, y cuando la paleta documentada no alcanza la
+**estira con variantes profundas y claras de esos mismos colores**, que siguen siendo el
+color del territorio con otra saturación. Después elige de a uno con castigo por
+parecido, así los elegidos se separan en tono: Omaguaca sale ocre + verde de cardón,
+Mapuche sale rojo kelü + azul de witral + amarillo de michay. Medido sobre 40
+generaciones en crema: contraste mínimo 0,25 y promedio 0,50, sin un solo color flojo.
+Sobre un fondo oscuro la selección se invierte sola a las variantes claras.
+
+Los seis colores documentados siguen estando enteros en la paleta de pintar: si querés
+usar la tiza sobre crema, podés. Y el cuentagotas (`I`) levanta cualquier variante que
+haya salido en el dibujo.
+
 **El espejo se fuerza en un solo lugar.** `generarGrilla` pasa toda figura por
 `espejar()` antes de devolverla, así ninguna familia puede sacar algo torcido por más
 que se agregue una nueva después. Medido: 60 generaciones seguidas, 0 asimétricas.

@@ -21,6 +21,7 @@
   /* ---------- paleta de la pagina ---------- */
   function aplicarFondo(hex) {
     fondo = hex;
+    Simbolo.fondo = hex;
     const rgb = Simbolo.aRgb(hex);
     const luz = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
     const claro = luz > 0.52;

@@ -23,6 +23,13 @@ está en `git log` de ese repo. Los documentos del TIF y el tablero 3D siguen al
 - **La simetría se fuerza en un solo lugar**, en `generarGrilla` con `espejar()`, no en
   cada familia. Lucas rechazó las figuras torcidas que salían cuando cada familia se
   encargaba por su cuenta.
+- **La generación no usa la paleta del pueblo tal cual.** Pasa por
+  `Motor.paletaContra(colores, fondo, n)`, que filtra por contraste contra el fondo del
+  lienzo, estira con variantes profundas y claras si no alcanza, y elige con castigo por
+  parecido para que los colores se separen en tono. Sin el filtro, sobre el crema salían
+  símbolos en rosa y blanco que no se veían; sin el castigo, salían tres variantes del
+  mismo ocre. La paleta de pintar sigue mostrando los seis documentados: eso es identidad
+  del pueblo y no se toca.
 - **La variedad va adentro de las familias, no en el sorteo.** `flor` reparte en ocho
   especies y `mandala` en cinco trazas, y entre las dos se llevan el 65 % del menú. Si
   hay que sumar variedad, sumala ahí y no como familia nueva.
