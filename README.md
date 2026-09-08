@@ -111,10 +111,24 @@ las volantas de los costados —que ahí lo aplastaban— se van al pie en dos l
 la decisión se toma según el ancho del lienzo que se está dibujando, el PNG exportado
 (2000 px) conserva las volantas laterales aunque lo bajes desde el teléfono.
 
+## Música
+
+`audio/shasta.mp3` suena de fondo en loop al **40 %**. Ningún navegador deja arrancar
+audio solo, así que se engancha al primer gesto: tocar una baldosa del mosaico ya
+alcanza, y si no, el botón de empezar. Si el navegador igual la frena, se vuelve a
+intentar en el gesto siguiente en vez de quedar muda. Se silencia con el botón de la
+derecha del header. El ícono de accesibilidad que está al lado **es un lugar reservado**:
+se ve y responde al mouse, pero todavía no hace nada, así que no entra en el orden de
+tabulación.
+
+> El tema lo aportó Lucas. El sitio es público, así que conviene confirmar que se puede
+> redistribuir antes de la entrega.
+
 ## Controles
 
 - **Pueblo:** cambia la paleta, el fondo sugerido, la zona marcada en el mapa y genera
 - **`Q`** pincel · **`W`** borrador · **`E`** selección · **`I`** copiar color · **`G`** generar · `Esc` limpia la selección
+- Debajo del símbolo, centrados: **generar**, **descargar** y **vaciar** (en rojo, que es el único destructivo)
 - Con **selección** marcás las celdas que querés y después tocás un color para cambiarlas todas juntas
 - **Fondo:** cualquier color. La tinta se invierte sola si el fondo es oscuro, y los puntos
   del PixelBlast se mezclan hacia el blanco o el negro (nunca con un delta: sobre un rojo

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MUSUQ PACHA · generador de símbolos</title>
 <meta name="description" content="Generador de símbolos en grilla para los pueblos originarios argentinos. Musuq Pacha, TIF UADE 2026.">
-<link rel="stylesheet" href="css/fuente.css?v=12">
-<link rel="stylesheet" href="css/app.css?v=12">
+<link rel="stylesheet" href="css/fuente.css?v=13">
+<link rel="stylesheet" href="css/app.css?v=13">
 </head>
 <body>
 
@@ -22,16 +22,20 @@
   <symbol id="ic-descargar" viewBox="0 -960 960 960"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></symbol>
   <symbol id="ic-volver" viewBox="0 -960 960 960"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></symbol>
   <symbol id="ic-cerrar" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></symbol>
+  <symbol id="ic-accesibilidad" viewBox="0 -960 960 960"><path d="M423.5-743.5Q400-767 400-800t23.5-56.5Q447-880 480-880t56.5 23.5Q560-833 560-800t-23.5 56.5Q513-720 480-720t-56.5-23.5ZM360-80v-520q-60-5-122-15t-118-25l20-80q78 21 166 30.5t174 9.5q86 0 174-9.5T820-720l20 80q-56 15-118 25t-122 15v520h-80v-240h-80v240h-80Z"/></symbol>
+  <symbol id="ic-sonido" viewBox="0 -960 960 960"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320ZM400-606l-86 86H200v80h114l86 86v-252ZM300-480Z"/></symbol>
+  <symbol id="ic-mudo" viewBox="0 -960 960 960"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/></symbol>
   <symbol id="ic-mas" viewBox="0 -960 960 960"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></symbol>
 </defs></svg>
 
 <canvas id="fondo" aria-hidden="true"></canvas>
+<audio id="musica" src="audio/shasta.mp3?v=13" loop preload="auto"></audio>
 
 <section id="portada">
   <canvas id="mosaico" aria-hidden="true"></canvas>
   <div class="bloque" id="bloque">
     <h1 class="titulo">MUSUQ PACHA</h1>
-    <p class="bajada">genera mi símbolo</p>
+    <p class="bajada">Generador de símbolos de pueblos originarios</p>
     <button class="boton boton--grande" id="entrar">empezar</button>
   </div>
 </section>
@@ -44,6 +48,13 @@
     <span class="marca">MUSUQ PACHA</span>
     <small class="barra__sub">generador de símbolos</small>
     <span class="barra__pueblo" id="puebloActual"></span>
+    <span class="barra__sep"></span>
+    <span class="icono icono--falso" title="Accesibilidad" aria-hidden="true">
+      <svg class="ic"><use href="#ic-accesibilidad"/></svg>
+    </span>
+    <button class="icono" id="sonido" title="Silenciar música" aria-label="Silenciar música">
+      <svg class="ic"><use href="#ic-sonido"/></svg>
+    </button>
   </header>
 
   <aside class="rail rail--izq" id="menu">
@@ -56,6 +67,7 @@
     <canvas class="mapa" id="mapa"></canvas>
     <p class="mapa__pie" id="mapaPie"></p>
     <h2 class="rotulo">lienzo</h2>
+    <label class="fila"><span>fondo</span><input type="color" id="colorFondo" value="#F2EDE5"></label>
     <label class="fila"><span>grilla</span>
       <select id="lado">
         <option value="7">7 × 7</option>
@@ -69,6 +81,18 @@
 
   <section class="escena">
     <canvas id="lienzo"></canvas>
+    <div class="acciones">
+      <button class="accion accion--fuerte" id="generar" title="Generar otro símbolo (G)" aria-label="Generar otro símbolo">
+        <svg class="ic"><use href="#ic-generar"/></svg>
+      </button>
+      <button class="accion" id="png" title="Descargar PNG" aria-label="Descargar PNG">
+        <svg class="ic"><use href="#ic-descargar"/></svg>
+      </button>
+      <button class="accion accion--peligro" id="limpiar" title="Vaciar el lienzo" aria-label="Vaciar el lienzo">
+        <svg class="ic"><use href="#ic-vaciar"/></svg>
+      </button>
+    </div>
+    <p class="estado" id="estado" role="status" aria-live="polite"></p>
   </section>
 
   <aside class="rail rail--der">
@@ -98,32 +122,14 @@
     <p class="fila nota"><span id="notaColor">—</span></p>
   </aside>
 
-  <footer class="acciones">
-    <button class="boton boton--fuerte" id="generar" title="Generar (G)">
-      <svg class="ic"><use href="#ic-generar"/></svg><span>generar</span><kbd>G</kbd>
-    </button>
-    <button class="boton" id="limpiar" title="Vaciar">
-      <svg class="ic"><use href="#ic-vaciar"/></svg><span>vaciar</span>
-    </button>
-    <label class="boton" id="botonFondo" title="Color de fondo">
-      <svg class="ic"><use href="#ic-fondo"/></svg><span>fondo</span>
-      <input type="color" id="colorFondo" value="#F2EDE5">
-    </label>
-    <span class="semilla" id="semilla"></span>
-    <span class="sep"></span>
-    <button class="boton" id="png" title="Descargar PNG">
-      <svg class="ic"><use href="#ic-descargar"/></svg><span>descargar PNG</span>
-    </button>
-    <span class="estado" id="estado" role="status" aria-live="polite"></span>
-  </footer>
 </main>
 
-<script src="js/pueblos.js?v=12"></script>
-<script src="js/mapa.js?v=12"></script>
-<script src="js/motor.js?v=12"></script>
-<script src="js/fondo.js?v=12"></script>
-<script src="js/simbolo.js?v=12"></script>
-<script src="js/mosaico.js?v=12"></script>
-<script src="js/app.js?v=12"></script>
+<script src="js/pueblos.js?v=13"></script>
+<script src="js/mapa.js?v=13"></script>
+<script src="js/motor.js?v=13"></script>
+<script src="js/fondo.js?v=13"></script>
+<script src="js/simbolo.js?v=13"></script>
+<script src="js/mosaico.js?v=13"></script>
+<script src="js/app.js?v=13"></script>
 </body>
 </html>

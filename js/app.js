@@ -129,6 +129,31 @@
     avisar.t = setTimeout(() => { if (estado.textContent === txt) estado.textContent = ''; }, 3600);
   }
 
+  /* ---------- música de fondo ----------
+     Ningún navegador deja arrancar audio solo, así que se engancha al primer
+     gesto: tocar una baldosa del mosaico ya alcanza, y si no, el botón de
+     empezar. Si el navegador igual la frena, se vuelve a intentar en el gesto
+     siguiente en vez de quedar muda para siempre. */
+  const musica = $('#musica');
+  musica.volume = 0.4;
+  let sonando = false;
+
+  function arrancarMusica() {
+    if (sonando) return;
+    sonando = true;
+    const intento = musica.play();
+    if (intento && intento.catch) intento.catch(() => { sonando = false; });
+  }
+  addEventListener('pointerdown', arrancarMusica);
+
+  $('#sonido').addEventListener('click', e => {
+    const b = e.currentTarget;
+    musica.muted = !musica.muted;
+    b.querySelector('use').setAttribute('href', musica.muted ? '#ic-mudo' : '#ic-sonido');
+    b.setAttribute('title', musica.muted ? 'Activar música' : 'Silenciar música');
+    b.setAttribute('aria-label', musica.muted ? 'Activar música' : 'Silenciar música');
+  });
+
   /* ---------- menú de pueblos (en mobile tapa la pantalla) ---------- */
   const menu = abrir => $('#menu').classList.toggle('abierto', abrir);
   $('#volver').addEventListener('click', () => menu(true));
@@ -156,7 +181,6 @@
 
   function generar(semilla) {
     Simbolo.generar(performance.now(), semilla);
-    $('#semilla').textContent = 'semilla ' + Simbolo.firmaSemilla;
     ondaDesdeElSimbolo();
   }
 

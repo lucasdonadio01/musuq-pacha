@@ -76,17 +76,13 @@ html, body {
 }
 .icono:hover { background: rgba(0, 0, 0, .06); }
 
-/* el color de fondo se elige desde un botón, el input va invisible encima */
-#botonFondo { position: relative; overflow: hidden; }
-#botonFondo input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
 /* ---------- taller ---------- */
 #taller {
   position: relative; z-index: 2;
   height: 100%;
   display: grid;
   grid-template-columns: 208px 1fr 244px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 .barra {
@@ -98,6 +94,11 @@ html, body {
 .marca { font-weight: 500; letter-spacing: .16em; font-size: 13px; }
 .barra__sub { color: var(--suave); font-size: 11px; letter-spacing: .1em; }
 .barra__volver, .barra__pueblo { display: none; }
+.barra__sep { flex: 1; }
+/* el de accesibilidad es un lugar reservado: se ve y responde al mouse, pero
+   todavia no hace nada, asi que no entra en el orden de tabulacion */
+.icono--falso { cursor: pointer; opacity: .75; }
+.icono--falso:hover { opacity: 1; }
 
 .rail {
   padding: 18px 18px 24px;
@@ -164,34 +165,51 @@ html, body {
 
 .fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; }
 .fila span { color: var(--suave); }
+.fila input[type="color"] {
+  width: 44px; height: 24px; padding: 0; border: 1px solid var(--linea);
+  background: none; cursor: pointer;
+}
 .fila select {
   font: 300 12px 'Space Grotesk', sans-serif; color: var(--tinta);
   background: none; border: 1px solid var(--linea); padding: 3px 6px;
 }
 .fila input[type="checkbox"] { accent-color: var(--tinta); width: 15px; height: 15px; }
 
-.escena { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
-#lienzo { width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: none; }
+/* El lienzo se lleva el alto que sobra y las acciones quedan centradas justo
+   abajo del símbolo, con aire propio: ya no hay barra de footer. */
+.escena {
+  position: relative; min-height: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 0 20px;
+}
+#lienzo { flex: 1; width: 100%; min-height: 0; display: block; cursor: crosshair; touch-action: none; }
 
-.acciones {
-  grid-column: 1 / -1;
-  display: flex; align-items: center; gap: 8px;
-  padding: 11px 18px; border-top: 1px solid var(--linea);
-  background: var(--velo);
+.acciones { display: flex; gap: 10px; }
+.accion {
+  width: 44px; height: 44px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: none; color: var(--tinta); border: 1px solid var(--linea);
+  cursor: pointer; transition: background 140ms, border-color 140ms, color 140ms;
 }
-.acciones .sep { flex: 1; }
-.semilla {
-  font-size: 10.5px; color: var(--suave); letter-spacing: .1em;
-  font-variant-numeric: tabular-nums; margin-left: 4px;
+.accion:hover { border-color: var(--tinta); background: rgba(0, 0, 0, .05); }
+.accion:active { transform: translateY(1px); }
+.accion .ic { width: 20px; height: 20px; }
+.accion--fuerte { background: var(--tinta); color: var(--fondo); border-color: var(--tinta); }
+.accion--fuerte:hover { background: var(--tinta); opacity: .85; }
+.accion--peligro { color: #C0392B; border-color: rgba(192, 57, 43, .38); }
+.accion--peligro:hover { color: #C0392B; border-color: #C0392B; background: rgba(192, 57, 43, .10); }
+
+.estado {
+  min-height: 15px; margin-top: 9px;
+  font-size: 11px; color: var(--suave); letter-spacing: .04em; text-align: center;
 }
-.estado { font-size: 11px; color: var(--suave); letter-spacing: .04em; text-align: right; }
 
 /* ---------- mobile ----------
    Otra disposición, no la misma apretada: arriba el pueblo elegido y las
    herramientas, el lienzo en el medio con todo el ancho, y las acciones abajo
    como iconos. Los pueblos y el mapa pasan a un menú que se abre con la flecha. */
 @media (max-width: 760px) {
-  #taller { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+  #taller { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
 
   .barra { order: 1; gap: 8px; padding: 8px 10px; }
   .marca, .barra__sub { display: none; }
@@ -210,11 +228,11 @@ html, body {
 
   .escena { order: 3; }
 
-  .acciones { order: 4; justify-content: space-around; gap: 6px; padding: 8px 10px; }
-  .acciones .boton span, .acciones .boton kbd, .acciones .estado, .acciones .sep { display: none; }
-  .acciones .boton { padding: 11px 16px; }
-  .acciones .ic { width: 21px; height: 21px; }
-  .semilla { margin: 0; font-size: 10px; letter-spacing: .06em; }
+  .escena { padding-bottom: 14px; }
+  .acciones { gap: 14px; }
+  .accion { width: 52px; height: 52px; }
+  .accion .ic { width: 23px; height: 23px; }
+  .estado { margin-top: 6px; }
 
   /* el menú tapa la pantalla entera */
   .rail--izq {

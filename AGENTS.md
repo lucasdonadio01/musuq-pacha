@@ -61,6 +61,13 @@ está en `git log` de ese repo. Los documentos del TIF y el tablero 3D siguen al
   por debajo de 620 px van al pie, por encima a los costados. Gracias a eso el PNG de
   2000 px sale con volantas laterales aunque se exporte desde el teléfono.
 
+- **La música arranca con el primer gesto, no al cargar.** `arrancarMusica()` se engancha
+  a `pointerdown` en la ventana y vuelve a habilitarse si `play()` es rechazado, así el
+  bloqueo de autoplay no la deja muda para siempre. Volumen 0,4 y loop.
+- **No hay barra de footer.** Las tres acciones viven adentro de `.escena`, debajo del
+  lienzo, en las dos vistas. El color de fondo se fue al rail izquierdo con `grilla` y
+  `espejo`, que es el grupo de ajustes del lienzo.
+
 ## Al terminar
 
 Commiteá, y si hay algo que Lucas tiene que hacer a mano, dejalo escrito acá abajo.
