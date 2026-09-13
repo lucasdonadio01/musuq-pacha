@@ -60,3 +60,9 @@ html[data-color=contraste] .vista-arbol__siguiente small{color:#fff}
 .cartel-pixel:focus-visible .cartel-pixel__giro{outline:2px solid #fff;outline-offset:6px}
 @keyframes cartel-vaiven{0%,100%{transform:translate(-50%,-10px) perspective(800px) rotateY(-36deg) rotateX(9deg)}50%{transform:translate(-50%,-16px) perspective(800px) rotateY(-24deg) rotateX(6deg)}}
 @media(prefers-reduced-motion:reduce){.cartel-pixel__giro{animation:none}}
+.panel__despliegue{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .55s cubic-bezier(.22,.61,.36,1),opacity .4s ease .12s}
+.panel__despliegue>div{min-height:0;overflow:hidden}
+.panel--resumen .panel__despliegue{grid-template-rows:0fr;opacity:0;transition:grid-template-rows .45s cubic-bezier(.22,.61,.36,1),opacity .2s ease}
+.panel__criterio{max-height:240px;transition:max-height .55s cubic-bezier(.22,.61,.36,1),min-height .55s cubic-bezier(.22,.61,.36,1),margin .55s cubic-bezier(.22,.61,.36,1),opacity .4s ease .12s}
+.panel--resumen .panel__criterio{max-height:0;min-height:0;margin-bottom:0;opacity:0;overflow:hidden;transition:max-height .45s cubic-bezier(.22,.61,.36,1),min-height .45s cubic-bezier(.22,.61,.36,1),margin .45s cubic-bezier(.22,.61,.36,1),opacity .2s ease}
+@media(prefers-reduced-motion:reduce){.panel__despliegue,.panel__criterio,.panel--resumen .panel__despliegue,.panel--resumen .panel__criterio{transition:none}}

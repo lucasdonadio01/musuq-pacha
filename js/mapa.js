@@ -1593,7 +1593,10 @@
   const poseCerca = { posicion: new THREE.Vector3(), mira: new THREE.Vector3() };
   const heroeBase = new THREE.Vector3();
   const desvioCerca = new THREE.Vector3();
-  const habitat=window.MUSUQ_HABITAT?.crear({escena,C,P,suelo:sueloCelda,celdaEn,rios:D.rios,lienzo});
+  const rumboViento = new THREE.Vector3(viento.x, 0, -viento.y).normalize();
+  const habitat=window.MUSUQ_HABITAT?.crear({escena,C,P,suelo:sueloCelda,celdaEn,rios:D.rios,lienzo,rumbo:rumboViento});
+  const ambiente = window.MUSUQ_AMBIENTE?.crear({ escena, escenaHeroe, C, P, suelo: sueloCelda, celdaEn, rios: D.rios, bosques, rumbo: rumboViento });
+  const vientoVisible = window.MUSUQ_VIENTO?.crear({ rumbo: rumboViento, alturaMapa: P.z0 + Math.max(...C.nivel) * P.paso + 0.8 });
 
   function alturaEn(x, y) {
     const j = indicePorCelda.get(Math.floor(x / P.q) + ':' + Math.floor(y / P.q));
@@ -1780,6 +1783,7 @@
   }
 
   const ficha = document.getElementById('panel-ficha');
+  const despliegue = document.getElementById('panel-despliegue');
   const formatoKm = new Intl.NumberFormat('es-AR');
 
   function completarFicha(zona) {
@@ -1833,7 +1837,7 @@
     }
     animando = true;
     lienzo.style.cursor = !explorando || zonaBajoCursor ? 'pointer' : 'default';
-    if (zona && explorando && !document.querySelector('dialog[open]')) window.MUSUQ_A11Y?.narrar(zona.nombre + '. ' + zona.criterio + (window.MUSUQ_FICHAS?.[zona.id] ? '. ' + window.MUSUQ_FICHAS[zona.id].descripcion : ''));
+    if (zona && zona !== zonaFijada && explorando && !document.querySelector('dialog[open]')) window.MUSUQ_A11Y?.narrar(zona.nombre);
   }
 
   const semitonos = (n) => Math.pow(2, n / 12);
@@ -1941,6 +1945,7 @@
     suavidadHover = 11;
     activarZona(zona);
     document.getElementById('liberar-zona').hidden = !zona;
+    if (nueva && explorando && !document.querySelector('dialog[open]')) window.MUSUQ_A11Y?.narrar(zona.nombre + '. ' + zona.criterio + (window.MUSUQ_FICHAS?.[zona.id] ? '. ' + window.MUSUQ_FICHAS[zona.id].descripcion : ''));
     if (zona) {
       medirZona(zona);
     }
@@ -2237,6 +2242,39 @@
     return [(puntoCartel.x + 1) / 2 * lienzo.clientWidth, (1 - puntoCartel.y) / 2 * lienzo.clientHeight];
   }
 
+  const ejesCartel = [new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1)];
+  const normalCartel = new THREE.Vector3();
+  const abajoCartel = new THREE.Vector3(0, -1, 0);
+
+  function proyectarVector(v, ppu) {
+    const [x0, y0] = aPantalla(0, 0, 0);
+    const [x1, y1] = aPantalla(v.x, v.y, v.z);
+    return [x1 - x0, y1 - y0, -v.dot(ejes.adelante) * ppu];
+  }
+
+  function orientacionCartel() {
+    const [ax, ay] = aPantalla(0, 0, 0);
+    const [bx, by] = aPantalla(ejes.derecha.x, ejes.derecha.y, ejes.derecha.z);
+    const ppu = Math.hypot(bx - ax, by - ay) || 1;
+    let mejor = ejesCartel[0];
+    let puntaje = -Infinity;
+    for (const eje of ejesCartel) {
+      normalCartel.crossVectors(eje, ejeY);
+      const valor = eje.dot(ejes.derecha) - (normalCartel.dot(ejes.adelante) > 0 ? 10 : 0);
+      if (valor > puntaje) {
+        puntaje = valor;
+        mejor = eje;
+      }
+    }
+    normalCartel.crossVectors(mejor, ejeY);
+    const k = (anchoVista <= 700 ? 1.03 : 1.2) / ppu;
+    return {
+      x: proyectarVector(mejor, ppu).map((n) => n * k),
+      y: proyectarVector(abajoCartel, ppu).map((n) => n * k),
+      z: proyectarVector(normalCartel, ppu).map((n) => n * k)
+    };
+  }
+
   function grupoEnPantalla(ndcX, ndcY) {
     if (!bosques?.grupos || !explorando || !zonaFijada) {
       return null;
@@ -2365,6 +2403,7 @@
     }
     const candidato = punteroAdentro ? grupoEnPantalla(puntero.x, puntero.y) : null;
     const vistos = new Set();
+    const orientacion = orientacionCartel();
     for (const grupo of bosques.grupos()) {
       vistos.add(grupo.clave);
       let c = carteles.get(grupo.clave);
@@ -2384,6 +2423,18 @@
       const [sx, sy] = aPantalla(grupo.x, grupo.alto, grupo.z);
       c.cartel.elemento.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)';
       c.cartel.elemento.style.zIndex = String(Math.max(1, Math.round(sy)));
+      if (c.fase === undefined) {
+        c.fase = Math.random() * 6.28;
+        c.giro = c.cartel.elemento.querySelector('.cartel-pixel__giro');
+      }
+      if (c.giro) {
+        const flota = movimientoReducido.matches ? 0 : Math.sin(ahora / 1000 * 0.9 + c.fase) * 3;
+        const { x, y, z } = orientacion;
+        const ax = 96 * x[0] + 192 * y[0];
+        const ay = 96 * x[1] + 192 * y[1];
+        const az = 96 * x[2] + 192 * y[2];
+        c.giro.style.transform = 'matrix3d(' + [x[0], x[1], x[2], 0, y[0], y[1], y[2], 0, z[0], z[1], z[2], 0, -ax, 178 - ay + flota, -az, 1].map((n) => +n.toFixed(4)).join(',') + ')';
+      }
       if (c.sobre || (candidato && candidato.clave === grupo.clave)) {
         c.hasta = ahora + 300;
       }
@@ -2431,6 +2482,13 @@
       if (punteroAdentro) detectarPendiente = true;
     }
     enfoque = acercamiento * acercamiento * acercamiento * (acercamiento * (acercamiento * 6 - 15) + 10);
+    const panelResumido = !(zonaFijada && acercamiento > 0.55);
+    if (panel.classList.contains('panel--resumen') !== panelResumido) {
+      panel.classList.toggle('panel--resumen', panelResumido);
+      if (despliegue) {
+        despliegue.inert = panelResumido;
+      }
+    }
     const rafagaObjetivo = !instantaneo && acercamientoObjetivo === 1 && acercamiento < 1 ? Math.pow(Math.sin(Math.PI * acercamiento), 1.5) : 0;
     rafaga += (rafagaObjetivo - rafaga) * (instantaneo ? 1 : 1 - Math.exp(-dt * 14));
     if (rafaga < 0.001) rafaga = 0;
@@ -2593,6 +2651,9 @@
       opacidadHeroe *= THREE.MathUtils.smoothstep(Math.abs(cambioArbol.t - 0.5), 0.02, 0.3);
     }
     matHeroe.uniforms.opacidad.value = opacidadHeroe*(1-(habitat?.zoom||0));
+    const heroeAmbiente = enArbol && arbolHeroe ? { grupo: arbolHeroe, base: heroe.position, dir: direccionHeroe, alto: heroe.scale.y, ancho: heroe.scale.x, visibilidad: opacidadHeroe * (1 - (habitat?.zoom || 0)) } : null;
+    ambiente?.actualizar({ dt, instantaneo, tiempo, zona: zonaFijada, heroe: heroeAmbiente, camaraCerca, cercania });
+    vientoVisible?.actualizar({ dt, instantaneo, camaraMapa: camara, cercania: arbolVisto ? cercania : 0, heroe: heroeAmbiente });
     matCielo.uniforms.presencia.value = THREE.MathUtils.smoothstep(cercania, 0.2, 0.75);
     matHeroe.uniforms.tiempo.value = tiempo;
     matNubeCielo.uniforms.tiempo.value = tiempo;
@@ -2628,6 +2689,7 @@
     matNubeCielo.colorWrite = true;
     matNubeCielo.depthWrite = false;
     renderer.render(escenaNiebla, camaraActiva);
+    vientoVisible?.renderMapa(renderer, camaraActiva);
     renderer.clearDepth();
     presenciaFronteras = instantaneo ? Number(mostrarFronteras) : THREE.MathUtils.clamp(presenciaFronteras + (mostrarFronteras ? dt : -dt) / 0.55, 0, 1);
     const suaveFronteras = presenciaFronteras * presenciaFronteras * (3 - 2 * presenciaFronteras);
@@ -2650,6 +2712,7 @@
       habitat?.render(renderer,camaraCerca);
       renderer.clearDepth();
       renderer.render(escenaHeroe, camaraCerca);
+      vientoVisible?.renderCerca(renderer, camaraCerca);
     }
     requestAnimationFrame(cuadroAnimacion);
   }

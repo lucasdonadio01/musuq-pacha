@@ -40,7 +40,7 @@
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('normal',new T.Float32BufferAttribute(nor,3));geo.setAttribute('color',new T.Float32BufferAttribute(col,3));
   geo.userData.voxeles=vox.size;return geo;
  }
- function crear({escena,C,P,suelo,celdaEn,rios,lienzo}){
+ function crear({escena,C,P,suelo,celdaEn,rios,lienzo,rumbo}){
   const raiz=new T.Group();raiz.name='Hábitat · tercer zoom';escena.add(raiz);raiz.visible=false;
   const escenaFauna=new T.Scene();escenaFauna.name='Fauna nítida';
   const tiempo={value:0},presencia={value:0};
@@ -72,12 +72,10 @@
    const alas=[-1,1].map((s,k)=>{const a=new T.Group();a.position.set(0,.53,s*.08);ave.add(a);mesh(alasGeo[k],a);return a;});
    aves.push({obj:ave,alas});
   }
-  const gPasto=new T.BufferGeometry(),vPasto=[];
-  for(let k=0;k<2;k++){const a=k*Math.PI/2,dx=Math.cos(a)*.08,dz=Math.sin(a)*.08;vPasto.push(-dx,0,-dz,dx,0,dz,0,1,0);}
-  gPasto.setAttribute('position',new T.Float32BufferAttribute(vPasto,3));
-  const matPasto=new T.ShaderMaterial({side:T.DoubleSide,uniforms:{tiempo,presencia},vertexShader:`uniform float tiempo;uniform float presencia;varying vec3 c;varying float h;void main(){vec3 p=position;h=p.y;c=instanceColor;vec4 w=instanceMatrix*vec4(p,1.);w.x+=sin(tiempo*1.5+w.x*13.+w.z*8.)*p.y*p.y*.008*presencia;w.z+=cos(tiempo*1.1+w.z*15.)*p.y*.004*presencia;w.y-= (1.-presencia)*.1;gl_Position=projectionMatrix*modelViewMatrix*w;}`,
-   fragmentShader:`varying vec3 c;varying float h;void main(){gl_FragColor=vec4(c*mix(.78,1.15,h),1.);}`});
-  const pasto=new T.InstancedMesh(gPasto,matPasto,4800);pasto.instanceColor=new T.InstancedBufferAttribute(new Float32Array(4800*3),3);pasto.count=0;pasto.frustumCulled=false;pasto.name='Pasto bajo al viento';raiz.add(pasto);
+  const F=window.MUSUQ_FORMAS;
+  const matPasto=F.material({tiempo,rumbo:{value:rumbo||new T.Vector3(1,0,0)},fuerza:.2,aparicion:presencia});
+  const pastos=F.tiposPasto.map((tipo,k)=>{const m=new T.InstancedMesh(F.pasto(tipo,21+k),matPasto,1800);m.instanceColor=new T.InstancedBufferAttribute(new Float32Array(1800*3),3);m.count=0;m.frustumCulled=false;m.name='Pasto low poly al viento · '+tipo;raiz.add(m);return m;});
+  const pasto={get count(){return pastos.reduce((s,m)=>s+m.count,0);}};
   const cactus=new T.Group();cactus.name='Cardones · noroeste';raiz.add(cactus);
   const geoCactus=parte([[0,.4,0,.12,.4,.12],[-.23,.46,0,.1,.25,.09],[-.12,.3,0,.2,.08,.09],[.22,.63,0,.085,.21,.085],[.11,.47,0,.2,.075,.09]],(x,y,z)=>Math.abs(z)>.07?'#688e55':'#7c9c5a',.055);
   const detalles=[];const objetos=[{id:'venado',obj:venado,radio:.17},{id:'tero',obj:aves[0].obj,radio:.075}];
@@ -92,25 +90,25 @@
   }
   function apto(x,z,margen=.07){const i=celdaEn(x,-z);return i!==undefined&&(C.zonas[i]&(1<<zonaActual.id))&&Math.abs(x-C.x[i])<P.q*.5-margen&&Math.abs(z+C.y[i])<P.q*.5-margen&&distanciaRio(x,z)>.09?i:undefined;}
   function preparar(zona,grupo,base,dir){
-   zonaActual=zona;grupoActual=grupo;origen.copy(base);direccion.copy(dir);derecha.crossVectors(direccion,new T.Vector3(0,1,0)).normalize();edad=0;foco=null;zoom=0;detalles.length=0;cactus.clear();pasto.count=0;
+   zonaActual=zona;grupoActual=grupo;origen.copy(base);direccion.copy(dir);derecha.crossVectors(direccion,new T.Vector3(0,1,0)).normalize();edad=0;foco=null;zoom=0;detalles.length=0;cactus.clear();pastos.forEach(m=>m.count=0);
    for(const l of rios)for(let k=2;k<l.p.length;k+=2){const ax=l.p[k-2],az=-l.p[k-1],bx=l.p[k],bz=-l.p[k+1];if(Math.min(ax,bx)<base.x+3&&Math.max(ax,bx)>base.x-3&&Math.min(az,bz)<base.z+3&&Math.max(az,bz)>base.z-3)detalles.push([ax,az,bx,bz]);}
    let n=0;
    for(let i=0;i<C.x.length;i++){
     if(!(C.zonas[i]&(1<<zona.id))||Math.hypot(C.x[i]-base.x,-C.y[i]-base.z)>P.q*3.6)continue;
     const bio=bioma(C.x[i],C.y[i]),g=window.MUSUQ_BOSQUES.geografia(C.x[i],C.y[i]);
-    const cantidad=Math.floor(105*bio.pasto);
-    for(let k=0;k<cantidad&&n<4800;k++){
+    const cantidad=Math.floor(42*bio.pasto);
+    for(let k=0;k<cantidad&&n<5400;k++){
      const seed=i*107+k*17,x=C.x[i]+(azar(seed)-.5)*(P.q-.06),z=-C.y[i]+(azar(seed+2)-.5)*(P.q-.06);
      if(distanciaRio(x,z)<.068||Math.hypot(x-base.x,z-base.z)<.07||azar(seed+3)<.18)continue;
-     mat.position.set(x,suelo(i)+.004,z);mat.rotation.set(0,azar(seed+1)*6.28,0);mat.scale.set(.065,.013+azar(seed+4)*.023,.065);mat.updateMatrix();pasto.setMatrixAt(n,mat.matrix);
-     color.set(bio.color).multiplyScalar(.81+azar(seed+5)*.25);pasto.setColorAt(n++,color);
+     const mp=pastos[n%3],alto=.022+azar(seed+4)*.034;mat.position.set(x,suelo(i)+.002,z);mat.rotation.set(0,azar(seed+1)*6.28,0);mat.scale.set(alto,alto,alto);mat.updateMatrix();mp.setMatrixAt(mp.count,mat.matrix);
+     color.set(bio.color).multiplyScalar(1.1+azar(seed+5)*.3);mp.setColorAt(mp.count++,color);n++;
     }
     if(bio.id==='arido'&&g.lat>-27.5&&g.lat<-23&&g.lon>-66.5&&g.lon<-64.7&&cactus.children.length<7){
      const x=C.x[i]+P.q*.22,z=-C.y[i]+P.q*.18;
      if(distanciaRio(x,z)>.12){const c=mesh(geoCactus,cactus);c.position.set(x,suelo(i),z);c.scale.setScalar(.23+azar(i)*.16);c.rotation.y=azar(i+3)*6.28;}
     }
    }
-   pasto.count=n;pasto.instanceMatrix.needsUpdate=true;pasto.instanceColor.needsUpdate=true;
+   pastos.forEach(m=>{m.instanceMatrix.needsUpdate=true;m.instanceColor.needsUpdate=true;});
    ruta=null;
    for(let k=0;k<70;k++){
     const p=base.clone().addScaledVector(direccion,-.25-azar(k+2)*.35).addScaledVector(derecha,.05+(azar(k+1)-.5)*.5);
