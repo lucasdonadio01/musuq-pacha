@@ -1,0 +1,8 @@
+.panel{max-height:calc(100svh - 120px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.panel__ficha{margin:0 0 18px}
+.ficha__descripcion{font-size:12px;line-height:1.6;color:#2f3a2b;margin:0 0 14px}
+.ficha__datos{margin:0;border-top:1px solid var(--linea)}
+.ficha__datos div{display:grid;grid-template-columns:88px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--linea)}
+.ficha__datos dt{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);padding-top:2px}
+.ficha__datos dd{margin:0;font-size:11px;line-height:1.5;color:#53604e}
+@media(max-width:700px){.panel{max-height:220px}.ficha__descripcion{font-size:11px;margin:8px 0 10px}.ficha__datos div{grid-template-columns:76px 1fr;padding:6px 0}}
