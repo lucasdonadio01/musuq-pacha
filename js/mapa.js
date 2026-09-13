@@ -56,7 +56,8 @@
       foco: { value: new THREE.Vector2(0.5, 0.47) },
       fuerza: { value: 0 },
       radio: { value: 6 },
-      rafaga: { value: 0 }
+      rafaga: { value: 0 },
+      lejania: { value: 0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -72,20 +73,22 @@
       uniform float fuerza;
       uniform float radio;
       uniform float rafaga;
+      uniform float lejania;
       varying vec2 vUv;
       void main() {
         vec2 desdeFoco = vUv - foco;
         float distanciaFoco = length(desdeFoco * vec2(1.15, 1.0));
         float borde = smoothstep(0.42, 0.78, distanciaFoco);
         float arriba = smoothstep(0.64, 1.0, vUv.y);
-        float m = clamp(max(borde, arriba) * fuerza + smoothstep(0.18, 0.8, distanciaFoco) * rafaga * 0.8, 0.0, 1.0);
+        float m = clamp(max(borde, arriba) * fuerza * (1.0 - lejania) + smoothstep(0.18, 0.8, distanciaFoco) * min(rafaga, 1.0) * 0.8 + lejania * smoothstep(0.16, 0.52, vUv.y), 0.0, 1.0);
         vec4 c = texture2D(imagen, vUv);
         if (m > 0.01) {
           vec4 suma = c;
+          float giroRuido = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) * 6.2831;
           for (int k = 0; k < 16; k++) {
             float f = float(k);
-            float angulo = f * 2.39996;
-            vec2 desvio = vec2(cos(angulo), sin(angulo)) * sqrt((f + 0.5) / 16.0) * radio * m * (1.0 + rafaga) * pixel;
+            float angulo = f * 2.39996 + giroRuido;
+            vec2 desvio = vec2(cos(angulo), sin(angulo)) * sqrt((f + 0.5) / 16.0) * radio * m * (1.0 + rafaga + lejania * 1.6) * pixel;
             suma += texture2D(imagen, vUv + desvio);
           }
           c = suma / 17.0;
@@ -148,7 +151,7 @@
   function tope(i) {
     return P.z0 + C.nivel[i] * P.paso * relieve;
   }
-  const bosques = window.MUSUQ_BOSQUES?.crear({escena,C,P,suelo:i=>tope(i)+elevacion[i]+onda[i]});
+  const bosques = window.MUSUQ_BOSQUES?.crear({escena,C,P,suelo:i=>tope(i)+elevacion[i]+onda[i],alBrotar:()=>sonarArboles()});
 
   const geoCuadro = new THREE.BoxGeometry(1, 1, 1);
   geoCuadro.translate(0, 0.5, 0);
@@ -183,6 +186,9 @@
     return zona ? (zona.id * 0.61803398875) % 1 : 0;
   });
   geoCuadro.setAttribute('ritmoZona', new THREE.InstancedBufferAttribute(ritmosZona, 1));
+  const coloresBioma=new Float32Array(N*3),colorBioma=new THREE.Color();
+  for(let i=0;i<N;i++)colorBioma.set(window.MUSUQ_HABITAT?.bioma(C.x[i],C.y[i]).color||'#819d45').toArray(coloresBioma,i*3);
+  geoCuadro.setAttribute('colorBioma',new THREE.InstancedBufferAttribute(coloresBioma,3));
 
   const matCuadro = new THREE.ShaderMaterial({
     uniforms: {
@@ -197,9 +203,12 @@
       animarInvitacion: { value: 1 },
       modoAccesible: { value: window.MUSUQ_A11Y?.estado.color === 'daltonismo' ? 1 : 0 },
       patronActivo: { value: 1 }
+      ,detalleBioma: {value:0}
     },
     vertexShader: `
       attribute float fuera;
+      attribute vec3 colorBioma;
+      varying vec3 vBioma;
       attribute float activo;
       attribute vec3 colorActivo;
       attribute vec3 colorPista;
@@ -219,6 +228,7 @@
       void main() {
         vec4 mundo = modelMatrix * instanceMatrix * vec4(position, 1.0);
         vNormal = normalize(mat3(modelMatrix) * mat3(instanceMatrix) * normal);
+        vBioma=colorBioma;
         vColor = mix(instanceColor, colorActivo, activo);
         vColorPista = colorPista;
         vInvitacion = invitacion;
@@ -233,6 +243,8 @@
     `,
     fragmentShader: `
       uniform vec3 luz;
+      uniform float detalleBioma;
+      varying vec3 vBioma;
       uniform vec3 tinte;
       uniform vec3 niebla;
       uniform float fuerzaNiebla;
@@ -275,6 +287,12 @@
           : tipo < 3.5 ? 1.0 - step(0.18, length(fract(uvPatron) - 0.5))
           : step(0.72, fract(uvPatron.y));
         c = mix(c, c * 0.60, trama * modoAccesible * arriba * max(vActivo, invitacion * 2.0));
+        vec2 parcela=floor(vPos.xz*48.);
+        float grano=fract(sin(dot(parcela,vec2(127.1,311.7)))*43758.5453);
+        float tierra=smoothstep(.72,.94,sin(vPos.x*11.)*.22+cos(vPos.z*13.)*.22+grano*.6);
+        vec3 suelo=mix(vBioma,vec3(.55,.43,.28),tierra*.20)*(.98+grano*.035);
+        float bordeVerde=step(.97+sin(vPos.x*42.+vPos.z*27.)*.008,vLocal.y);
+        c=mix(c,suelo*mix(.76,1.,l),detalleBioma*vActivo*max(arriba,bordeVerde));
         gl_FragColor = vec4(c, 1.0);
       }
     `
@@ -365,27 +383,46 @@
     uniforms: {
       azul: { value: new THREE.Color('#75a8b1') },
       claro: { value: new THREE.Color('#dce9e4') },
-      enfoque: { value: 0 }
+      enfoque: { value: 0 },tiempo:{value:0},detalle:{value:0}
     },
     vertexShader: `
       attribute float lado;
+      attribute float largo;
+      varying float vLargo;
+      varying vec3 vPosRio;
       attribute float activo;
       varying float vLado;
       varying float vActivo;
       void main() {
         vLado = lado;
+        vLargo=largo;vPosRio=position;
         vActivo = clamp(activo, 0.0, 1.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
-    fragmentShader: `
+    fragmentShader: ruidoGLSL + `
       uniform vec3 azul;
+      uniform float tiempo;
+      uniform float detalle;
+      varying float vLargo;
+      varying vec3 vPosRio;
       uniform vec3 claro;
       uniform float enfoque;
       varying float vLado;
       varying float vActivo;
       void main() {
         vec3 c = mix(azul, claro, step(0.62, abs(vLado)));
+        float detalleLocal=detalle*vActivo;
+        vec2 r=vec2(vLargo*2.1+tiempo*.0216,vLado*.34);
+        float corriente=ruido(vec3(r*1.3,tiempo*.012));
+        vec3 agua=mix(vec3(.21,.52,.57),vec3(.43,.73,.73),smoothstep(-.15,1.,abs(vLado)));
+        float fase=fract(vLargo*3.8-tiempo*.18+ruido(vec3(vPosRio.xz*4.,1.))* .13);
+        float cresta=(1.-smoothstep(.055,.12,abs(fase-.68)))*(1.-smoothstep(.1,.85,abs(vLado)));
+        float segmentos=smoothstep(.30,.65,ruido(vec3(vLargo*4.,vLado*.5,7.)));
+        float borde=smoothstep(.72,.96,abs(vLado))*(.38+.62*segmentos);
+        agua=mix(agua,vec3(.92,.98,.9),max(cresta*segmentos*.8,borde*.85));
+        agua*=1.+(1.-smoothstep(.01,.045,abs(corriente-.5)))*.06;
+        c=mix(c,agua,detalleLocal);
         c = mix(c, vec3(dot(c, vec3(0.299, 0.587, 0.114))), enfoque * (1.0 - vActivo));
         gl_FragColor = vec4(min(c * (1.0 + 0.15 * enfoque * vActivo), vec3(1.0)), 1.0);
       }
@@ -443,6 +480,7 @@
   const mallaProvinciales = new THREE.Mesh(provinciales.geo, materialFrontera(2.6, 0.62, 0.78));
   const mallaPais = new THREE.Mesh(pais.geo, materialFrontera(1.5, 1.0, 1.0));
   let mostrarFronteras = true;
+  let presenciaFronteras = 1;
   for (const m of [mallaProvinciales, mallaPais]) {
     m.position.y = P.z0 + 0.02;
     m.frustumCulled = false;
@@ -919,6 +957,158 @@
     }
   }
 
+  const escenaCielo = new THREE.Scene();
+  const escenaHeroe = new THREE.Scene();
+  const matCielo = new THREE.ShaderMaterial({
+    uniforms: {
+      arriba: { value: new THREE.Color('#a9bccd') },
+      horizonte: { value: new THREE.Color('#e2e8ec') },
+      presencia: { value: 1 }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = vec4(position.xy, 0.999, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 arriba;
+      uniform vec3 horizonte;
+      uniform float presencia;
+      varying vec2 vUv;
+      void main() {
+        gl_FragColor = vec4(mix(horizonte, arriba, smoothstep(0.3, 1.0, vUv.y)), presencia);
+      }
+    `,
+    depthTest: false,
+    depthWrite: false,
+    transparent: true
+  });
+  const cuadroCielo = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matCielo);
+  cuadroCielo.frustumCulled = false;
+  escenaCielo.add(cuadroCielo);
+
+  const matHeroe = new THREE.ShaderMaterial({
+    uniforms: {
+      map: { value: null },
+      tiempo: { value: 0 },
+      texel: { value: new THREE.Vector2(0.005, 0.005) },
+      opacidad: { value: 1 }
+    },
+    vertexShader: `
+      uniform float tiempo;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vec3 p = position;
+        float altura = clamp(p.y, 0.0, 1.0);
+        p.x += sin(tiempo * 0.7 + altura * 2.4) * 0.025 * altura * altura;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D map;
+      uniform float tiempo;
+      uniform vec2 texel;
+      uniform float opacidad;
+      varying vec2 vUv;
+      void main() {
+        float copa = smoothstep(0.38, 0.8, vUv.y);
+        vec2 uv = vUv;
+        uv.x += (sin(vUv.y * 24.0 + tiempo * 1.1) * 0.0032 + sin(vUv.x * 15.0 - tiempo * 0.75) * 0.0022) * copa;
+        uv.y += cos(vUv.x * 19.0 + tiempo * 0.9) * 0.0024 * copa;
+        vec4 c = texture2D(map, uv);
+        if (c.a < 0.35) discard;
+        float vecino = min(min(texture2D(map, uv + vec2(texel.x, 0.0)).a, texture2D(map, uv - vec2(texel.x, 0.0)).a), min(texture2D(map, uv + vec2(0.0, texel.y)).a, texture2D(map, uv - vec2(0.0, texel.y)).a));
+        if (vecino < 0.5) discard;
+        gl_FragColor = vec4(c.rgb, opacidad);
+      }
+    `,
+    side: THREE.DoubleSide,
+    transparent: true,
+    depthWrite: false
+  });
+  const heroe = new THREE.Mesh(new THREE.PlaneGeometry(1, 1, 1, 16).translate(0, 0.5, 0), matHeroe);
+  heroe.frustumCulled = false;
+  heroe.visible = false;
+  escenaHeroe.add(heroe);
+  const texturasHeroe = new Map();
+  const cargadorHeroe = new THREE.TextureLoader();
+
+  function texturaHeroe(id) {
+    if (!texturasHeroe.has(id)) {
+      const textura = cargadorHeroe.load(window.MUSUQ_ARBOLES_SPRITES?.[id] || 'assets/arboles/' + id + '-sprite.webp', () => {
+        if (arbolHeroe && arbolHeroe.id === id) {
+          ajustarHeroe();
+        }
+      });
+      textura.anisotropy = 4;
+      texturasHeroe.set(id, textura);
+    }
+    return texturasHeroe.get(id);
+  }
+
+  function ajustarHeroe() {
+    if (!arbolHeroe) {
+      return;
+    }
+    const textura = texturaHeroe(arbolHeroe.id);
+    const imagen = textura.image;
+    const aspecto = imagen && imagen.width ? imagen.width / imagen.height : 1;
+    if (imagen && imagen.width) {
+      matHeroe.uniforms.texel.value.set(2.5 / imagen.width, 2.5 / imagen.height);
+    }
+    matHeroe.uniforms.map.value = textura;
+    const alto = Math.max(0.45, arbolHeroe.alto - arbolHeroe.base) * 1.1;
+    direccionHeroe.copy(direccionArbol);
+    sitioHeroe(arbolHeroe, heroe.position, direccionHeroe);
+    heroe.scale.set(alto * aspecto, alto, 1);
+    heroe.rotation.set(0, Math.atan2(-direccionHeroe.x, -direccionHeroe.z), 0);
+  }
+
+  const matNubeCielo = matNiebla.clone();
+  const giroCielo = new THREE.Quaternion();
+  const nubesCielo = formasNube.map((forma, f) => {
+    const cantidad = 4;
+    const valores = Array.from({ length: cantidad }, (_, k) => azarNiebla(f * 17.3 + k * 5.1 + 3.7));
+    const geo = geometriaNube(forma);
+    geo.setAttribute('fase', new THREE.InstancedBufferAttribute(Float32Array.from(valores), 1));
+    geo.setAttribute('ciclo', new THREE.InstancedBufferAttribute(Float32Array.from(valores, (v) => 70 + v * 40), 1));
+    geo.setAttribute('deriva', new THREE.InstancedBufferAttribute(Float32Array.from(valores.flatMap(() => [viento.x * 6, -viento.y * 6])), 2));
+    geo.setAttribute('corte', new THREE.InstancedBufferAttribute(Float32Array.from({ length: cantidad * 2 }, (_, i) => (i % 2 ? 3 : 2)), 2));
+    geo.setAttribute('opacidadBase', new THREE.InstancedBufferAttribute(Float32Array.from(valores, (v) => (v < 0.4 ? 0.55 : 0.88)), 1));
+    const malla = new THREE.InstancedMesh(geo, matNubeCielo, cantidad);
+    malla.frustumCulled = false;
+    malla.visible = false;
+    malla.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    escenaNiebla.add(malla);
+    return malla;
+  });
+
+  function ubicarNubesCielo() {
+    if (!arbolVisto) {
+      return;
+    }
+    nubesCielo.forEach((malla, f) => {
+      for (let k = 0; k < malla.count; k++) {
+        const a = azarNiebla(f * 31.7 + k * 7.3);
+        const b = azarNiebla(f * 11.1 + k * 3.9);
+        const c = azarNiebla(f * 5.3 + k * 13.7);
+        posicionNube.set(arbolVisto.x, 0, arbolVisto.z)
+          .addScaledVector(direccionArbol, 22 + a * 30)
+          .addScaledVector(derechaArbol, (b - 0.5) * 50);
+        posicionNube.y = 5.5 + c * 5;
+        const escala = 2.8 + a * 2.2;
+        escalaNube.set(escala, escala * 0.8, escala);
+        giroCielo.setFromAxisAngle(ejeY, b * 6.2831);
+        matrizNube.compose(posicionNube, giroCielo, escalaNube);
+        malla.setMatrixAt(k, matrizNube);
+      }
+      malla.instanceMatrix.needsUpdate = true;
+    });
+  }
+
   const velocidadOnda = 6;
   const duracionOnda = 1.6;
   const distanciaOnda = new Float32Array(N);
@@ -1309,6 +1499,178 @@
   let enfoque = 0;
   const limitesZona = { minR: 0, maxR: 0, minU: 0, maxU: 0 };
   const limitesZonaObjetivo = { minR: 0, maxR: 0, minU: 0, maxU: 0 };
+  const camaraCerca = new THREE.PerspectiveCamera(38, 1, 0.05, 600);
+  let arbolFoco = null;
+  let arbolVisto = null;
+  let arbolHeroe = null;
+  let cambioArbol = null;
+  const focoArbol = new THREE.Vector2();
+  let cercania = 0;
+  const frenteSuelo = new THREE.Vector3(ejes.adelante.x, 0, ejes.adelante.z).normalize();
+  const derechaSuelo = new THREE.Vector3(ejes.derecha.x, 0, ejes.derecha.z).normalize();
+  const direccionArbol = frenteSuelo.clone();
+  const derechaArbol = derechaSuelo.clone();
+  const direccionPrueba = new THREE.Vector3();
+  const direccionHeroe = frenteSuelo.clone();
+  const sitioPrueba = new THREE.Vector3();
+
+  function distanciaSegmento(px, pz, ax, az, bx, bz) {
+    const dx = bx - ax;
+    const dz = bz - az;
+    const t = Math.max(0, Math.min(1, ((px - ax) * dx + (pz - az) * dz) / (dx * dx + dz * dz || 1)));
+    return Math.hypot(px - (ax + dx * t), pz - (az + dz * t));
+  }
+
+  function celdaEn(x, y) {
+    return indicePorCelda.get(Math.floor(x / P.q) + ':' + Math.floor(y / P.q));
+  }
+
+  function sueloCelda(i) {
+    return tope(i) + elevacion[i] + onda[i];
+  }
+
+  function sitioHeroe(grupo, destino, direccion = direccionArbol) {
+    const margen = P.q * 0.22;
+    const maximo = grupo.radio + 0.25;
+    for (let paso = 0; paso <= 12; paso++) {
+      const d = maximo * (1 - paso / 12);
+      const x = grupo.x - direccion.x * d;
+      const z = grupo.z - direccion.z * d;
+      const celda = celdaEn(x, -z);
+      const frente = celdaEn(x - direccion.x * margen, -(z - direccion.z * margen));
+      if (celda === undefined || frente === undefined) {
+        continue;
+      }
+      const propia = !grupo.bitZona || ((C.zonas[celda] & grupo.bitZona) && (C.zonas[frente] & grupo.bitZona));
+      if (propia && Math.abs(sueloCelda(celda) - sueloCelda(frente)) < 0.01) {
+        destino.set(x, sueloCelda(celda), z);
+        return d;
+      }
+    }
+    const centro = celdaEn(grupo.x, -grupo.z);
+    destino.set(grupo.x, centro === undefined ? grupo.base : sueloCelda(centro), grupo.z);
+    return 0;
+  }
+
+  function elegirDireccion(grupo) {
+    const otros = bosques?.grupos?.() || [];
+    const alto = Math.max(0.45, grupo.alto - grupo.base) * 1.1;
+    let menor = Infinity;
+    for (const grados of [0, -30, 30, -55, 55, -80, 80]) {
+      direccionPrueba.copy(frenteSuelo).applyAxisAngle(ejeY, grados * Math.PI / 180);
+      const hueco = grupo.radio + 0.25 - sitioHeroe(grupo, sitioPrueba, direccionPrueba);
+      const hx = sitioPrueba.x;
+      const hz = sitioPrueba.z;
+      const cx = hx - direccionPrueba.x * alto * 2.5;
+      const cz = hz - direccionPrueba.z * alto * 2.5;
+      let costo = Math.abs(grados) * 0.01 + hueco * 3;
+      for (const g of otros) {
+        if (g.clave === grupo.clave) {
+          continue;
+        }
+        const d = distanciaSegmento(g.x, g.z, cx, cz, hx, hz);
+        if (d < g.radio + 0.3) {
+          costo += 10 * (g.radio + 0.3 - d);
+        }
+      }
+      if (alturaEn(cx, -cz) > grupo.base + alto * 0.3) {
+        costo += 5;
+      }
+      if (costo < menor) {
+        menor = costo;
+        direccionArbol.copy(direccionPrueba);
+      }
+    }
+    derechaArbol.crossVectors(direccionArbol, ejeY).normalize();
+  }
+  const poseOrto = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const poseCercana = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const poseCambio = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const poseIntermedia = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const poseUltima = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const poseFinal = { mira: new THREE.Vector3(), direccion: new THREE.Vector3(), distancia: 1, altura: 1 };
+  const tangenteCerca = Math.tan(THREE.MathUtils.degToRad(19));
+  const poseCerca = { posicion: new THREE.Vector3(), mira: new THREE.Vector3() };
+  const heroeBase = new THREE.Vector3();
+  const desvioCerca = new THREE.Vector3();
+  const habitat=window.MUSUQ_HABITAT?.crear({escena,C,P,suelo:sueloCelda,celdaEn,rios:D.rios,lienzo});
+
+  function alturaEn(x, y) {
+    const j = indicePorCelda.get(Math.floor(x / P.q) + ':' + Math.floor(y / P.q));
+    return j === undefined ? 0 : tope(j) + elevacion[j];
+  }
+
+  function poseArbol(grupo, destino) {
+    const movil = anchoVista <= 700;
+    const alto = Math.max(0.45, grupo.alto - grupo.base) * 1.1;
+    sitioHeroe(grupo, heroeBase);
+    const distancia = alto * (movil ? 3.4 : 2.5);
+    destino.posicion.copy(heroeBase).addScaledVector(direccionArbol, -distancia).addScaledVector(derechaArbol, alto * 0.12);
+    destino.posicion.y = Math.max(heroeBase.y + alto * 0.4, alturaEn(destino.posicion.x, -destino.posicion.z) + 0.2);
+    destino.mira.copy(heroeBase).addScaledVector(derechaArbol, movil ? 0 : -alto * 0.42);
+    destino.mira.y = heroeBase.y + alto * (movil ? 0.32 : 0.52);
+  }
+
+  function copiarPose(destino, origen) {
+    destino.mira.copy(origen.mira);
+    destino.direccion.copy(origen.direccion);
+    destino.distancia = origen.distancia;
+    destino.altura = origen.altura;
+  }
+
+  function mezclarPose(a, b, t, destino) {
+    destino.mira.lerpVectors(a.mira, b.mira, t);
+    destino.direccion.lerpVectors(a.direccion, b.direccion, t).normalize();
+    destino.distancia = Math.exp(THREE.MathUtils.lerp(Math.log(a.distancia), Math.log(b.distancia), t));
+    destino.altura = Math.exp(THREE.MathUtils.lerp(Math.log(a.altura), Math.log(b.altura), t));
+    return destino;
+  }
+
+  function suavizarCamara(t) {
+    return t * t * t * (t * (t * 6 - 15) + 10);
+  }
+
+  function ubicarCamaraCerca(tiempo) {
+    poseArbol(arbolVisto, poseCerca);
+    desvioCerca.copy(poseCerca.posicion).sub(heroeBase).applyAxisAngle(ejeY, Math.sin(tiempo * 0.11) * 0.06);
+    poseCerca.posicion.copy(heroeBase).add(desvioCerca);
+    poseCercana.mira.copy(poseCerca.mira);
+    poseCercana.direccion.copy(poseCerca.posicion).sub(poseCerca.mira);
+    poseCercana.distancia = poseCercana.direccion.length();
+    poseCercana.direccion.normalize();
+    poseCercana.altura = poseCercana.distancia * tangenteCerca;
+    let destino = poseCercana;
+    if (cambioArbol) {
+      const t = suavizarCamara(cambioArbol.t);
+      destino = mezclarPose(poseCambio, poseCercana, t, poseIntermedia);
+      const alejar = 1 + Math.sin(Math.PI * t) * 0.8;
+      destino.distancia *= alejar;
+      destino.altura *= alejar;
+    }
+    copiarPose(poseUltima, destino);
+    const alcance = (arbolVisto.base - camara.position.y) / ejes.adelante.y;
+    poseOrto.mira.copy(camara.position).addScaledVector(ejes.adelante, alcance);
+    poseOrto.direccion.copy(ejes.adelante).negate();
+    poseOrto.distancia = 1200;
+    poseOrto.altura = camara.top;
+    const final = mezclarPose(poseOrto, destino, suavizarCamara(cercania), poseFinal);
+    camaraCerca.position.copy(final.mira).addScaledVector(final.direccion, final.distancia);
+    const piso = alturaEn(camaraCerca.position.x, -camaraCerca.position.z) + 0.2;
+    if (camaraCerca.position.y < piso) {
+      camaraCerca.position.y = piso;
+    }
+    camaraCerca.fov = THREE.MathUtils.radToDeg(2 * Math.atan(final.altura / final.distancia));
+    camaraCerca.near = Math.max(0.05, final.distancia * 0.02);
+    camaraCerca.far = final.distancia + 900;
+    camaraCerca.aspect = anchoVista / altoVista;
+    camaraCerca.updateProjectionMatrix();
+    camaraCerca.lookAt(final.mira);
+    puntoTmp.copy(heroeBase);
+    puntoTmp.y += Math.max(0.45, arbolVisto.alto - arbolVisto.base) * 0.55;
+    puntoTmp.project(camaraCerca);
+    focoArbol.set((puntoTmp.x + 1) / 2, (puntoTmp.y + 1) / 2);
+    matFoco.uniforms.foco.value.lerp(focoArbol, THREE.MathUtils.smoothstep(cercania, 0, 0.6));
+  }
 
   function ubicarCamara() {
     const movil = anchoVista <= 700;
@@ -1435,6 +1797,11 @@
     ficha.querySelector('[data-ficha="bioma"]').textContent = datos.bioma;
     ficha.querySelector('[data-ficha="arboles"]').textContent = datos.arboles;
     ficha.querySelector('[data-ficha="flora"]').textContent = datos.flora;
+    const verArboles = document.getElementById('ver-arboles');
+    if (verArboles) {
+      verArboles.dataset.zona = String(zona.id);
+      verArboles.hidden = !window.MUSUQ_BOSQUES?.porZona?.[zona.id]?.length;
+    }
   }
 
   function activarZona(zona) {
@@ -1491,6 +1858,12 @@
   };
   const sonidosAgua = Array.from({ length: 5 }, () => crearAudio('sonidos/agua.mp3', 1));
   const sonidosAlejar = [crearAudio('sonidos/alejar-soplido.mp3', 0.8), crearAudio('sonidos/alejar-agua.mp3', 0.8)];
+  const sonidosArbol = [0, 1, 2].map(() => crearAudio('sonidos/arbol-saliendo.mp3', 0.8));
+  const sonidosVista = {
+    entrar: crearAudio('sonidos/zoom-3.mp3', 1),
+    salir: crearAudio('sonidos/zoom-3-reversa.mp3', 1),
+    otro: crearAudio('sonidos/ver-otro-arbol.mp3', 1)
+  };
   const esperasSonido = [];
   let nivelZoom = 0;
   let siguienteAgua = 0;
@@ -1530,6 +1903,12 @@
     sonarEnMomento(sonidos.impacto, demora - 0.02, 0.08, tono);
   }
 
+  function sonarArboles() {
+    [[-5, 0], [5, 0.04], [0, 0.3]].forEach(([semitono, retraso], k) => {
+      setTimeout(() => reproducir(sonidosArbol[k], 0, 1.875 * semitonos(semitono)), retraso * 1000);
+    });
+  }
+
   function sonarAlejamiento() {
     sonidosAlejar.forEach((audio) => reproducir(audio, 0, semitonos(-2)));
   }
@@ -1538,7 +1917,7 @@
     if (!e.detail.efectos) {
       esperasSonido.forEach(clearTimeout);
       esperasSonido.length = 0;
-      [...Object.values(sonidos), ...sonidosAgua, ...sonidosAlejar].forEach((audio) => audio.pause());
+      [...Object.values(sonidos), ...sonidosAgua, ...sonidosAlejar, ...sonidosArbol, ...Object.values(sonidosVista)].forEach((audio) => audio.pause());
     }
   });
 
@@ -1548,6 +1927,9 @@
   }
 
   function fijarZona(zona) {
+    if (zona !== zonaFijada) {
+      arbolFoco = null;
+    }
     const nueva = zona && zona !== zonaFijada;
     const cambioDeZona = nueva && !!zonaFijada;
     zonaFijada = zona;
@@ -1620,6 +2002,9 @@
   });
 
   function detectarZona() {
+    if (arbolFoco || cercania > 0) {
+      return;
+    }
     if(Math.abs(inmersion-inmersionObjetivo)>0.005)return;
     raycaster.setFromCamera(puntero, camara);
     if(!raycaster.ray.intersectPlane(planoDeteccion,puntoBase))return;
@@ -1731,6 +2116,15 @@
     }
     const r=lienzo.getBoundingClientRect();
     puntero.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+    if (arbolFoco || cercania > 0) {
+      habitat?.detectar(e,camaraCerca);
+      return;
+    }
+    const grupoTocado = grupoEnPantalla(puntero.x, puntero.y);
+    if (grupoTocado) {
+      abrirArbol(grupoTocado);
+      return;
+    }
     detectarZona();
     if (!zonaBajoCursor) {
       tocarAgua(e);
@@ -1741,7 +2135,7 @@
   function cambiarModo(valor){
     if(explorando===valor)return;
     explorando=valor;inmersionObjetivo=valor?1:0;
-    if(!valor)bosques?.seleccionar(null);
+    if(!valor){bosques?.seleccionar(null);arbolFoco=null;habitat?.cerrar();}
     document.body.classList.toggle('en-mapa',valor);
     window.dispatchEvent(new CustomEvent('musuq:modo',{detail:{explorando:valor}}));
     document.getElementById('header').inert=valor;
@@ -1768,11 +2162,17 @@
   let esperaRueda = 0;
   window.addEventListener('wheel',e=>{
     if(document.querySelector('dialog[open]'))return;
-    if(!explorando||e.target.closest('#selector,#mapa-panel')||Math.abs(e.deltaY)<4)return;
+    if(!explorando||e.target.closest('#selector,#mapa-panel,#carteles-arboles,#vista-arbol,#vista-fauna,#fauna-controles')||Math.abs(e.deltaY)<4)return;
     e.preventDefault();
     const ahora = performance.now();
     if (ahora < esperaRueda) {
       esperaRueda = ahora + 350;
+      return;
+    }
+    if(habitat?.cerrar()){esperaRueda=ahora+900;return;}
+    if (arbolFoco) {
+      cerrarArbol();
+      esperaRueda = ahora + 900;
       return;
     }
     if (zonaFijada) {
@@ -1785,11 +2185,19 @@
   window.addEventListener('scroll',()=>{if(explorando&&window.scrollY>12)cambiarModo(false);},{passive:true});
   let inicioTacto=null;
   lienzo.addEventListener('touchstart',e=>{inicioTacto=e.touches[0].clientY;},{passive:true});
-  lienzo.addEventListener('touchmove',e=>{if(explorando&&inicioTacto!==null&&Math.abs(e.touches[0].clientY-inicioTacto)>45){if(zonaFijada)fijarZona(null);else cambiarModo(false);inicioTacto=null;}},{passive:true});
+  lienzo.addEventListener('touchmove',e=>{
+    if(explorando&&inicioTacto!==null&&Math.abs(e.touches[0].clientY-inicioTacto)>45){
+      if(!habitat?.cerrar()){if(arbolFoco)cerrarArbol();else if(zonaFijada)fijarZona(null);else cambiarModo(false);}
+      inicioTacto=null;
+    }
+  },{passive:true});
   document.addEventListener('keydown', (e) => {
     if(document.querySelector('dialog[open]'))return;
     if (e.key === 'Escape') {
-      if (explorando && zonaFijada) {
+      if(habitat?.cerrar()){e.preventDefault();return;}
+      if (arbolFoco) {
+        cerrarArbol();
+      } else if (explorando && zonaFijada) {
         fijarZona(null);
       } else {
         cambiarModo(false);
@@ -1819,10 +2227,184 @@
     if(zonaActiva)panel.style.setProperty('--zona-color',colorDeZona(zonaActiva));
   });
 
+  const capaCarteles = document.getElementById('carteles-arboles');
+  const puntoCartel = new THREE.Vector3();
+  const carteles = new Map();
+  let zonaCarteles = null;
+
+  function aPantalla(x, y, z) {
+    puntoCartel.set(x, y, z).project(camara);
+    return [(puntoCartel.x + 1) / 2 * lienzo.clientWidth, (1 - puntoCartel.y) / 2 * lienzo.clientHeight];
+  }
+
+  function grupoEnPantalla(ndcX, ndcY) {
+    if (!bosques?.grupos || !explorando || !zonaFijada) {
+      return null;
+    }
+    const px = (ndcX + 1) / 2 * lienzo.clientWidth;
+    const py = (1 - ndcY) / 2 * lienzo.clientHeight;
+    let mejor = null;
+    let menor = 1;
+    for (const g of bosques.grupos()) {
+      const [bx, by] = aPantalla(g.x, g.base, g.z);
+      const [, ty] = aPantalla(g.x, g.alto, g.z);
+      const [rx] = aPantalla(g.x + ejes.derecha.x * g.radio, g.base, g.z + ejes.derecha.z * g.radio);
+      const radio = Math.abs(rx - bx) + 10;
+      const medioAlto = Math.abs(by - ty) / 2 + radio * 0.35 + 10;
+      const d = Math.hypot((px - bx) / radio, (py - (by + ty) / 2) / medioAlto);
+      if (d < menor) {
+        menor = d;
+        mejor = g;
+      }
+    }
+    return mejor;
+  }
+
+  const vistaArbol = document.getElementById('vista-arbol');
+
+  function gruposZona() {
+    return (bosques?.grupos?.() || []).slice().sort((a, b) => {
+      const [idA, parcheA] = a.clave.split(':');
+      const [idB, parcheB] = b.clave.split(':');
+      return Number(parcheA) - Number(parcheB) || idA.localeCompare(idB);
+    });
+  }
+
+  function completarVistaArbol(grupo) {
+    if (!vistaArbol || !grupo || !zonaFijada || !window.MUSUQ_BOSQUES) {
+      return;
+    }
+    const especie = window.MUSUQ_BOSQUES.especies[grupo.id];
+    document.getElementById('vista-arbol-nombre').textContent = especie.nombre;
+    document.getElementById('vista-arbol-cientifico').textContent = especie.cientifico;
+    document.getElementById('vista-arbol-descripcion').textContent = window.MUSUQ_ARBOLES_TEXTOS?.[grupo.id] || '';
+    const otras = Object.entries(window.MUSUQ_BOSQUES.porZona)
+      .filter(([id, lista]) => Number(id) !== zonaFijada.id && lista.includes(grupo.id))
+      .map(([id]) => zonas.find((z) => z.id === Number(id))?.nombre)
+      .filter(Boolean);
+    const tambien = document.getElementById('vista-arbol-tambien');
+    tambien.textContent = otras.length ? 'También en: ' + [...new Set(otras)].join(' · ') : '';
+    tambien.hidden = !otras.length;
+    const lista = gruposZona();
+    const indice = lista.findIndex((g) => g.clave === grupo.clave);
+    const siguiente = lista.slice(indice + 1).concat(lista.slice(0, Math.max(0, indice))).find((g) => g.id !== grupo.id) || null;
+    const botonSiguiente = document.getElementById('vista-arbol-siguiente');
+    botonSiguiente.hidden = !siguiente;
+    if (siguiente) {
+      botonSiguiente.dataset.clave = siguiente.clave;
+      document.getElementById('vista-arbol-siguiente-nombre').textContent = 'Ver ' + window.MUSUQ_BOSQUES.especies[siguiente.id].nombre;
+      document.getElementById('vista-arbol-siguiente-sub').textContent = 'También nativo de los ' + zonaFijada.nombre.toLowerCase();
+    }
+    vistaArbol.style.setProperty('--zona-color', colorDeZona(zonaFijada));
+  }
+
+  function abrirArbol(grupo) {
+    if (!zonaFijada || !grupo || !window.MUSUQ_BOSQUES) {
+      return;
+    }
+    if (arbolFoco && arbolFoco.clave === grupo.clave) {
+      return;
+    }
+    if (arbolVisto && cercania > 0) {
+      copiarPose(poseCambio, poseUltima);
+      cambioArbol = { t: 0, cambia: arbolHeroe !== grupo };
+      if (arbolFoco && cambioArbol.cambia) {
+        reproducir(sonidosVista.otro, 0, 1);
+      }
+    } else {
+      cambioArbol = null;
+      camaraCerca.quaternion.copy(camara.quaternion);
+    }
+    grupo.bitZona = 1 << zonaFijada.id;
+    arbolFoco = grupo;
+    arbolVisto = grupo;
+    elegirDireccion(grupo);
+    if (!cambioArbol) {
+      arbolHeroe = grupo;
+      ajustarHeroe();
+      ubicarNubesCielo();
+    }
+    if (!cambioArbol || !cambioArbol.cambia) {
+      completarVistaArbol(grupo);
+    }
+  }
+
+  function cerrarArbol() {
+    arbolFoco = null;
+  }
+
+  document.getElementById('vista-arbol-volver')?.addEventListener('click', cerrarArbol);
+  document.getElementById('vista-arbol-siguiente')?.addEventListener('click', (e) => {
+    const grupo = gruposZona().find((g) => g.clave === e.currentTarget.dataset.clave);
+    if (grupo) {
+      abrirArbol(grupo);
+    }
+  });
+  document.getElementById('ver-arboles')?.addEventListener('click', () => {
+    const lista = gruposZona();
+    if (lista.length) {
+      abrirArbol(lista[0]);
+    }
+  });
+
+  function actualizarCarteles(ahora) {
+    if (!capaCarteles || !window.MUSUQ_CARTEL_PIXEL || !bosques?.grupos) {
+      return;
+    }
+    if (zonaCarteles !== zonaFijada) {
+      for (const c of carteles.values()) {
+        c.cartel.destruir();
+      }
+      carteles.clear();
+      zonaCarteles = zonaFijada;
+    }
+    const activos = explorando && !!zonaFijada && !arbolFoco && cercania === 0 && !document.querySelector('dialog[open]');
+    capaCarteles.classList.toggle('visible', activos);
+    if (!activos) {
+      return;
+    }
+    const candidato = punteroAdentro ? grupoEnPantalla(puntero.x, puntero.y) : null;
+    const vistos = new Set();
+    for (const grupo of bosques.grupos()) {
+      vistos.add(grupo.clave);
+      let c = carteles.get(grupo.clave);
+      if (!c) {
+        const nuevo = { grupo, sobre: false, hasta: 0 };
+        nuevo.cartel = window.MUSUQ_CARTEL_PIXEL.crear({
+          especie: grupo.id,
+          nombre: grupo.nombre,
+          alCambiarSobre: (valor) => { nuevo.sobre = valor; },
+          alTocar: () => abrirArbol(nuevo.grupo)
+        });
+        capaCarteles.append(nuevo.cartel.elemento);
+        carteles.set(grupo.clave, nuevo);
+        c = nuevo;
+      }
+      c.grupo = grupo;
+      const [sx, sy] = aPantalla(grupo.x, grupo.alto, grupo.z);
+      c.cartel.elemento.style.transform = 'translate(' + sx.toFixed(1) + 'px,' + sy.toFixed(1) + 'px)';
+      c.cartel.elemento.style.zIndex = String(Math.max(1, Math.round(sy)));
+      if (c.sobre || (candidato && candidato.clave === grupo.clave)) {
+        c.hasta = ahora + 300;
+      }
+      c.cartel.armar(ahora < c.hasta);
+    }
+    for (const [clave, c] of carteles) {
+      if (!vistos.has(clave)) {
+        c.cartel.destruir();
+        carteles.delete(clave);
+      }
+    }
+    if (candidato) {
+      lienzo.style.cursor = 'pointer';
+    }
+  }
+
   const inicio = performance.now();
   let anterior = inicio;
   let objetivoAnterior = 0;
   let rafaga = 0;
+  let objetivoArbolAnterior = 0;
 
   function cuadroAnimacion(ahora) {
     const dt = Math.min(0.05, (ahora - anterior) / 1000);
@@ -1852,6 +2434,42 @@
     const rafagaObjetivo = !instantaneo && acercamientoObjetivo === 1 && acercamiento < 1 ? Math.pow(Math.sin(Math.PI * acercamiento), 1.5) : 0;
     rafaga += (rafagaObjetivo - rafaga) * (instantaneo ? 1 : 1 - Math.exp(-dt * 14));
     if (rafaga < 0.001) rafaga = 0;
+    const cercaniaObjetivo = arbolFoco && explorando && zonaFijada ? 1 : 0;
+    if (cercaniaObjetivo !== objetivoArbolAnterior) {
+      if (cercaniaObjetivo === 1) {
+        sonidosVista.salir.pause();
+        reproducir(sonidosVista.entrar, 0, 1);
+      } else if (cercania > 0) {
+        sonidosVista.entrar.pause();
+        sonidosVista.otro.pause();
+        reproducir(sonidosVista.salir, 0.25, 1);
+      }
+      objetivoArbolAnterior = cercaniaObjetivo;
+    }
+    if (cercania !== cercaniaObjetivo) {
+      const pasoCercania = instantaneo ? 1 : dt / 1.4;
+      cercania = cercania < cercaniaObjetivo ? Math.min(cercaniaObjetivo, cercania + pasoCercania) : Math.max(cercaniaObjetivo, cercania - pasoCercania);
+    }
+    if (cambioArbol) {
+      cambioArbol.t = Math.min(1, cambioArbol.t + (instantaneo ? 1 : dt / 1.1));
+      if (cambioArbol.t >= 0.5 && arbolHeroe !== arbolVisto) {
+        arbolHeroe = arbolVisto;
+        ajustarHeroe();
+        ubicarNubesCielo();
+        completarVistaArbol(arbolVisto);
+      }
+      if (cambioArbol.t >= 1) {
+        cambioArbol = null;
+      }
+    }
+    if (cercania === 0 && !arbolFoco) {
+      arbolVisto = null;
+      cambioArbol = null;
+    }
+    const rafagaArbol = arbolVisto && !instantaneo
+      ? Math.max(Math.pow(Math.max(0, Math.sin(Math.PI * cercania)), 1.1), cambioArbol ? Math.sin(Math.PI * cambioArbol.t) * 0.85 : 0)
+      : 0;
+    const lejania = arbolVisto ? THREE.MathUtils.smoothstep(cercania, 0.45, 0.95) : 0;
     const kZona = instantaneo || acercamiento < 0.02 ? 1 : 1 - Math.exp(-dt * 4.5);
     for (const clave in limitesZona) {
       limitesZona[clave] += (limitesZonaObjetivo[clave] - limitesZona[clave]) * kZona;
@@ -1938,8 +2556,9 @@
     }
 
     balanceo.lerp(balanceoObjetivo, instantaneo ? 1 : 1 - Math.exp(-dt * 2.5));
-    bosques?.actualizar(dt,instantaneo,camara);
+    bosques?.actualizar(dt,instantaneo,arbolVisto&&cercania>0?camaraCerca:camara);
     ubicarCamara();
+    actualizarCarteles(ahora);
     const tiempo = instantaneo ? 0 : (ahora - inicio) / 1000;
     matAgua.uniforms.tiempo.value = tiempo;
     matAgua.uniforms.inmersion.value = inmersion;
@@ -1951,29 +2570,86 @@
     matCuadro.uniforms.tiempoInvitacion.value = tiempo;
     matCuadro.uniforms.animarInvitacion.value = instantaneo ? 0 : 1;
     matRio.uniforms.enfoque.value = enfoque;
+    matRio.uniforms.tiempo.value=tiempo;
+    matRio.uniforms.detalle.value=THREE.MathUtils.smoothstep(cercania,.4,.9);
+    matCuadro.uniforms.detalleBioma.value=THREE.MathUtils.smoothstep(cercania,.35,.85);
     matFoco.uniforms.fuerza.value = enfoque;
-    matFoco.uniforms.rafaga.value = rafaga;
     matNiebla.uniforms.tiempo.value = tiempo;
     matNiebla.uniforms.movimiento.value = instantaneo ? 0 : 1;
     matNiebla.uniforms.presencia.value = 1 - enfoque;
+    const enArbol = !!arbolVisto && cercania > 0;
+    if (enArbol) {
+      ubicarCamaraCerca(tiempo);
+    }
+    const camaraActiva = enArbol ? camaraCerca : camara;
+    heroe.visible = enArbol;
+    if (enArbol && arbolHeroe) {
+      sitioHeroe(arbolHeroe, heroe.position, direccionHeroe);
+    }
+    habitat?.actualizar({dt,instantaneo,zona:zonaFijada,grupo:enArbol?arbolHeroe:null,base:heroe.position,dir:direccionHeroe,cercania});
+    if(enArbol)habitat?.aplicarCamara(camaraCerca,dt);
+    let opacidadHeroe = THREE.MathUtils.smoothstep(cercania, 0.5, 0.72);
+    if (cambioArbol && cambioArbol.cambia) {
+      opacidadHeroe *= THREE.MathUtils.smoothstep(Math.abs(cambioArbol.t - 0.5), 0.02, 0.3);
+    }
+    matHeroe.uniforms.opacidad.value = opacidadHeroe*(1-(habitat?.zoom||0));
+    matCielo.uniforms.presencia.value = THREE.MathUtils.smoothstep(cercania, 0.2, 0.75);
+    matHeroe.uniforms.tiempo.value = tiempo;
+    matNubeCielo.uniforms.tiempo.value = tiempo;
+    matNubeCielo.uniforms.movimiento.value = instantaneo ? 0 : 1;
+    matNubeCielo.uniforms.presencia.value = lejania;
+    for (const malla of nubesCielo) {
+      malla.visible = enArbol;
+    }
+    matFoco.uniforms.rafaga.value = Math.min(2.0, rafaga + rafagaArbol * 1.85);
+    matFoco.uniforms.lejania.value = lejania*(1-(habitat?.zoom||0));
+    const mostrarVista = !habitat?.enFauna && !!arbolFoco && (!cambioArbol || cambioArbol.t > 0.7) && cercania >= 0.9;
+    if (vistaArbol && vistaArbol.classList.contains('visible') !== mostrarVista) {
+      vistaArbol.classList.toggle('visible', mostrarVista);
+      vistaArbol.inert = !mostrarVista;
+    }
+    document.body.classList.toggle('en-arbol', !!arbolVisto && cercania > 0.02);
 
-    const conFoco = enfoque > 0.001 || rafaga > 0.001;
+    const conFoco = enfoque > 0.001 || rafaga > 0.001 || rafagaArbol > 0.001 || lejania > 0.001;
     renderer.setRenderTarget(conFoco ? objetivoFoco : null);
     renderer.clear();
-    renderer.render(escenaAgua, camara);
-    renderer.render(escena, camara);
+    if (enArbol) {
+      renderer.render(escenaCielo, camaraCerca);
+    }
+    renderer.render(escenaAgua, camaraActiva);
+    renderer.render(escena, camaraActiva);
     matNiebla.colorWrite = false;
     matNiebla.depthWrite = true;
-    renderer.render(escenaNiebla, camara);
+    matNubeCielo.colorWrite = false;
+    matNubeCielo.depthWrite = true;
+    renderer.render(escenaNiebla, camaraActiva);
     matNiebla.colorWrite = true;
     matNiebla.depthWrite = false;
-    renderer.render(escenaNiebla, camara);
+    matNubeCielo.colorWrite = true;
+    matNubeCielo.depthWrite = false;
+    renderer.render(escenaNiebla, camaraActiva);
     renderer.clearDepth();
-    if(mostrarFronteras)renderer.render(escenaFronteras, camara);
+    presenciaFronteras = instantaneo ? Number(mostrarFronteras) : THREE.MathUtils.clamp(presenciaFronteras + (mostrarFronteras ? dt : -dt) / 0.55, 0, 1);
+    const suaveFronteras = presenciaFronteras * presenciaFronteras * (3 - 2 * presenciaFronteras);
+    const verFronteras = suaveFronteras * (arbolVisto ? 1 - THREE.MathUtils.smoothstep(cercania, 0, 0.3) : 1);
+    if (verFronteras > 0.001) {
+      const bajada = (1 - suaveFronteras) * camara.top * 0.14;
+      mallaProvinciales.position.y = P.z0 + 0.02 - bajada;
+      mallaPais.position.y = P.z0 + 0.02 - bajada;
+      mallaProvinciales.material.uniforms.opacidad.value = 0.78 * verFronteras;
+      mallaPais.material.uniforms.opacidad.value = verFronteras;
+      renderer.render(escenaFronteras, camaraActiva);
+    }
     if (conFoco) {
       renderer.setRenderTarget(null);
       renderer.clear();
       renderer.render(escenaFoco, camaraFoco);
+    }
+    if (enArbol) {
+      renderer.clearDepth();
+      habitat?.render(renderer,camaraCerca);
+      renderer.clearDepth();
+      renderer.render(escenaHeroe, camaraCerca);
     }
     requestAnimationFrame(cuadroAnimacion);
   }

@@ -59,16 +59,38 @@
     }
   }
 
-  function crear({escena,C,P,suelo}){
+  function crear({escena,C,P,suelo,alBrotar}){
     const T=window.THREE, maxArboles=200, grupo=new T.Group();
     grupo.name='Bosquetes nativos'; escena.add(grupo);
     const uvGeo=C.x.map((x,i)=>geografia(x,C.y[i]));
     const planes=new Map();
     const recortes=new Map(), cargador=new T.TextureLoader();
-    const plano=new T.PlaneGeometry(1,1).translate(0,0.5,0);
+    const tiempoHojas={value:0};
+    const plano=new T.PlaneGeometry(1,1,1,6).translate(0,0.5,0);
     function cargar(id){
       if(recortes.has(id))return recortes.get(id);
       const material=new T.MeshBasicMaterial({side:T.DoubleSide,alphaTest:0.35,depthWrite:true,toneMapped:false});
+      const bordeTexel={value:new T.Vector2(0.005,0.005)};
+      material.onBeforeCompile=shader=>{
+        shader.uniforms.bordeTexel=bordeTexel;
+        shader.uniforms.tiempoHojas=tiempoHojas;
+        shader.vertexShader='uniform float tiempoHojas;\nvarying float vFaseHojas;\n'+shader.vertexShader.replace('#include <begin_vertex>',[
+          'vec3 transformed=vec3(position);',
+          'float faseHojas=fract(sin(dot(instanceMatrix[3].xz,vec2(12.9898,78.233)))*43758.5453)*6.2831;',
+          'float alturaHojas=clamp(position.y,0.0,1.0);',
+          'transformed.x+=sin(tiempoHojas*(0.8+fract(faseHojas)*0.5)+faseHojas+alturaHojas*2.2)*0.03*alturaHojas*alturaHojas;',
+          'vFaseHojas=faseHojas;'].join('\n'));
+        shader.fragmentShader='uniform vec2 bordeTexel;\nuniform float tiempoHojas;\nvarying float vFaseHojas;\n'+shader.fragmentShader.replace('#include <map_fragment>',[
+          '#ifdef USE_MAP',
+          'float copaHojas=smoothstep(0.38,0.8,vUv.y);',
+          'vec2 uvHojas=vUv+vec2(sin(vUv.y*22.0+tiempoHojas*1.05+vFaseHojas)*0.004+sin(vUv.x*14.0-tiempoHojas*0.7+vFaseHojas)*0.0025,cos(vUv.x*18.0+tiempoHojas*0.85+vFaseHojas)*0.003)*copaHojas;',
+          'vec4 texelColor=texture2D(map,uvHojas);',
+          'float vecinoA=min(min(texture2D(map,uvHojas+vec2(bordeTexel.x,0.0)).a,texture2D(map,uvHojas-vec2(bordeTexel.x,0.0)).a),min(texture2D(map,uvHojas+vec2(0.0,bordeTexel.y)).a,texture2D(map,uvHojas-vec2(0.0,bordeTexel.y)).a));',
+          'texelColor.a*=step(0.5,vecinoA);',
+          'texelColor=mapTexelToLinear(texelColor);',
+          'diffuseColor*=texelColor;',
+          '#endif'].join('\n'));
+      };
       const mesh=new T.InstancedMesh(plano,material,maxArboles);
       mesh.name='Árbol 2D · '+id;mesh.count=0;mesh.frustumCulled=false;
       mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);grupo.add(mesh);
@@ -76,7 +98,7 @@
       const url=window.MUSUQ_ARBOLES_SPRITES?.[id]||'assets/arboles/'+id+'-sprite.webp';
       cargador.load(url, textura=>{
         textura.anisotropy=2;
-        recurso.aspecto=textura.image.width/textura.image.height;
+        recurso.aspecto=textura.image.width/textura.image.height;bordeTexel.value.set(2.5/textura.image.width,2.5/textura.image.height);
         material.map=textura;material.needsUpdate=true;recurso.listo=true;
       },undefined,()=>{recurso.error=true;console.warn('No se pudo cargar el árbol ilustrado:',id);});
       return recurso;
@@ -92,13 +114,13 @@
         gl_Position=projectionMatrix*p;}`,
       fragmentShader:`varying float vAlpha;varying vec3 vN;varying vec3 vV;
         void main(){float suave=smoothstep(0.05,0.8,abs(dot(normalize(vN),normalize(vV))));
-        gl_FragColor=vec4(0.73,0.61,0.43,vAlpha*suave);}`
+        gl_FragColor=vec4(0.36,0.29,0.21,vAlpha*suave*0.75);}`
     }),maxArboles*5);
     polvo.name='Polvo de brote';
     polvo.count=0;polvo.frustumCulled=false;polvo.instanceMatrix.setUsage(T.DynamicDrawUsage);grupo.add(polvo);
     opacidad.setUsage(T.DynamicDrawUsage);
     const obj=new T.Object3D(), direccion=new T.Vector3();
-    let arboles=[], seleccion=null, inicio=0, retirada=-1, reloj=0;
+    let arboles=[], seleccion=null, inicio=0, retirada=-1, reloj=0, brotado=false;
 
     function plan(zona){
       if(planes.has(zona.id))return planes.get(zona.id);
@@ -132,7 +154,7 @@
               resultado.push({i,id,x:C.x[i]+esquina*P.q*(0.17+(k%2)*0.16),z:-C.y[i]+P.q*(-0.30+k*0.19),
                 escala:P.q*(0.92+azar(semilla)*0.64)*especies[id].alto,
                 giro:(azar(semilla+1)-0.5)*0.95,espejo:azar(semilla+3)>0.5?-1:1,
-                semilla,demora:tipoIndex*0.12+parche*0.16+azar(semilla+2)*0.30});
+                semilla,grupo:id+':'+parche,demora:tipoIndex*0.12+parche*0.16+azar(semilla+2)*0.30});
             }
           }
         }
@@ -143,13 +165,14 @@
     function seleccionar(zona,demora=0){
       if(zona?.id===seleccion?.id)return;
       if(!zona){retirada=reloj;seleccion=null;return;}
-      seleccion=zona;arboles=plan(zona);inicio=reloj+demora;retirada=-1;
+      seleccion=zona;arboles=plan(zona);inicio=reloj+demora;retirada=-1;brotado=false;
       for(const b of arboles){cargar(b.id);delete b.nacimiento;}
     }
 
     function actualizar(dt,reducido,camara){
       if(!reducido)reloj+=dt;
       else inicio=reloj-10;
+      tiempoHojas.value=reloj;
       let np=0;
       for(const r of recortes.values())r.mesh.count=0;
       if(camara)camara.getWorldDirection(direccion);
@@ -160,8 +183,10 @@
         const recurso=recortes.get(b.id);
         if(!recurso?.listo)continue;
         if(b.nacimiento===undefined)b.nacimiento=Math.max(inicio+b.demora,reloj);
+        if(reducido)b.nacimiento=Math.min(b.nacimiento,reloj-1);
         const edad=reducido?9:reloj-b.nacimiento;
         if(edad<0)continue;
+        if(!brotado){brotado=true;alBrotar?.();}
         const t=clamp(edad/0.85), el=t-1;
         const crecimiento=reducido?1:1+2.05*el*el*el+1.05*el*el;
         const f=Math.max(0.001,crecimiento*salida);
@@ -186,7 +211,23 @@
       }
       opacidad.needsUpdate=true;grupo.visible=arboles.length>0;
     }
-    return {seleccionar,actualizar,plan,estado:()=>({zona:seleccion?.id||null,arboles:arboles.length,polvo:polvo.count,
+    function grupos(){
+      if(retirada>=0)return [];
+      const porGrupo=new Map();
+      for(const b of arboles){
+        if(b.nacimiento===undefined||reloj<b.nacimiento+0.4||!recortes.get(b.id)?.listo)continue;
+        const base=suelo(b.i);
+        const g=porGrupo.get(b.grupo)||{clave:b.grupo,id:b.id,nombre:especies[b.id].nombre,x:0,z:0,base:Infinity,alto:-Infinity,n:0,miembros:[]};
+        g.x+=b.x;g.z+=b.z;g.n++;g.base=Math.min(g.base,base);g.alto=Math.max(g.alto,base+b.escala);g.miembros.push(b);
+        porGrupo.set(b.grupo,g);
+      }
+      return Array.from(porGrupo.values(),g=>{
+        g.x/=g.n;g.z/=g.n;
+        g.radio=Math.max(...g.miembros.map(b=>Math.hypot(b.x-g.x,b.z-g.z)+b.escala*0.45));
+        delete g.miembros;return g;
+      });
+    }
+    return {seleccionar,actualizar,plan,grupos,estado:()=>({zona:seleccion?.id||null,arboles:arboles.length,polvo:polvo.count,
       especies:[...new Set(arboles.map(a=>a.id))],celdas:[...new Set(arboles.map(a=>a.i))],
       visibles:Array.from(recortes.values()).reduce((s,r)=>s+r.mesh.count,0),
       texturas:Array.from(recortes,([id,r])=>({id,listo:r.listo,error:r.error,url:r.mesh.material.map?.image.src})),

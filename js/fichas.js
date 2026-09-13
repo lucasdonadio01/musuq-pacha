@@ -114,3 +114,18 @@ window.MUSUQ_FICHAS = {
     flora: 'Chaguar, cactus, tusca y pastizales en antiguos cauces'
   }
 };
+
+window.MUSUQ_ARBOLES_TEXTOS = {
+  quenoa: 'Arbolito de altura, retorcido, de corteza canela que se desprende en láminas. Forma bosquecillos en las quebradas de la Puna jujeña, donde casi no crecen otros árboles.',
+  blanco: 'Algarrobo de copa amplia y follaje liviano. Sus vainas, la algarroba, fueron un alimento clave: harina, patay y aloja.',
+  quebracho: 'Árbol esbelto del Chaco seco, de corteza clara y ramitas colgantes. Su madera es dura y muy resistente.',
+  dulce: 'Algarrobo de las zonas áridas, bajo y de tronco torcido. Con sus frutos dulces se hacían harinas y bebidas.',
+  tabaquillo: 'Árbol serrano de tronco torcido y corteza rojiza que se pela en láminas. Crece en las quebradas altas de las sierras.',
+  lapacho: 'Árbol del noreste que se cubre de flores rosadas a fines del invierno, antes de sacar las hojas. Su madera es dura y apreciada.',
+  parana: 'Araucaria de tronco recto y copa en forma de paraguas, propia de la selva misionera. Sus piñones son comestibles.',
+  tala: 'Árbol bajo y espinoso de copa densa, común en los montes de la costa del Río de la Plata y el Espinal.',
+  calden: 'Algarrobo del Espinal, de copa ancha como un paraguas. Forma el caldenal de La Pampa y el sur de San Luis.',
+  nire: 'Árbol pequeño de los bosques andino-patagónicos y fueguinos, moldeado por el viento. En otoño sus hojas se vuelven doradas.',
+  pehuen: 'Araucaria de la cordillera neuquina, con ramas como candelabros. Sus piñones fueron la base de la alimentación pehuenche.',
+  guindo: 'Coihue de Magallanes, de hojas siempre verdes. Forma bosques densos y húmedos en el sur de Tierra del Fuego.'
+};

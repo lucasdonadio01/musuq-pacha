@@ -1,7 +1,8 @@
 (function () {
   const clave = 'musuq-pacha.sonido.v1';
-  const botonSonido = document.getElementById('boton-sonido');
-  const botonMusica = document.getElementById('boton-musica');
+  const botonesSonido = document.querySelectorAll('[data-audio=efectos]');
+  const botonesMusica = document.querySelectorAll('[data-audio=musica]');
+  const audioMapa = document.getElementById('audio-mapa');
   let estado = { efectos: true, musica: true };
   try {
     const guardado = JSON.parse(localStorage.getItem(clave));
@@ -23,12 +24,8 @@
   }
 
   function sincronizar() {
-    if (botonSonido) {
-      botonSonido.setAttribute('aria-pressed', String(!estado.efectos));
-    }
-    if (botonMusica) {
-      botonMusica.setAttribute('aria-pressed', String(!estado.musica));
-    }
+    botonesSonido.forEach((boton) => boton.setAttribute('aria-pressed', String(!estado.efectos)));
+    botonesMusica.forEach((boton) => boton.setAttribute('aria-pressed', String(!estado.musica)));
     if (estado.musica && interactuo && !document.hidden) {
       const promesa = musica.play();
       if (promesa) {
@@ -48,21 +45,22 @@
     }
   };
 
-  if (botonSonido) {
-    botonSonido.addEventListener('click', () => {
-      estado.efectos = !estado.efectos;
-      guardar();
-      sincronizar();
-      window.dispatchEvent(new CustomEvent('musuq:sonido', { detail: { ...estado } }));
-    });
-  }
-  if (botonMusica) {
-    botonMusica.addEventListener('click', () => {
-      estado.musica = !estado.musica;
-      guardar();
-      sincronizar();
-    });
-  }
+  botonesSonido.forEach((boton) => boton.addEventListener('click', () => {
+    estado.efectos = !estado.efectos;
+    guardar();
+    sincronizar();
+    window.dispatchEvent(new CustomEvent('musuq:sonido', { detail: { ...estado } }));
+  }));
+  botonesMusica.forEach((boton) => boton.addEventListener('click', () => {
+    estado.musica = !estado.musica;
+    guardar();
+    sincronizar();
+  }));
+  window.addEventListener('musuq:modo', (e) => {
+    if (audioMapa) {
+      audioMapa.hidden = !e.detail.explorando;
+    }
+  });
 
   const primeraInteraccion = () => {
     if (interactuo) {

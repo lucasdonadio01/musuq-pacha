@@ -1,0 +1,19 @@
+.fauna-controles{position:absolute;right:28px;top:24px;z-index:4;display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:360px}
+.fauna-controles>span{width:100%;text-align:right;font-size:10px;letter-spacing:.1em;color:#23372e}
+.fauna-controles button{border:1px solid #fff9;border-radius:4px;background:#fffffff2;color:#283829;padding:11px 14px;font:500 12px 'Space Grotesk',sans-serif;cursor:pointer;min-height:44px}
+.fauna-controles button:hover{background:#e7efda}
+.fauna-controles[hidden],.vista-fauna[hidden]{display:none}
+.vista-fauna{position:absolute;z-index:5;left:clamp(20px,4vw,64px);bottom:110px;width:min(355px,calc(100vw - 40px));max-height:calc(100svh - 170px);overflow:auto;overscroll-behavior:contain;background:#fffffff5;border-radius:4px;padding:22px 24px;color:#283829}
+.vista-fauna h2{font:500 clamp(26px,2.6vw,36px)/1.1 'Space Grotesk',sans-serif;letter-spacing:-.035em;margin:8px 0}
+.vista-fauna p{font-size:13px;line-height:1.55;margin:10px 0}
+.vista-fauna .fauna__rotulo{font-size:9px;letter-spacing:.12em;margin:0;color:#58684e}
+#fauna-cientifico{font-size:12px;font-style:italic;color:#607052}
+#fauna-ambiente{border-top:1px solid #d8e0d1;padding-top:12px;font-size:11px}
+.vista-fauna a{font-size:11px;color:inherit;text-underline-offset:3px}
+.vista-fauna .fauna__nota{font-size:10px;color:#64705d}
+.vista-fauna button{min-height:44px;background:#253629;color:#fff;border:0;border-radius:4px;display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;font:12px 'Space Grotesk',sans-serif;margin-bottom:18px}
+.en-fauna .vista-arbol{visibility:hidden!important;pointer-events:none!important;opacity:0!important}
+.en-fauna .vista-arbol *{pointer-events:none!important}
+.fauna-controles :focus-visible,.vista-fauna :focus-visible{outline:3px solid #376940;outline-offset:3px}
+@media(max-width:700px){.fauna-controles{right:14px;top:16px;max-width:260px}.fauna-controles button{padding:9px 11px;font-size:11px}.vista-fauna{left:12px;right:12px;bottom:74px;width:auto;max-height:36svh;padding:16px}.vista-fauna h2{font-size:25px}.vista-fauna p{font-size:12px}.vista-fauna button{margin-bottom:10px}}
+html[data-color=contraste] .vista-fauna,html[data-color=contraste] .fauna-controles button{background:#fff;border:2px solid #000;color:#000}

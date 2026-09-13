@@ -6,3 +6,57 @@
 .ficha__datos dt{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--gris);padding-top:2px}
 .ficha__datos dd{margin:0;font-size:11px;line-height:1.5;color:#53604e}
 @media(max-width:700px){.panel{max-height:220px}.ficha__descripcion{font-size:11px;margin:8px 0 10px}.ficha__datos div{grid-template-columns:76px 1fr;padding:6px 0}}
+.ficha__arboles{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:14px 0 0;padding:11px 12px;border:1px solid var(--linea);border-radius:3px;background:#f3f6ef;color:#1f2a1c;font-size:11px;letter-spacing:.02em;cursor:pointer}
+.ficha__arboles:hover{background:#e8eee2}
+.ficha__arboles svg{width:16px;height:16px}
+.ficha__arboles[hidden]{display:none}
+.vista-arbol{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.vista-arbol.visible{opacity:1;visibility:visible}
+.vista-arbol.visible :is(.vista-arbol__carta,.vista-arbol__siguiente){pointer-events:auto}
+.vista-arbol__carta{position:absolute;left:clamp(20px,4vw,64px);bottom:clamp(112px,14vh,140px);width:min(400px,calc(100vw - 40px));padding:22px 24px 20px;border-radius:4px;color:var(--tinta);background:#fff;transform:translateY(16px);transition:transform .5s cubic-bezier(.22,.61,.36,1)}
+.vista-arbol.visible .vista-arbol__carta{transform:none}
+.vista-arbol__volver{display:grid;place-items:center;width:40px;height:40px;margin:0 0 14px;padding:0;border:0;border-radius:50%;background:var(--tinta);color:#fff;cursor:pointer;transition:background .2s}
+.vista-arbol__volver:hover{background:#3a443a}
+.vista-arbol__volver svg{width:20px;height:20px}
+.vista-arbol__rotulo{margin:0 0 6px;font-size:9px;letter-spacing:.14em;color:var(--gris)}
+.vista-arbol__nombre{margin:0;font-size:clamp(28px,2.6vw,38px);font-weight:500;letter-spacing:-.03em;color:var(--tinta)}
+.vista-arbol__cientifico{margin:2px 0 12px;font-size:12px;font-style:italic;color:var(--gris)}
+.vista-arbol__descripcion{margin:0;font-size:13px;line-height:1.6;color:var(--tinta)}
+.vista-arbol__tambien{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--linea);font-size:10px;color:var(--gris)}
+.vista-arbol__tambien[hidden]{display:none}
+.vista-arbol__siguiente{position:absolute;right:clamp(20px,4vw,64px);bottom:clamp(112px,14vh,140px);display:flex;align-items:center;gap:16px;padding:14px 16px 14px 22px;border:0;border-radius:4px;color:#fff;text-align:left;background:var(--tinta);cursor:pointer;transform:translateX(16px);transition:transform .5s cubic-bezier(.22,.61,.36,1),background .2s}
+.vista-arbol.visible .vista-arbol__siguiente{transform:none}
+.vista-arbol__siguiente:hover{background:#3a443a}
+.vista-arbol__siguiente[hidden]{display:none}
+.vista-arbol__siguiente-texto{display:flex;flex-direction:column;gap:3px}
+.vista-arbol__siguiente strong{font-size:18px;font-weight:500;letter-spacing:-.01em}
+.vista-arbol__siguiente small{font-size:11px;color:#c9d0c6}
+.vista-arbol__siguiente svg{width:28px;height:28px;flex-shrink:0}
+.vista-arbol__siguiente .vista-arbol__siguiente-arbol{width:26px;height:26px;margin-right:-4px}
+.vista-arbol :focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+.en-arbol :is(.panel,.selector,.herramientas,.mapa-pie){opacity:0!important;pointer-events:none!important}
+@media(max-width:700px){.vista-arbol__carta{left:12px;right:12px;bottom:136px;width:auto;padding:16px}.vista-arbol__descripcion{font-size:12px}.vista-arbol__siguiente{left:12px;right:12px;bottom:64px;justify-content:space-between}}
+@media(prefers-reduced-motion:reduce){.vista-arbol,.vista-arbol__carta,.vista-arbol__siguiente{transition:none}}
+html[data-color=contraste] .vista-arbol__carta{border:2px solid #000;color:#000}
+html[data-color=contraste] .vista-arbol__carta :is(h2,p){color:#000}
+html[data-color=contraste] .vista-arbol__siguiente{border:2px solid #000;background:#000}
+html[data-color=contraste] .vista-arbol__siguiente small{color:#fff}
+.carteles-arboles{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.carteles-arboles.visible{opacity:1;visibility:visible}
+.cartel-pixel{position:absolute;left:0;top:0;width:0;height:0;margin:0;padding:0;border:0;background:none;color:var(--t,#121212);font-family:'Space Grotesk',system-ui,sans-serif;cursor:pointer;pointer-events:none;outline:none}
+.cartel-pixel__giro{position:absolute;left:0;bottom:0;width:192px;height:192px;transform-origin:50% 100%;transform:translate(-50%,-10px) perspective(800px) rotateY(-30deg) rotateX(8deg);animation:cartel-vaiven 7s ease-in-out infinite;animation-delay:var(--fase,0s)}
+.cartel-pixel.armado .cartel-pixel__giro{pointer-events:auto}
+.cartel-pixel__diseno,.cartel-pixel__rejilla{position:absolute;left:0;top:0;width:192px;height:192px;filter:drop-shadow(-4px 4px 0 color-mix(in srgb,var(--c) 50%,#000))}
+.cartel-pixel i{position:absolute;width:16px;height:16px;background:var(--c)}
+.cartel-pixel__diseno[data-visible=false]{visibility:hidden}
+.cartel-pixel__contenido{position:absolute;inset:0}
+.cartel-pixel__nombre{position:absolute;left:16px;right:16px;top:34px;height:62px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:400;line-height:.92;letter-spacing:-.01em;white-space:nowrap}
+.cartel-pixel__nombre span{display:block}
+.cartel-pixel__tipo{position:absolute;left:70px;top:110px;font-size:14px;font-weight:700;line-height:19px;letter-spacing:.01em;white-space:nowrap}
+.cartel-pixel__flecha{position:absolute;left:131px;top:130px;width:39px;height:39px;fill:currentColor}
+.cartel-pixel__rejilla{pointer-events:none}
+.cartel-pixel__ventana{position:absolute;width:16px;height:16px;overflow:hidden;opacity:0}
+.cartel-pixel__copia{position:absolute;width:192px;height:192px;filter:none;visibility:visible}
+.cartel-pixel:focus-visible .cartel-pixel__giro{outline:2px solid #fff;outline-offset:6px}
+@keyframes cartel-vaiven{0%,100%{transform:translate(-50%,-10px) perspective(800px) rotateY(-36deg) rotateX(9deg)}50%{transform:translate(-50%,-16px) perspective(800px) rotateY(-24deg) rotateX(6deg)}}
+@media(prefers-reduced-motion:reduce){.cartel-pixel__giro{animation:none}}

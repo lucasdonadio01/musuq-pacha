@@ -6,3 +6,8 @@
 .boton-audio[aria-pressed=true]::before{content:"";position:absolute;inset:0;border:3px solid #d62c2c;border-radius:50%;pointer-events:none}
 .boton-audio[aria-pressed=true]::after{content:"";position:absolute;left:50%;top:50%;width:3px;height:calc(100% - 6px);border-radius:2px;background:#d62c2c;transform:translate(-50%,-50%) rotate(-45deg);pointer-events:none}
 html[data-color=contraste] .boton-audio[aria-pressed=true]{color:#fff}
+.audio-mapa{position:fixed;z-index:12;right:72px;bottom:52px;display:flex;gap:8px}
+.audio-mapa .boton-audio{position:relative;width:40px;height:40px;min-width:40px;min-height:40px;padding:0;background:#fff;border:1px solid #d7ddd2;box-shadow:0 3px 12px #0002;color:#707070}
+.audio-mapa .boton-audio:hover{background:#efefef;color:#111}
+.audio-mapa .boton-audio[aria-pressed=true],.audio-mapa .boton-audio[aria-pressed=true]:hover{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+@media(max-width:700px){.audio-mapa{right:60px;bottom:12px}}
