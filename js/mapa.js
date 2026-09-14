@@ -203,7 +203,10 @@
       animarInvitacion: { value: 1 },
       modoAccesible: { value: window.MUSUQ_A11Y?.estado.color === 'daltonismo' ? 1 : 0 },
       patronActivo: { value: 1 }
-      ,detalleBioma: {value:0}
+      ,detalleBioma: {value:0},
+      centroBrote: {value:new THREE.Vector2()},
+      radioBrote: {value:0},
+      avanceBrote: {value:0}
     },
     vertexShader: `
       attribute float fuera;
@@ -244,6 +247,9 @@
     fragmentShader: `
       uniform vec3 luz;
       uniform float detalleBioma;
+      uniform vec2 centroBrote;
+      uniform float radioBrote;
+      uniform float avanceBrote;
       varying vec3 vBioma;
       uniform vec3 tinte;
       uniform vec3 niebla;
@@ -292,7 +298,19 @@
         float tierra=smoothstep(.72,.94,sin(vPos.x*11.)*.22+cos(vPos.z*13.)*.22+grano*.6);
         vec3 suelo=mix(vBioma,vec3(.55,.43,.28),tierra*.20)*(.98+grano*.035);
         float bordeVerde=step(.97+sin(vPos.x*42.+vPos.z*27.)*.008,vLocal.y);
-        c=mix(c,suelo*mix(.76,1.,l),detalleBioma*vActivo*max(arriba,bordeVerde));
+        // Frente continuo entre parcelas: lóbulos suaves, sin encendido por bloques.
+        vec2 brotePos=vPos.xz-centroBrote;
+        float lobulos=sin(brotePos.x*3.7+sin(brotePos.y*2.9))*.10
+          +sin(brotePos.y*5.1-brotePos.x*1.8)*.055;
+        float distanciaBrote=length(brotePos)+lobulos;
+        float frente=avanceBrote*(radioBrote+.55)-.25;
+        float cubierto=smoothstep(-.13,.13,frente-distanciaBrote);
+        cubierto*=smoothstep(0.,.045,avanceBrote);
+        float crecimiento=max(cubierto,detalleBioma);
+        float labio=(1.-smoothstep(.025,.17,abs(frente-distanciaBrote)))
+          *(1.-smoothstep(.85,1.,avanceBrote))*cubierto;
+        vec3 superficie=suelo*mix(.76,1.,l)*(1.+labio*.13);
+        c=mix(c,superficie,crecimiento*vActivo*max(arriba,bordeVerde));
         gl_FragColor = vec4(c, 1.0);
       }
     `
@@ -1183,6 +1201,7 @@
   const distanciaOnda = new Float32Array(N);
   let ondaInicio = -1;
   let ondaFin = 0;
+  let broteInicio = -1;
   const maxParticulas = 180;
   const maxPolvo = 36;
   const matParticula = new THREE.ShaderMaterial({
@@ -2021,11 +2040,24 @@
     if (nueva) {
       const cerca = acercamiento >= 0.6;
       const demora = cerca ? 0.35 : 1.15;
+      let cx=0,cz=0,cantidad=0;
+      for(let i=0;i<N;i++)if(C.zonas[i]&bitSeleccionado){cx+=C.x[i];cz-=C.y[i];cantidad++;}
+      if(cantidad){cx/=cantidad;cz/=cantidad;}
+      let radio=0;
+      for(let i=0;i<N;i++)if(C.zonas[i]&bitSeleccionado)radio=Math.max(radio,Math.hypot(C.x[i]-cx,-C.y[i]-cz));
+      matCuadro.uniforms.centroBrote.value.set(cx,cz);
+      matCuadro.uniforms.radioBrote.value=radio+P.q;
+      matCuadro.uniforms.avanceBrote.value=0;
+      broteInicio=performance.now()+demora*1000;
       nivelZoom = cambioDeZona ? (nivelZoom + 1) % tonosZoom.length : 0;
       sonarAcercamiento(demora, lanzarOnda(zona, demora), tonosZoom[nivelZoom]);
       bosques?.seleccionar(zona, demora + 0.08);
     }
-    if (!zona) bosques?.seleccionar(null);
+    if (!zona) {
+      bosques?.seleccionar(null);
+      broteInicio=-1;
+      matCuadro.uniforms.avanceBrote.value=0;
+    }
   }
 
   for (const z of zonas) {
@@ -2360,7 +2392,8 @@
     normalCartelGirada.crossVectors(ejeCartelGirado, ejeY);
     return {
       x: proyectarVector(ejeCartelGirado, base.ppu).map((n) => n * base.k),
-      y: base.y,
+      // Cada cartel se escala por separado; no modificar el eje compartido.
+      y: base.y.slice(),
       z: proyectarVector(normalCartelGirada, base.ppu).map((n) => n * base.k)
     };
   }
@@ -2525,10 +2558,16 @@
         const objetivoGiro = movimientoReducido.matches || !cursorCartel.dentro ? 0 : THREE.MathUtils.clamp((cursorCartel.x - rectLienzo.left - sx) / 180, -1, 1) * 0.7;
         c.giroCursor = (c.giroCursor || 0) + (objetivoGiro - (c.giroCursor || 0)) * suavidadGiro;
         const { x, y, z } = columnasCartel(orientacion, c.giroCursor);
-        const ax = 96 * x[0] + 192 * y[0];
-        const ay = 96 * x[1] + 192 * y[1];
-        const az = 96 * x[2] + 192 * y[2];
-        c.giro.style.transform = 'matrix3d(' + [x[0], x[1], x[2], 0, y[0], y[1], y[2], 0, z[0], z[1], z[2], 0, -ax, 178 - ay + flota, -az, 1].map((n) => +n.toFixed(4)).join(',') + ')';
+        // Reducir el cartel un 65%, conservando su anclaje y orientación 3D.
+        const escalaCartel = 0.35;
+        for (const eje of [x, y, z]) {
+          for (let i = 0; i < 3; i++) eje[i] *= escalaCartel;
+        }
+        const ancho = c.cartel.ancho || 192, alto = c.cartel.alto || 192;
+        const ax = ancho / 2 * x[0] + alto * y[0];
+        const ay = ancho / 2 * x[1] + alto * y[1];
+        const az = ancho / 2 * x[2] + alto * y[2];
+        c.giro.style.transform = 'matrix3d(' + [x[0], x[1], x[2], 0, y[0], y[1], y[2], 0, z[0], z[1], z[2], 0, -ax, alto - 14 - ay + flota, -az, 1].map((n) => +n.toFixed(4)).join(',') + ')';
       }
       if (c.sobre || (candidato && candidato.clave === grupo.clave)) {
         c.hasta = ahora + 300;
@@ -2726,6 +2765,9 @@
     matRio.uniforms.tiempo.value=tiempo;
     matRio.uniforms.detalle.value=THREE.MathUtils.smoothstep(cercania,.4,.9);
     matCuadro.uniforms.detalleBioma.value=THREE.MathUtils.smoothstep(cercania,.35,.85);
+    matCuadro.uniforms.avanceBrote.value=zonaFijada
+      ? (instantaneo ? 1 : THREE.MathUtils.clamp((ahora-broteInicio)/(duracionOnda*1000),0,1))
+      : 0;
     matFoco.uniforms.fuerza.value = enfoque;
     matNiebla.uniforms.tiempo.value = tiempo;
     matNiebla.uniforms.movimiento.value = instantaneo ? 0 : 1;

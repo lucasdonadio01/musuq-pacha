@@ -54,7 +54,14 @@
   for(const [id,total] of [['venado',6],['tero',4],['tero-posado',1],['venado-bebiendo',1]])for(let i=0;i<total;i++){
    cargas.push(new Promise((resolve,reject)=>{const tex=cargador.load('assets/fauna/'+id+'-'+i+'.webp',resolve,undefined,reject);tex.encoding=T.LinearEncoding;texturas[id].push(tex);}));
   }
-  Promise.all(cargas).then(()=>{spritesListos=true;}).catch(error=>{console.error('No se pudieron cargar las ilustraciones de fauna',error);});
+  Promise.all(cargas).then(()=>{
+   // Sprite's shader takes the absolute scale; flip UVs instead of scale.x.
+   texturas.teroIzquierda=texturas.tero.map(original=>{
+    const espejo=original.clone();espejo.repeat.x=-1;espejo.offset.x=1;
+    espejo.needsUpdate=true;return espejo;
+   });
+   spritesListos=true;
+  }).catch(error=>{console.error('No se pudieron cargar las ilustraciones de fauna',error);});
   function animalSprite(id){
    const obj=new T.Group(),imagen=new T.Sprite(new T.SpriteMaterial({map:texturas[id][0],transparent:true,alphaTest:.35,depthWrite:true}));
    obj.name=id+' · ilustración animada';imagen.scale.setScalar(id==='venado'?1.6:2.);
@@ -180,8 +187,8 @@
     }
     else{a.obj.position.copy(origen).addScaledVector(direccion,(a.delante?-.12:.2)+s*(a.delante?-.28:.48)).addScaledVector(derecha,(a.delante?-.14:.1)+s*((i%2?1:-1)*(.32+i*.12)));a.obj.position.y+=.28+s*(.75+i*.13)+Math.max(0,e-4)*.08;a.obj.visible=spritesListos&&e<15&&e>0;}
     const secuencia=[0,1,2,3,2,1];
-    pose(a.obj,'tero',reducido?1:secuencia[Math.floor(t*7+i*1.7)%6],reducido?0:Math.sin(t*4+i)*.012);
-    a.obj.userData.sprite.scale.x=i%2?2.:-2.;
+    pose(a.obj,i%2===0&&spritesListos?'teroIzquierda':'tero',reducido?1:secuencia[Math.floor(t*7+i*1.7)%6],reducido?0:Math.sin(t*4+i)*.012);
+    a.obj.userData.sprite.scale.x=2.;
     if(!spritesListos)a.obj.visible=false;
    });
   }

@@ -1,7 +1,8 @@
 .cartel-pixel__giro{transform-style:preserve-3d;transform-origin:0 0;animation:none;transform:translate(-50%,-12px)}
 .cartel-pixel__diseno,.cartel-pixel__rejilla{filter:none;transform-style:preserve-3d}
 .cartel-pixel__cuerpo,.cartel-pixel__contenido{position:absolute;inset:0;transform-style:preserve-3d}
-.cartel-pixel svg.cartel-pixel__cara{position:absolute;inset:0;width:192px;height:192px;fill:var(--c);overflow:visible}
+.cartel-pixel__giro,.cartel-pixel__diseno,.cartel-pixel__rejilla{width:305px;height:160px}
+.cartel-pixel svg.cartel-pixel__cara{position:absolute;inset:0;width:305px;height:160px;fill:var(--c);overflow:visible}
 .cartel-pixel__frente{transform:translateZ(9px)}
 .cartel-pixel svg.cartel-pixel__dorso{fill:color-mix(in srgb,var(--c) 64%,#152609)}
 .cartel-pixel .cartel-pixel__canto{position:absolute;transform-origin:0 0;background:color-mix(in srgb,var(--c) 64%,#152609);width:9px;height:16px;transform:rotateY(-90deg)}
@@ -11,13 +12,16 @@
 .cartel-pixel__relieve{transform-style:preserve-3d}
 .cartel-pixel__glifo{position:absolute;inset:0;display:block;color:color-mix(in srgb,var(--t) 62%,var(--c));backface-visibility:hidden}
 .cartel-pixel__glifo--frente{color:var(--t)}
-.cartel-pixel__nombre{left:36px;right:18px;top:45px;height:47px;display:block;font-family:'Space Grotesk',sans-serif;font-weight:400;font-style:normal;line-height:1.03;letter-spacing:-.025em}
+.cartel-pixel__nombre{left:90px;right:40px;top:46px;height:55px;display:block;text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:400;font-style:normal;line-height:1.03;letter-spacing:-.025em}
 .cartel-pixel__nombre .cartel-pixel__glifo{display:flex;align-items:center;justify-content:center;font-size:inherit}
 .cartel-pixel__tipo{left:69px;top:110px;width:65px;height:42px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;line-height:20px;letter-spacing:-.045em;text-align:left}
-.cartel-pixel__flecha{left:136px;top:131px;width:36px;height:36px}
-.cartel-pixel svg.cartel-pixel__icono{display:block;width:36px;height:36px;fill:currentColor;overflow:visible}
+.cartel-pixel__arbol{position:absolute;left:12.31px;top:24.62px;width:49.23px;height:49.23px}
+.cartel-pixel__arbol .cartel-pixel__glifo{color:color-mix(in srgb,var(--c) 65%,black)}
+.cartel-pixel__arbol .cartel-pixel__glifo--frente{color:var(--c)}
+.cartel-pixel__flecha{left:240px;top:95px;width:56.4px;height:56.4px}
+.cartel-pixel svg.cartel-pixel__icono{display:block;width:100%;height:100%;fill:currentColor;overflow:visible}
+.cartel-pixel__arbol .cartel-pixel__glifo>span,.cartel-pixel__flecha .cartel-pixel__glifo>span{display:block;width:100%;height:100%}
 .cartel-pixel__pixel{position:absolute;width:16px;height:16px;background:var(--c);box-shadow:-2px 3px 0 color-mix(in srgb,var(--c) 65%,#152609)}
 .cartel-pixel:focus-visible .cartel-pixel__giro{outline:2px solid var(--t);outline-offset:8px}
 .cartel-pixel.sin-movimiento .cartel-pixel__giro,html[data-detener=true] .cartel-pixel__giro{animation:none}
 @media(prefers-reduced-motion:reduce){.cartel-pixel__giro{animation:none}}
-
