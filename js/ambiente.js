@@ -214,7 +214,7 @@
     const camPlano = new T.Vector2();
     let heroeClave = '';
 
-    function soltarHoja(h, heroe, espera) {
+    function soltarHoja(h, heroe, espera, camara) {
       const lado = (Math.random() - 0.5) * heroe.ancho * 0.75;
       h.x = heroe.base.x + lateral.x * lado + heroe.dir.x * (Math.random() - 0.5) * heroe.ancho * 0.3;
       h.z = heroe.base.z + lateral.z * lado + heroe.dir.z * (Math.random() - 0.5) * heroe.ancho * 0.3;
@@ -223,9 +223,17 @@
       h.deriva = heroe.alto * (0.04 + Math.random() * 0.08) * (Math.random() < 0.75 ? 1 : -0.6);
       h.fase = Math.random() * 6.28;
       h.giro = Math.random() * 6.28;
-      h.escala = heroe.alto * (0.045 + Math.random() * 0.02);
+      h.escala = heroe.alto * (Math.random() < 0.4 ? 0.02 + Math.random() * 0.016 : 0.042 + Math.random() * 0.032);
       h.espera = espera;
       h.edad = 0;
+      h.viajera = !!camara && Math.random() < 0.22;
+      h.pasada = false;
+      h.ox = (Math.random() - 0.5) * heroe.alto * 0.4;
+      h.oy = (Math.random() - 0.3) * heroe.alto * 0.18;
+      h.rapidez = heroe.alto * (0.38 + Math.random() * 0.22);
+      h.vx = 0;
+      h.vy = 0;
+      h.vz = 0;
     }
 
     function actualizar({ dt, instantaneo, tiempo: t, zona, heroe, camaraCerca, cercania }) {
@@ -275,7 +283,7 @@
       if (heroeClave !== heroe.grupo.clave) {
         heroeClave = heroe.grupo.clave;
         estadoHojas.forEach((h, k) => {
-          soltarHoja(h, heroe, Math.random() * 2.5);
+          soltarHoja(h, heroe, Math.random() * 2.5, camaraCerca);
           color.set(especie?.hoja || '#8fb04a').multiplyScalar(1.05 + Math.random() * 0.35);
           hojas.setColorAt(k, color);
         });
@@ -287,15 +295,37 @@
           h.espera -= dt;
         } else {
           h.edad += dt;
-          h.y -= h.caida * dt;
           const vaiven = Math.sin(h.edad * 1.4 + h.fase);
-          h.x += (rumbo.x * h.deriva + lateral.x * vaiven * heroe.alto * 0.07) * dt;
-          h.z += (rumbo.z * h.deriva + lateral.z * vaiven * heroe.alto * 0.07) * dt;
+          if (h.viajera && cercania > 0.95 && camaraCerca) {
+            const cam = camaraCerca.position;
+            const dx = cam.x + lateral.x * h.ox - h.x;
+            const dy = cam.y + h.oy - h.y;
+            const dz = cam.z + lateral.z * h.ox - h.z;
+            const d = Math.hypot(dx, dy, dz) || 1;
+            if (d < heroe.alto * 0.1) {
+              h.pasada = true;
+            }
+            if (!h.pasada) {
+              h.vx = (dx / d) * h.rapidez;
+              h.vy = (dy / d) * h.rapidez;
+              h.vz = (dz / d) * h.rapidez;
+            }
+            h.x += (h.vx + lateral.x * vaiven * heroe.alto * 0.05) * dt;
+            h.y += (h.vy + Math.cos(h.edad * 1.1 + h.fase) * heroe.alto * 0.03) * dt;
+            h.z += (h.vz + lateral.z * vaiven * heroe.alto * 0.05) * dt;
+          } else {
+            h.y -= h.caida * dt;
+            h.x += (rumbo.x * h.deriva + lateral.x * vaiven * heroe.alto * 0.07) * dt;
+            h.z += (rumbo.z * h.deriva + lateral.z * vaiven * heroe.alto * 0.07) * dt;
+          }
           const i = celdaEn(h.x, -h.z);
           const piso = i === undefined ? heroe.base.y : suelo(i);
           escala = h.escala * Math.min(1, h.edad / 0.6) * Math.min(1, (h.y - piso) / (heroe.alto * 0.04)) * visibilidad;
           if (h.y <= piso) {
-            soltarHoja(h, heroe, Math.random() * 1.5);
+            soltarHoja(h, heroe, Math.random() * 1.5, camaraCerca);
+            escala = 0;
+          } else if (h.viajera && camaraCerca && (h.edad > 14 || (h.x - camaraCerca.position.x) * (heroe.base.x - camaraCerca.position.x) + (h.z - camaraCerca.position.z) * (heroe.base.z - camaraCerca.position.z) < -heroe.alto * heroe.alto * 0.1)) {
+            soltarHoja(h, heroe, Math.random() * 2, camaraCerca);
             escala = 0;
           }
         }

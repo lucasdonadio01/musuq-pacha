@@ -8,7 +8,7 @@
    texto:'Cérvido nativo de pelaje pardo claro y vientre blanco. Se alimenta de plantas del pastizal. Su distribución se redujo y fragmentó: conservar los ambientes abiertos es fundamental para su supervivencia. El modelo representa una hembra, sin astas.',
    fuente:'https://sib.gob.ar/especies/ozotoceros-bezoarticus'},
   tero:{nombre:'Tero',cientifico:'Vanellus chilensis',ambiente:'Pastizales, campos abiertos y orillas de humedales.',
-   texto:'Ave nativa de pecho negro, vientre blanco y patas rojizas. Recorre el suelo buscando pequeños invertebrados y su llamado de alarma es muy reconocible. Nidifica en el suelo. El vuelo estacionario del visor es una licencia de animación para observar sus detalles.',
+   texto:'Ave nativa de pecho negro, vientre blanco y patas rojizas. Recorre el suelo buscando pequeños invertebrados y su llamado de alarma es muy reconocible. Nidifica en el suelo. La pose sobre la rama es una licencia artística del visor, no una representación de su lugar de nidificación.',
    fuente:'https://sib.gob.ar/especies/vanellus-chilensis'}
  };
  function bioma(x,y){
@@ -43,34 +43,32 @@
  function crear({escena,C,P,suelo,celdaEn,rios,lienzo,rumbo}){
   const raiz=new T.Group();raiz.name='Hábitat · tercer zoom';escena.add(raiz);raiz.visible=false;
   const escenaFauna=new T.Scene();escenaFauna.name='Fauna nítida';
+  const escenaFaunaFrente=new T.Scene();escenaFaunaFrente.name='Fauna delante del árbol';
   const tiempo={value:0},presencia={value:0};
   const material=new T.ShaderMaterial({vertexColors:true,vertexShader:`varying vec3 c;varying vec3 n;void main(){c=color;n=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
    fragmentShader:`varying vec3 c;varying vec3 n;void main(){float l=.73+.27*max(0.,dot(normalize(n),normalize(vec3(-.4,.8,1.))));gl_FragColor=vec4(c*l,1.);}`});
   const mesh=(geo,parent)=>{const m=new T.Mesh(geo,material);parent.add(m);return m;};
-  const venado=new T.Group();venado.name='Venado de las pampas · vóxeles';escenaFauna.add(venado);
-  mesh(parte([[0,.66,0,.49,.24,.20], [.34,.82,0,.15,.30,.13]],(x,y)=>y<.59?'#e7d2a3':'#b88e57'),venado);
-  const cabeza=new T.Group();cabeza.position.set(.4,1.01,0);venado.add(cabeza);
-  mesh(parte([[.08,.04,0,.21,.14,.12],[.22,-.02,0,.19,.075,.08]],(x,y)=>x>.31?'#392c21':y<-.035?'#eddfb9':'#ba955e',.04),cabeza);
-  mesh(parte([[-.015,.23,.13,.065,.19,.055],[-.015,.23,-.13,.065,.19,.055]],'#c9a675',.035),cabeza);
-  mesh(parte([[.12,.09,.115,.028,.032,.023],[.12,.09,-.115,.028,.032,.023]],'#211c16',.019),cabeza);
-  const piernas=[];
-  for(const x of [-.32,.31])for(const z of [-.145,.145]){
-   const p=new T.Group();p.position.set(x,.54,z);venado.add(p);piernas.push(p);
-   mesh(parte([[0,-.23,0,.055,.27,.055],[.025,-.49,0,.075,.045,.065]],(x,y)=>y<-.45?'#403326':'#ab8455',.035),p);
+  const cargador=new T.TextureLoader(),texturas={venado:[],tero:[],'tero-posado':[],'venado-bebiendo':[]};
+  let spritesListos=false;
+  const cargas=[];
+  for(const [id,total] of [['venado',6],['tero',4],['tero-posado',1],['venado-bebiendo',1]])for(let i=0;i<total;i++){
+   cargas.push(new Promise((resolve,reject)=>{const tex=cargador.load('assets/fauna/'+id+'-'+i+'.webp',resolve,undefined,reject);tex.encoding=T.LinearEncoding;texturas[id].push(tex);}));
   }
-  const cola=new T.Group();cola.position.set(-.48,.72,0);venado.add(cola);mesh(parte([[-.05,-.055,0,.095,.14,.07]],'#eadcbb',.04),cola);
-  const aves=[];
-  const geoAve=parte([[0,.49,0,.26,.18,.15],[.2,.70,0,.12,.12,.11],[-.29,.44,0,.16,.07,.09]],(x,y)=>y<.44?'#ede9d9':x>.06&&y<.6?'#252e2b':'#87988b',.04);
-  const geoPico=parte([[.34,.68,0,.105,.025,.024]],(x)=>x>.39?'#34312b':'#cf7a68',.018);
-  const geoOjos=parte([[.24,.73,.104,.024,.025,.018],[.24,.73,-.104,.024,.025,.018]],'#bc4a39',.015);
-  const geoCresta=parte([[.11,.85,0,.10,.025,.025]],'#26332d',.024);
-  const geoPatas=parte([[.04,.20,.08,.019,.18,.02],[.04,.20,-.08,.019,.18,.02],[.10,.025,.08,.09,.018,.025],[.10,.025,-.08,.09,.018,.025]],'#a86c65',.023);
-  const alasGeo=[-1,1].map(s=>parte([[-.08,0,s*.26,.30,.05,.33]],(x,y,z)=>Math.abs(z)>.32?'#28362e':Math.abs(z)>.22?'#e9e5d4':'#697d68',.04));
-  for(let i=0;i<7;i++){
-   const ave=new T.Group();ave.name='Tero · '+i;escenaFauna.add(ave);
-   for(const geo of [geoAve,geoPico,geoOjos,geoCresta,geoPatas])mesh(geo,ave);
-   const alas=[-1,1].map((s,k)=>{const a=new T.Group();a.position.set(0,.53,s*.08);ave.add(a);mesh(alasGeo[k],a);return a;});
-   aves.push({obj:ave,alas});
+  Promise.all(cargas).then(()=>{spritesListos=true;}).catch(error=>{console.error('No se pudieron cargar las ilustraciones de fauna',error);});
+  function animalSprite(id){
+   const obj=new T.Group(),imagen=new T.Sprite(new T.SpriteMaterial({map:texturas[id][0],transparent:true,alphaTest:.35,depthWrite:true}));
+   obj.name=id+' · ilustración animada';imagen.scale.setScalar(id==='venado'?1.6:2.);
+   imagen.center.set(.5,id==='venado'?.063:.44);obj.add(imagen);obj.userData.sprite=imagen;escenaFauna.add(obj);return obj;
+  }
+  const venado=animalSprite('venado');
+  const aves=Array.from({length:7},()=>({obj:animalSprite('tero')}));
+  aves.forEach((a,i)=>{a.delante=i===0||i%2===1;if(a.delante)escenaFaunaFrente.add(a.obj);});
+  aves[0].obj.userData.sprite.center.set(.56,.235);
+  aves[0].obj.userData.sprite.scale.setScalar(1.55);
+  function pose(obj,id,frame,respirar){
+   const imagen=obj.userData.sprite;
+   imagen.material.map=texturas[id][frame];imagen.scale.y=(id==='venado-bebiendo'?1.6/1.5:id==='venado'?1.6:id==='tero-posado'?1.55:2.)*(1+respirar);
+   obj.userData.frame=frame;
   }
   const F=window.MUSUQ_FORMAS;
   const matPasto=F.material({tiempo,rumbo:{value:rumbo||new T.Vector3(1,0,0)},fuerza:.2,aparicion:presencia});
@@ -109,13 +107,29 @@
     }
    }
    pastos.forEach(m=>{m.instanceMatrix.needsUpdate=true;m.instanceColor.needsUpdate=true;});
-   ruta=null;
-   for(let k=0;k<70;k++){
-    const p=base.clone().addScaledVector(direccion,-.25-azar(k+2)*.35).addScaledVector(derecha,.05+(azar(k+1)-.5)*.5);
+   ruta=null;let mejor=Infinity;
+   for(let k=0;k<450;k++){
+    const p=base.clone().addScaledVector(direccion,-.12-azar(k+2)*.48).addScaledVector(derecha,-.28-azar(k+1)*.60);
     const i=apto(p.x,p.z,.15);if(i===undefined)continue;
-    if(Array.from({length:20},(_,j)=>apto(p.x+Math.cos(j/20*Math.PI*2)*.075,p.z+Math.sin(j/20*Math.PI*2)*.05,.065)!==undefined).every(Boolean)){ruta={x:p.x,z:p.z,i};break;}
+    const distancia=distanciaRio(p.x,p.z),score=(Number.isFinite(distancia)?Math.abs(distancia-.17):1)+Math.abs(suelo(i)-base.y)*.6;
+    if(score>=mejor)continue;
+    if(Array.from({length:20},(_,j)=>apto(p.x+Math.cos(j/20*Math.PI*2)*.075,p.z+Math.sin(j/20*Math.PI*2)*.05,.065)===i).every(Boolean)){ruta={x:p.x,z:p.z,i};mejor=score;}
    }
    if(!ruta){const i=celdaEn(base.x,-base.z);if(i!==undefined)ruta={x:C.x[i],z:-C.y[i],i};}
+   let bebida=null,puntaje=Infinity;
+   for(const [ax,az,bx,bz] of detalles)for(let k=0;k<=12;k++){
+    const rx=ax+(bx-ax)*k/12,rz=az+(bz-az)*k/12;
+    const x=rx+derecha.x*.106,z=rz+derecha.z*.106;
+    const lado=(x-base.x)*derecha.x+(z-base.z)*derecha.z;
+    const prof=(x-base.x)*direccion.x+(z-base.z)*direccion.z;
+    if(lado>-.22||lado<-.95||prof>.15||prof<-.8)continue;
+    const i=apto(x,z,.04),ri=celdaEn(rx,-rz);if(i===undefined||ri===undefined||Math.abs(suelo(i)-suelo(ri))>.018)continue;
+    const pies=[-.022,.015,.08,.105].every(d=>{const j=celdaEn(x+derecha.x*d,-z-derecha.z*d);return j!==undefined&&Math.abs(suelo(j)-suelo(i))<.018&&distanciaRio(x+derecha.x*d,z+derecha.z*d)>.039;});
+    if(!pies)continue;
+    const s=Math.abs(lado+.52)+Math.abs(prof+.30)*.5;
+    if(s<puntaje){puntaje=s;bebida={x,z,i,bebe:true,rx,rz};}
+   }
+   if(bebida)ruta=bebida;
    venado.scale.setScalar(.145);aves.forEach((a,i)=>a.obj.scale.setScalar(i===0?.115:.10));
   }
   function abrir(id){
@@ -129,7 +143,7 @@
   }
   function cerrar(){if(!foco)return false;foco=null;panel.inert=true;panel.hidden=true;document.body.classList.remove('en-fauna');return true;}
   document.getElementById('fauna-volver').addEventListener('click',cerrar);botones.forEach(b=>b.addEventListener('click',()=>abrir(b.dataset.fauna)));
-  function actualizar({dt,instantaneo,zona,grupo,base,dir,cercania}){
+  function actualizar({dt,instantaneo,zona,grupo,base,dir,cercania,arbolVisual}){
    reducido=instantaneo;transicion=cercania;const activa=!!grupo&&!!zona&&cercania>.45;
    raiz.visible=activa;
    if(!activa){clave='';cerrar();zoom=0;controles.hidden=true;return;}
@@ -137,18 +151,38 @@
    if(nueva!==clave){cerrar();preparar(zona,grupo,base,dir);clave=nueva;}
    if(!reducido){reloj+=dt;edad+=dt;}else edad=Math.max(edad,8);
    tiempo.value=reducido?0:reloj;presencia.value=T.MathUtils.smoothstep(cercania,.45,.95);
-   venado.visible=zona.id===14&&!!ruta;aves.forEach(a=>a.obj.visible=zona.id===14);
+   venado.visible=spritesListos&&zona.id===14&&!!ruta;aves.forEach(a=>a.obj.visible=spritesListos&&zona.id===14);
+   botones.forEach(b=>b.disabled=!spritesListos);
    controles.hidden=zona.id!==14||!!foco||cercania<.94;
    if(zona.id!==14)return;
    const t=edad,anda=!foco||foco.id!=='venado';
-   if(ruta&&anda){const a=t*.28;venado.position.set(ruta.x+Math.cos(a)*.075,suelo(ruta.i)+.003,ruta.z+Math.sin(a)*.05);venado.rotation.y=Math.atan2(-Math.cos(a)*.05,-Math.sin(a)*.075);}
-   piernas.forEach((p,k)=>p.rotation.z=reducido||!anda?0:Math.sin(t*4+(k===0||k===3?0:Math.PI))*.20);
-   cabeza.rotation.z=reducido?0:Math.sin(t*.8)*.055;cola.rotation.x=reducido?0:Math.sin(t*2)*.15;
+   if(ruta?.bebe){
+    venado.position.set(ruta.x,suelo(ruta.i)+.010,ruta.z);venado.rotation.y=0;
+    venado.userData.sprite.center.set(.55,.08);venado.userData.sprite.scale.x=1.6;
+    pose(venado,'venado-bebiendo',0,reducido?0:Math.sin(t*2.3)*.005);
+   }else{
+    if(ruta&&anda){const a=t*.28;venado.position.set(ruta.x+Math.cos(a)*.075,suelo(ruta.i)+.003,ruta.z+Math.sin(a)*.05);}
+    venado.userData.sprite.center.set(.5,.063);
+    pose(venado,'venado',reducido||!anda?4:Math.floor(t*5)%4,reducido?0:Math.sin(t*2)*.009);
+   }
    aves.forEach((a,i)=>{
-    const e=Math.max(0,t-i*.24),f=clamp(e/4),s=f*f*(3-2*f);
-    if(i===0){if(foco?.id!=='tero'){a.obj.position.copy(origen).addScaledVector(direccion,.15*(1-s)-.37*s).addScaledVector(derecha,.31*s);a.obj.position.y+=.28+.22*s;}a.obj.rotation.y=-.5;}
-    else{a.obj.position.copy(origen).addScaledVector(direccion,.2+s*(.25+i*.06)).addScaledVector(derecha,s*((i%2?1:-1)*(.32+i*.12)));a.obj.position.y+=.28+s*(.75+i*.13)+Math.max(0,e-4)*.08;a.obj.visible=e<15&&e>0;}
-    a.alas.forEach((ala,k)=>ala.rotation.x=reducido?(-.15*(k?1:-1)):Math.sin(t*8+i*.7)*.85*(k?1:-1));
+    const e=Math.max(0,t-i*.38),f=clamp(e/(4+i*.12)),s=f*f*(3-2*f);
+    if(i===0){
+     if(foco?.id!=='tero'&&arbolVisual){
+      arbolVisual.updateMatrixWorld(true);
+      a.obj.position.set(grupo.id==='tala'?-.13:-.19,grupo.id==='tala'?.415:.376,.008);arbolVisual.localToWorld(a.obj.position);
+     }
+     const volando=foco?.id==='tero';
+     a.obj.userData.sprite.center.set(volando?.5:.56,volando?.44:.235);
+     a.obj.userData.sprite.scale.x=volando?2.:1.55;
+     pose(a.obj,volando?'tero':'tero-posado',volando?(reducido?1:[0,1,2,3,2,1][Math.floor(t*7)%6]):0,reducido?0:Math.sin(t*1.8)*.008);
+     return;
+    }
+    else{a.obj.position.copy(origen).addScaledVector(direccion,(a.delante?-.12:.2)+s*(a.delante?-.28:.48)).addScaledVector(derecha,(a.delante?-.14:.1)+s*((i%2?1:-1)*(.32+i*.12)));a.obj.position.y+=.28+s*(.75+i*.13)+Math.max(0,e-4)*.08;a.obj.visible=spritesListos&&e<15&&e>0;}
+    const secuencia=[0,1,2,3,2,1];
+    pose(a.obj,'tero',reducido?1:secuencia[Math.floor(t*7+i*1.7)%6],reducido?0:Math.sin(t*4+i)*.012);
+    a.obj.userData.sprite.scale.x=i%2?2.:-2.;
+    if(!spritesListos)a.obj.visible=false;
    });
   }
   function aplicarCamara(camara,dt){
@@ -174,7 +208,7 @@
     if(Math.hypot(event.clientX-px,event.clientY-py)<32){abrir(item.id);return true;}
    }return false;
   }
-  return {actualizar,aplicarCamara,detectar,cerrar,abrir,bioma,render(renderer,camara){if(raiz.visible)renderer.render(escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,activo:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:zonaActual?.id===14,foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray()})};
+  return {actualizar,aplicarCamara,detectar,cerrar,abrir,bioma,render(renderer,camara,delante=false){if(raiz.visible)renderer.render(delante?escenaFaunaFrente:escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,activo:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:zonaActual?.id===14,foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray(),distanciaVenadoRio:distanciaRio(venado.position.x,venado.position.z),venadoLateral:(venado.position.x-origen.x)*derecha.x+(venado.position.z-origen.z)*derecha.z,bandada:aves.slice(1).map(a=>({delante:a.delante,visible:a.obj.visible}))})};
  }
  window.MUSUQ_HABITAT={crear,bioma,fichas};
 })();

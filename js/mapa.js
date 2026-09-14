@@ -380,6 +380,7 @@
   rios.geo.setAttribute('activo', new THREE.BufferAttribute(activoRio, 1));
   const matRio = new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
+    extensions: { derivatives: true },
     uniforms: {
       azul: { value: new THREE.Color('#75a8b1') },
       claro: { value: new THREE.Color('#dce9e4') },
@@ -413,15 +414,31 @@
       void main() {
         vec3 c = mix(azul, claro, step(0.62, abs(vLado)));
         float detalleLocal=detalle*vActivo;
-        vec2 r=vec2(vLargo*2.1+tiempo*.0216,vLado*.34);
-        float corriente=ruido(vec3(r*1.3,tiempo*.012));
-        vec3 agua=mix(vec3(.21,.52,.57),vec3(.43,.73,.73),smoothstep(-.15,1.,abs(vLado)));
-        float fase=fract(vLargo*3.8-tiempo*.18+ruido(vec3(vPosRio.xz*4.,1.))* .13);
-        float cresta=(1.-smoothstep(.055,.12,abs(fase-.68)))*(1.-smoothstep(.1,.85,abs(vLado)));
-        float segmentos=smoothstep(.30,.65,ruido(vec3(vLargo*4.,vLado*.5,7.)));
-        float borde=smoothstep(.72,.96,abs(vLado))*(.38+.62*segmentos);
-        agua=mix(agua,vec3(.92,.98,.9),max(cresta*segmentos*.8,borde*.85));
-        agua*=1.+(1.-smoothstep(.01,.045,abs(corriente-.5)))*.06;
+        vec3 normalRio=normalize(cross(dFdx(vPosRio),dFdy(vPosRio)));
+        float caida=1.-smoothstep(.35,.85,abs(normalRio.y));
+        float lateral=vLado*.5+.5;
+        float carriles=mix(5.,13.,caida);
+        float carril=floor(lateral*carriles);
+        float semilla=fract(sin(carril*127.1)*43758.5453);
+        float viaje=mix(vLargo*3.8-tiempo*.40,vPosRio.y*7.+tiempo*1.35,caida);
+        float fase=fract(viaje+semilla*5.);
+        float hebra=(1.-smoothstep(.09,.23,abs(fract(lateral*carriles)-.5)));
+        float tramo=smoothstep(.03,.10,fase)*(1.-smoothstep(.35+semilla*.35,.46+semilla*.35,fase));
+        float fibra=hebra*tramo*step(.24,semilla);
+        vec2 uvAgua=vec2(lateral*3.6,vLargo*9.-tiempo*.55);
+        float manchas=ruido(vec3(uvAgua,3.));
+        float detalleEspuma=ruido(vec3(uvAgua*2.4+vec2(1.3,-tiempo*.12),8.));
+        float aa=max(fwidth(manchas),.008);
+        vec3 agua=mix(vec3(.10,.36,.91),vec3(.06,.69,.98),smoothstep(.39-aa,.39+aa,manchas));
+        agua=mix(agua,vec3(.25,.88,.98),smoothstep(.57-aa,.57+aa,manchas));
+        float islas=smoothstep(.68-aa,.68+aa,manchas)*smoothstep(.42,.48,detalleEspuma);
+        float orilla=.91+.045*sin(vLargo*23.-tiempo*.5)+.025*(detalleEspuma-.5);
+        float aaOrilla=max(fwidth(vLado),.012);
+        float borde=smoothstep(orilla-aaOrilla,orilla+aaOrilla,abs(vLado));
+        float espumaInterior=islas*(1.-smoothstep(.65,.90,abs(vLado)));
+        agua=mix(agua,mix(vec3(.06,.47,.86),vec3(.13,.79,.95),step(.48,manchas)),caida);
+        float blancos=max(borde*.92,mix(espumaInterior*.82,max(fibra*.95,espumaInterior*.4),caida));
+        agua=mix(agua,vec3(.85,.98,1.),blancos);
         c=mix(c,agua,detalleLocal);
         c = mix(c, vec3(dot(c, vec3(0.299, 0.587, 0.114))), enfoque * (1.0 - vActivo));
         gl_FragColor = vec4(min(c * (1.0 + 0.15 * enfoque * vActivo), vec3(1.0)), 1.0);
@@ -432,6 +449,41 @@
   mallaRios.frustumCulled = false;
   escena.add(mallaRios);
 
+  const pasosRio=[];
+  const indiceRio=rios.geo.index.array;
+  for(let k=0;k<indiceRio.length;k+=6){
+    const a=indiceRio[k],b=indiceRio[k+1];
+    if(rios.cuadroDe[a]!==rios.cuadroDe[b])pasosRio.push([a,b]);
+  }
+  const espumaPos=new Float32Array(pasosRio.length*18);
+  const espumaUV=new Float32Array(pasosRio.length*12);
+  const espumaActiva=new Float32Array(pasosRio.length*6);
+  const esquinasEspuma=[[-1,-1],[1,-1],[1,1],[-1,-1],[1,1],[-1,1]];
+  for(let k=0;k<pasosRio.length;k++)for(let j=0;j<6;j++)espumaUV.set(esquinasEspuma[j],k*12+j*2);
+  const geoEspuma=new THREE.BufferGeometry();
+  geoEspuma.setAttribute('position',new THREE.BufferAttribute(espumaPos,3).setUsage(THREE.DynamicDrawUsage));
+  geoEspuma.setAttribute('uv',new THREE.BufferAttribute(espumaUV,2));
+  geoEspuma.setAttribute('activo',new THREE.BufferAttribute(espumaActiva,1).setUsage(THREE.DynamicDrawUsage));
+  const matEspuma=new THREE.ShaderMaterial({
+    transparent:true,depthWrite:false,side:THREE.DoubleSide,
+    uniforms:{tiempo:matRio.uniforms.tiempo,detalle:matRio.uniforms.detalle},
+    vertexShader:`attribute float activo;varying vec2 vUv;varying float vActivo;varying vec3 vP;
+      void main(){vUv=uv;vActivo=activo;vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:ruidoGLSL+`uniform float tiempo;uniform float detalle;varying vec2 vUv;varying float vActivo;varying vec3 vP;
+      void main(){
+        float r=length(vUv),angulo=atan(vUv.y,vUv.x);
+        float fase=fract(r*2.5-tiempo*.75);
+        float arcos=(1.-smoothstep(.045,.11,abs(fase-.5)))*smoothstep(.15,.5,sin(angulo*5.+r*3.));
+        float n=ruido(vec3(vUv*8.,tiempo*.8));
+        float burbuja=(1.-smoothstep(.16,.52,r)) * smoothstep(.28,.53,n);
+        float alfa=max(arcos*.75,burbuja*.9)*(1.-smoothstep(.72,1.,r))*detalle*vActivo;
+        if(alfa<.01)discard;
+        gl_FragColor=vec4(.82,.98,.95,alfa);
+      }`
+  });
+  const espumaRios=new THREE.Mesh(geoEspuma,matEspuma);
+  espumaRios.frustumCulled=false;escena.add(espumaRios);
+
   function actualizarRios() {
     const pos = rios.geo.attributes.position.array;
     for (let v = 0; v < rios.cuadroDe.length; v++) {
@@ -441,6 +493,23 @@
     }
     rios.geo.attributes.position.needsUpdate = true;
     rios.geo.attributes.activo.needsUpdate = true;
+    for(let k=0;k<pasosRio.length;k++){
+      const [a,b]=pasosRio[k],bajo=pos[a*3+1]<pos[b*3+1]?a:b,alto=bajo===a?b:a;
+      const salto=pos[alto*3+1]-pos[bajo*3+1];
+      let dx=pos[bajo*3]-pos[alto*3],dz=pos[bajo*3+2]-pos[alto*3+2];
+      let d=Math.hypot(dx,dz);
+      if(d<.001){dx=pos[bajo*3+2]-pos[(bajo+1)*3+2];dz=pos[(bajo+1)*3]-pos[bajo*3];d=Math.hypot(dx,dz)||1;}
+      dx/=d;dz/=d;
+      const x=(pos[bajo*3]+pos[(bajo+1)*3])*.5,z=(pos[bajo*3+2]+pos[(bajo+1)*3+2])*.5;
+      for(let j=0;j<6;j++){
+        const [u,v]=esquinasEspuma[j],p=(k*6+j)*3;
+        espumaPos[p]=x+dx*(v*.07+.045)-dz*u*.032;
+        espumaPos[p+1]=pos[bajo*3+1]+.003;
+        espumaPos[p+2]=z+dz*(v*.07+.045)+dx*u*.032;
+        espumaActiva[k*6+j]=salto>.035?Math.max(activoRio[a],activoRio[b]):0;
+      }
+    }
+    geoEspuma.attributes.position.needsUpdate=true;geoEspuma.attributes.activo.needsUpdate=true;
   }
 
   function materialFrontera(frecuencia, relleno, opacidad) {
@@ -2252,6 +2321,19 @@
     return [x1 - x0, y1 - y0, -v.dot(ejes.adelante) * ppu];
   }
 
+  const ladoCartel = new THREE.Vector3();
+  const ejeCartelGirado = new THREE.Vector3();
+  const normalCartelGirada = new THREE.Vector3();
+  const cursorCartel = { x: 0, dentro: false };
+  let ultimoCartel = 0;
+  window.addEventListener('pointermove', (e) => {
+    cursorCartel.x = e.clientX;
+    cursorCartel.dentro = true;
+  }, { passive: true });
+  document.documentElement.addEventListener('mouseleave', () => {
+    cursorCartel.dentro = false;
+  });
+
   function orientacionCartel() {
     const [ax, ay] = aPantalla(0, 0, 0);
     const [bx, by] = aPantalla(ejes.derecha.x, ejes.derecha.y, ejes.derecha.z);
@@ -2268,10 +2350,18 @@
     }
     normalCartel.crossVectors(mejor, ejeY);
     const k = (anchoVista <= 700 ? 1.03 : 1.2) / ppu;
+    ladoCartel.copy(normalCartel).applyAxisAngle(ejeY, 0.1);
+    const sentido = proyectarVector(ladoCartel, ppu)[0] >= proyectarVector(normalCartel, ppu)[0] ? 1 : -1;
+    return { mejor, ppu, k, sentido, y: proyectarVector(abajoCartel, ppu).map((n) => n * k) };
+  }
+
+  function columnasCartel(base, angulo) {
+    ejeCartelGirado.copy(base.mejor).applyAxisAngle(ejeY, angulo * base.sentido);
+    normalCartelGirada.crossVectors(ejeCartelGirado, ejeY);
     return {
-      x: proyectarVector(mejor, ppu).map((n) => n * k),
-      y: proyectarVector(abajoCartel, ppu).map((n) => n * k),
-      z: proyectarVector(normalCartel, ppu).map((n) => n * k)
+      x: proyectarVector(ejeCartelGirado, base.ppu).map((n) => n * base.k),
+      y: base.y,
+      z: proyectarVector(normalCartelGirada, base.ppu).map((n) => n * base.k)
     };
   }
 
@@ -2404,6 +2494,9 @@
     const candidato = punteroAdentro ? grupoEnPantalla(puntero.x, puntero.y) : null;
     const vistos = new Set();
     const orientacion = orientacionCartel();
+    const rectLienzo = lienzo.getBoundingClientRect();
+    const suavidadGiro = 1 - Math.exp(-Math.min(0.05, Math.max(0, (ahora - ultimoCartel) / 1000)) * 7);
+    ultimoCartel = ahora;
     for (const grupo of bosques.grupos()) {
       vistos.add(grupo.clave);
       let c = carteles.get(grupo.clave);
@@ -2429,7 +2522,9 @@
       }
       if (c.giro) {
         const flota = movimientoReducido.matches ? 0 : Math.sin(ahora / 1000 * 0.9 + c.fase) * 3;
-        const { x, y, z } = orientacion;
+        const objetivoGiro = movimientoReducido.matches || !cursorCartel.dentro ? 0 : THREE.MathUtils.clamp((cursorCartel.x - rectLienzo.left - sx) / 180, -1, 1) * 0.7;
+        c.giroCursor = (c.giroCursor || 0) + (objetivoGiro - (c.giroCursor || 0)) * suavidadGiro;
+        const { x, y, z } = columnasCartel(orientacion, c.giroCursor);
         const ax = 96 * x[0] + 192 * y[0];
         const ay = 96 * x[1] + 192 * y[1];
         const az = 96 * x[2] + 192 * y[2];
@@ -2644,7 +2739,7 @@
     if (enArbol && arbolHeroe) {
       sitioHeroe(arbolHeroe, heroe.position, direccionHeroe);
     }
-    habitat?.actualizar({dt,instantaneo,zona:zonaFijada,grupo:enArbol?arbolHeroe:null,base:heroe.position,dir:direccionHeroe,cercania});
+    habitat?.actualizar({dt,instantaneo,zona:zonaFijada,grupo:enArbol?arbolHeroe:null,base:heroe.position,dir:direccionHeroe,cercania,arbolVisual:heroe});
     if(enArbol)habitat?.aplicarCamara(camaraCerca,dt);
     let opacidadHeroe = THREE.MathUtils.smoothstep(cercania, 0.5, 0.72);
     if (cambioArbol && cambioArbol.cambia) {
@@ -2712,6 +2807,8 @@
       habitat?.render(renderer,camaraCerca);
       renderer.clearDepth();
       renderer.render(escenaHeroe, camaraCerca);
+      renderer.clearDepth();
+      habitat?.render(renderer,camaraCerca,true);
       vientoVisible?.renderCerca(renderer, camaraCerca);
     }
     requestAnimationFrame(cuadroAnimacion);

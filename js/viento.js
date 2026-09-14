@@ -13,7 +13,7 @@
     attribute float lado;
     attribute vec3 origen;
     attribute vec4 forma;
-    attribute vec2 vida;
+    attribute vec3 vida;
     varying float vAlfa;
     vec3 camino(float t) {
       vec3 lateral = normalize(vec3(-rumbo.z, 0.0, rumbo.x));
@@ -36,9 +36,9 @@
       vec2 s1 = c1.xy / max(c1.w, 0.0001) * resolucion;
       vec2 d = s1 - s0;
       d = length(d) > 0.00001 ? normalize(d) : vec2(1.0, 0.0);
-      float grosor = ancho * (0.3 + 0.7 * a);
+      float grosor = ancho * (0.3 + 0.7 * a) * (0.55 + 0.45 * vida.z);
       c0.xy += vec2(-d.y, d.x) * lado * grosor * c0.w / resolucion;
-      vAlfa = a;
+      vAlfa = a * vida.z;
       gl_Position = c0;
     }
   `;
@@ -75,7 +75,7 @@
     geo.setAttribute('lado', new T.Float32BufferAttribute(lados, 1));
     const origen = new T.InstancedBufferAttribute(new Float32Array(cantidad * 3), 3);
     const forma = new T.InstancedBufferAttribute(new Float32Array(cantidad * 4), 4);
-    const vida = new T.InstancedBufferAttribute(new Float32Array(cantidad * 2).fill(-100), 2);
+    const vida = new T.InstancedBufferAttribute(new Float32Array(cantidad * 3).fill(-100), 3);
     for (const atributo of [origen, forma, vida]) {
       atributo.setUsage(T.DynamicDrawUsage);
     }
@@ -98,7 +98,7 @@
     const escena = new T.Scene();
     escena.add(malla);
     for (let i = 0; i < cantidad; i++) {
-      vida.setXY(i, -100, 1);
+      vida.setXYZ(i, -100, 1, 0);
     }
     return { escena, origen, forma, vida, uniforms, cantidad, fin: new Float32Array(cantidad) };
   }
@@ -119,7 +119,7 @@
       origen.addScaledVector(rumbo, -largo * 0.5);
       c.origen.setXYZ(i, origen.x, origen.y, origen.z);
       c.forma.setXYZW(i, largo, (0.25 + Math.random() * 0.5) * signo, Math.random() * 6.28, (Math.random() < 0.55 ? 1 : 0) * signo * (0.4 + Math.random() * 0.5));
-      c.vida.setXY(i, reloj + espera, duracion);
+      c.vida.setXYZ(i, reloj + espera, duracion, Math.random() < 0.45 ? 0.2 + Math.random() * 0.2 : 0.72 + Math.random() * 0.28);
       c.fin[i] = reloj + espera + duracion;
       c.origen.needsUpdate = true;
       c.forma.needsUpdate = true;
@@ -132,8 +132,8 @@
       }
       mapa.uniforms.tiempo.value = reloj;
       cerca.uniforms.tiempo.value = reloj;
-      mapa.uniforms.opacidad.value = instantaneo ? 0 : 0.5 * (1 - T.MathUtils.smoothstep(cercania, 0, 0.35));
-      cerca.uniforms.opacidad.value = instantaneo || !heroe ? 0 : 0.78 * T.MathUtils.smoothstep(cercania, 0.6, 1);
+      mapa.uniforms.opacidad.value = instantaneo ? 0 : 0.62 * (1 - T.MathUtils.smoothstep(cercania, 0, 0.35));
+      cerca.uniforms.opacidad.value = instantaneo || !heroe ? 0 : 0.92 * T.MathUtils.smoothstep(cercania, 0.6, 1);
       if (mapa.uniforms.opacidad.value > 0.001 && camaraMapa) {
         for (let i = 0; i < mapa.cantidad; i++) {
           if (reloj < mapa.fin[i]) {
