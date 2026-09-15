@@ -66,3 +66,4 @@ html[data-color=contraste] .vista-arbol__siguiente small{color:#fff}
 .panel__criterio{max-height:240px;transition:max-height .55s cubic-bezier(.22,.61,.36,1),min-height .55s cubic-bezier(.22,.61,.36,1),margin .55s cubic-bezier(.22,.61,.36,1),opacity .4s ease .12s}
 .panel--resumen .panel__criterio{max-height:0;min-height:0;margin-bottom:0;opacity:0;overflow:hidden;transition:max-height .45s cubic-bezier(.22,.61,.36,1),min-height .45s cubic-bezier(.22,.61,.36,1),margin .45s cubic-bezier(.22,.61,.36,1),opacity .2s ease}
 @media(prefers-reduced-motion:reduce){.panel__despliegue,.panel__criterio,.panel--resumen .panel__despliegue,.panel--resumen .panel__criterio{transition:none}}
+a.ficha__arboles{text-decoration:none;box-sizing:border-box}

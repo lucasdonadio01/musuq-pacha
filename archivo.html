@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Archivo por pueblo · Musuq Pacha</title><link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/fuente.css"><link rel="stylesheet" href="css/archivo.css?v=2">
+</head><body>
+<div class="fondo-archivo" id="fondo-archivo" aria-hidden="true"></div><div class="velo-archivo"></div>
+<header class="archivo-header"><a id="volver-mapa" href="index.html">← Volver al mapa</a><span>MUSUQ PACHA / ARCHIVO</span><button id="archivo-sonido" aria-pressed="false">Sonido activado</button></header>
+<main id="archivo-experiencia" aria-label="Archivo por pueblo">
+ <div class="identidad"><p>EL ARCHIVO DE</p><h1 id="pueblo-nombre">Cargando pueblo…</h1></div>
+ <div id="archivo-escena"><canvas id="archivo-lienzo" aria-hidden="true"></canvas><nav id="archivo-nodos" aria-label="Categorías del archivo"></nav></div>
+ <div id="centro-rueda"><span>COSMOVISIÓN</span><p>Ocho entradas a un territorio.</p></div>
+ <article id="archivo-lectura" hidden tabindex="-1" aria-labelledby="categoria-titulo">
+  <button id="cerrar-categoria">← Todas las categorías</button><p class="lectura-rotulo" id="categoria-pueblo"></p>
+  <h2 id="categoria-titulo"></h2><p id="categoria-intro"></p>
+  <p class="nota-revision">Archivo en construcción. Las asociaciones del relevamiento necesitan validación histórica y cultural.</p>
+  <section aria-label="Materiales del relevamiento"><h3>Materiales para explorar</h3><p id="materiales-nota"></p><div id="categoria-galeria"></div></section>
+ </article>
+ <div id="archivo-error" hidden><h2>No encontramos ese pueblo</h2><a href="index.html">Elegí un pueblo en el mapa</a></div>
+ <div class="archivo-controles"><button id="categoria-anterior" aria-label="Categoría anterior">↑</button><p><strong id="categoria-actual">Creencias</strong><span id="archivo-ayuda">Scrolleá o arrastrá para girar · Clic para abrir</span></p><button id="categoria-siguiente" aria-label="Categoría siguiente">↓</button></div>
+ <p id="archivo-estado" class="sr-only" role="status" aria-live="polite"></p>
+</main>
+<footer class="archivo-creditos">Imágenes del relevamiento · Clasificación provisional <a href="simbolos/">Generador de símbolos</a></footer>
+<noscript>Activá JavaScript para recorrer las categorías. <a href="index.html">Volver al mapa</a>.</noscript>
+<script src="js/three.min.js"></script><script src="js/archivo-datos.js?v=1"></script><script src="js/archivo-imagenes.js?v=2"></script><script src="js/archivo.js?v=5"></script>
+</body></html>

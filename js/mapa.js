@@ -1894,6 +1894,10 @@
       verArboles.dataset.zona = String(zona.id);
       verArboles.hidden = !window.MUSUQ_BOSQUES?.porZona?.[zona.id]?.length;
     }
+    const verArchivo = document.getElementById('ver-archivo');
+    if (verArchivo) {
+      verArchivo.href = 'archivo.html?pueblo=' + zona.id;
+    }
   }
 
   function activarZona(zona) {
@@ -2854,6 +2858,12 @@
       vientoVisible?.renderCerca(renderer, camaraCerca);
     }
     requestAnimationFrame(cuadroAnimacion);
+  }
+
+  const puebloInicial = zonas.find((z) => z.id === Number(new URLSearchParams(location.search).get('pueblo')));
+  if (puebloInicial) {
+    cambiarModo(true);
+    fijarZona(puebloInicial);
   }
 
   requestAnimationFrame(cuadroAnimacion);
