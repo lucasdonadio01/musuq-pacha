@@ -91,7 +91,7 @@
       login.setAttribute('aria-expanded',String(!perfil.hidden));
       login.title = 'Sesión demo';
     } else {
-      login.innerHTML = '<span class="nav__ingresar-texto">INICIAR SESIÓN</span>' + icono('flecha-derecha');
+      login.innerHTML = '<span class="nav__ingresar-texto">INICIAR</span>' + icono('login');
       login.setAttribute('aria-label','Iniciar sesión de demostración');
       login.removeAttribute('aria-controls'); login.removeAttribute('aria-expanded');
       login.title = 'Simular una sesión, sin cuenta real';
