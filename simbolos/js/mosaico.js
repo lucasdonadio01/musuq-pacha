@@ -26,6 +26,7 @@ const Mosaico = (() => {
   let cols = 0, filas = 0, tam = 100, ox = 0, oy = 0, ancho = 0, alto = 0;
   let hueco = { c0: 0, f0: 0, cw: 0, fh: 0 };
   let raf = 0, reloj = 0, vivo = false;
+  let quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
 
@@ -81,6 +82,7 @@ const Mosaico = (() => {
   }
 
   function fondoActual(b, ahora) {
+    if (quieto) return b.cA;
     const u = Math.max(0, Math.min(1, (ahora - b.tf) / CRUCE));
     return Motor.mezcla(b.cDe, b.cA, Motor.suave(u));
   }
@@ -138,8 +140,9 @@ const Mosaico = (() => {
     for (let f = 0; f < filas; f++) for (let c = 0; c < cols; c++) {
       if (tapada(c, f)) continue;
       const vieja = previas[i++];
-      if (vieja) { vieja.c = c; vieja.f = f; baldosas.push(vieja); continue; }
+      if (vieja) { vieja.c = c; vieja.f = f; vieja.motor.quieto = quieto; baldosas.push(vieja); continue; }
       const b = { c, f, motor: Motor.crear(LADO), cDe: [0, 0, 0], cA: [0, 0, 0], tf: 0, calor: 0 };
+      b.motor.quieto = quieto;
       const comb = combinacion();
       b.cDe = b.cA = Motor.aRgb(comb.fondo);
       b.tf = performance.now();
@@ -187,7 +190,7 @@ const Mosaico = (() => {
       // El calor no cae solo en la baldosa de abajo del cursor: se reparte a
       // las vecinas segun la distancia, y por eso el conjunto se levanta como
       // una ola. Sube de golpe y baja despacio, asi un barrido deja estela.
-      const encima = baldosaEn(raton.x, raton.y);
+      const encima = quieto ? null : baldosaEn(raton.x, raton.y);
       for (const b of baldosas) {
         let objetivo = 0;
         if (encima) {
@@ -236,7 +239,7 @@ const Mosaico = (() => {
   }
 
   function tanda() {
-    if (!vivo || !baldosas.length) return;
+    if (!vivo || quieto || cayendo || !baldosas.length) return;
     const ahora = performance.now();
     // la que estás mirando no se toca: mientras tengas el cursor encima,
     // esa generación se queda quieta
@@ -249,27 +252,66 @@ const Mosaico = (() => {
     [...elegidas].forEach((i, n) => regenerar(libres[i], ahora + n * 26));
   }
 
+  function programarTandas() {
+    clearInterval(reloj);
+    reloj = 0;
+    if (vivo && !quieto && !cayendo) reloj = setInterval(tanda, CADA);
+  }
+
+  function fijarQuieto(valor) {
+    const siguiente = Boolean(valor);
+    if (quieto === siguiente) return;
+    quieto = siguiente;
+    for (const b of baldosas) {
+      b.motor.quieto = quieto;
+      if (quieto) { b.calor = 0; b.cDe = b.cA; }
+    }
+    if (quieto) {
+      raton = { x: -1, y: -1 };
+      // Cambiar la preferencia durante la entrada no debe dejar su promesa pendiente.
+      if (cayendo) {
+        cayendo = false;
+        const listo = finCaida; finCaida = null;
+        if (listo) listo();
+      }
+    }
+    programarTandas();
+  }
+
+  function moverRaton(e) {
+    if (quieto) return;
+    const r = cv.getBoundingClientRect();
+    raton = { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function sacarRaton() { raton = { x: -1, y: -1 }; }
+
+  function regenerarDesdePuntero(e) {
+    const r = cv.getBoundingClientRect();
+    const b = baldosaEn(e.clientX - r.left, e.clientY - r.top);
+    if (b) regenerar(b, performance.now()); // Sigue siendo editable, sin transición si está quieto.
+  }
+
   function iniciar(canvas, elBloque) {
+    if (vivo) return;
     cv = canvas; bloque = elBloque; vivo = true;
     medir();
     addEventListener('resize', medir);
-    cv.addEventListener('pointermove', e => { const r=cv.getBoundingClientRect();raton = { x: e.clientX-r.left, y: e.clientY-r.top }; });
-    cv.addEventListener('pointerleave', () => { raton = { x: -1, y: -1 }; });
-    cv.addEventListener('pointerdown', e => {
-      const r=cv.getBoundingClientRect();const b = baldosaEn(e.clientX-r.left, e.clientY-r.top);
-      if (b) regenerar(b, performance.now());     // un click, una generación nueva
-    });
+    cv.addEventListener('pointermove', moverRaton);
+    cv.addEventListener('pointerleave', sacarRaton);
+    cv.addEventListener('pointerdown', regenerarDesdePuntero);
     raf = requestAnimationFrame(bucle);
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) reloj = setInterval(tanda, CADA);
+    programarTandas();
   }
 
   /* Se sueltan todas las baldosas. Devuelve una promesa que se cumple cuando
      la ultima salio de pantalla, para que quien entra al juego sepa cuando
      puede sacar la portada de encima. */
   function caer() {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+    if (quieto || !vivo) return Promise.resolve();
     if (cayendo) return Promise.resolve();
     clearInterval(reloj);                        // que no se regeneren cayendo
+    reloj = 0;
     raton = { x: -1, y: -1 };
     cayendo = true;
     arranqueCaida = ultimoCuadro = performance.now();
@@ -287,9 +329,19 @@ const Mosaico = (() => {
     vivo = false;
     cancelAnimationFrame(raf);
     clearInterval(reloj);
+    reloj = 0;
     removeEventListener('resize', medir);
+    cv?.removeEventListener('pointermove', moverRaton);
+    cv?.removeEventListener('pointerleave', sacarRaton);
+    cv?.removeEventListener('pointerdown', regenerarDesdePuntero);
+    cayendo = false;
+    const listo = finCaida; finCaida = null;
+    if (listo) listo();
+    raton = { x: -1, y: -1 };
     baldosas = [];
+    indice.clear();
   }
 
-  return { iniciar, detener, caer, get baldosas() { return baldosas; } };
+  return { iniciar, detener, caer, get baldosas() { return baldosas; },
+    get quieto() { return quieto; }, set quieto(valor) { fijarQuieto(valor); } };
 })();

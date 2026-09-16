@@ -1,77 +1,79 @@
 (function () {
+  'use strict';
+  if (window.MUSUQ_SONIDO) return;
   const clave = 'musuq-pacha.sonido.v1';
-  const botonesSonido = document.querySelectorAll('[data-audio=efectos]');
-  const botonesMusica = document.querySelectorAll('[data-audio=musica]');
-  const audioMapa = document.getElementById('audio-mapa');
-  let estado = { efectos: true, musica: true };
-  try {
-    const guardado = JSON.parse(localStorage.getItem(clave));
-    if (guardado) {
-      estado = { efectos: guardado.efectos !== false, musica: guardado.musica !== false };
-    }
-  } catch (e) {}
-
-  const musica = new Audio('sonidos/musica.mp3');
+  const scriptURL = document.currentScript?.src || new URL('js/sonido.js', location.href).href;
+  const audioExistente = document.getElementById('musica');
+  // El micrositio conserva Shasta; las otras secciones comparten la pista del mapa.
+  const musica = audioExistente || new Audio(new URL('../sonidos/musica.mp3', scriptURL).href);
   musica.loop = true;
   musica.preload = 'auto';
-  musica.volume = 0.18;
+  musica.volume = audioExistente ? 0.4 : 0.18;
+  let estado = { efectos: true, musica: true };
   let interactuo = false;
+  function normalizar(valor) {
+    return { efectos: valor?.efectos !== false, musica: valor?.musica !== false };
+  }
+  try { estado = normalizar(JSON.parse(localStorage.getItem(clave))); } catch (_) {}
 
   function guardar() {
-    try {
-      localStorage.setItem(clave, JSON.stringify(estado));
-    } catch (e) {}
+    try { localStorage.setItem(clave, JSON.stringify(estado)); } catch (_) {}
   }
-
   function sincronizar() {
-    botonesSonido.forEach((boton) => boton.setAttribute('aria-pressed', String(!estado.efectos)));
-    botonesMusica.forEach((boton) => boton.setAttribute('aria-pressed', String(!estado.musica)));
+    for (const tipo of ['efectos', 'musica']) {
+      document.querySelectorAll('[data-audio="' + tipo + '"]').forEach(boton => {
+        const etiqueta = (estado[tipo] ? 'Silenciar ' : 'Activar ') + (tipo === 'musica' ? 'música' : 'sonidos');
+        boton.setAttribute('aria-pressed', String(!estado[tipo]));
+        boton.setAttribute('aria-label', etiqueta);
+        boton.title = etiqueta;
+      });
+    }
+    musica.muted = !estado.musica;
     if (estado.musica && interactuo && !document.hidden) {
-      const promesa = musica.play();
-      if (promesa) {
-        promesa.catch(() => {});
-      }
-    } else {
-      musica.pause();
-    }
+      const intento = musica.play();
+      if (intento?.catch) intento.catch(() => {});
+    } else musica.pause();
   }
-
+  function notificar() {
+    window.dispatchEvent(new CustomEvent('musuq:sonido', { detail: {...estado} }));
+  }
+  function fijar(tipo, activo) {
+    if (!['efectos', 'musica'].includes(tipo) || typeof activo !== 'boolean') return;
+    estado[tipo] = activo;
+    guardar(); sincronizar(); notificar();
+    return estado[tipo];
+  }
+  function alternar(tipo) {
+    if (!['efectos', 'musica'].includes(tipo)) return;
+    return fijar(tipo, !estado[tipo]);
+  }
   window.MUSUQ_SONIDO = {
-    get efectos() {
-      return estado.efectos;
-    },
-    get musica() {
-      return estado.musica;
-    }
+    get efectos() { return estado.efectos; },
+    get musica() { return estado.musica; },
+    alternar, fijar, sincronizar
   };
-
-  botonesSonido.forEach((boton) => boton.addEventListener('click', () => {
-    estado.efectos = !estado.efectos;
-    guardar();
-    sincronizar();
-    window.dispatchEvent(new CustomEvent('musuq:sonido', { detail: { ...estado } }));
-  }));
-  botonesMusica.forEach((boton) => boton.addEventListener('click', () => {
-    estado.musica = !estado.musica;
-    guardar();
-    sincronizar();
-  }));
-  window.addEventListener('musuq:modo', (e) => {
-    if (audioMapa) {
-      audioMapa.hidden = !e.detail.explorando;
-    }
+  // Delegación única: también funciona con controles del editor montados después.
+  document.addEventListener('click', e => {
+    const boton = e.target.closest?.('button[data-audio]');
+    if (boton && !boton.disabled) alternar(boton.dataset.audio);
   });
-
+  window.addEventListener('musuq:modo', e => {
+    const audioMapa = document.getElementById('audio-mapa');
+    if (audioMapa) audioMapa.hidden = !e.detail.explorando;
+  });
   const primeraInteraccion = () => {
-    if (interactuo) {
-      return;
-    }
-    interactuo = true;
-    sincronizar();
+    if (interactuo && (!estado.musica || !musica.paused)) return;
+    interactuo = true; sincronizar();
   };
   for (const tipo of ['pointerdown', 'keydown', 'touchstart']) {
-    window.addEventListener(tipo, primeraInteraccion, { capture: true, passive: true });
+    window.addEventListener(tipo, primeraInteraccion, { capture:true, passive:true });
   }
+  window.addEventListener('storage', e => {
+    if (e.key !== clave) return;
+    try { estado = normalizar(JSON.parse(e.newValue)); sincronizar(); notificar(); } catch (_) {}
+  });
+  window.addEventListener('pagehide', () => musica.pause());
+  window.addEventListener('pageshow', sincronizar);
   document.addEventListener('visibilitychange', sincronizar);
   sincronizar();
 })();

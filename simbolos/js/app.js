@@ -133,31 +133,22 @@
     avisar.t = setTimeout(() => { if (estado.textContent === txt) estado.textContent = ''; }, 3600);
   }
 
-  /* ---------- música de fondo ----------
-     Ningún navegador deja arrancar audio solo, así que se engancha al primer
-     gesto: tocar una baldosa del mosaico ya alcanza, y si no, el botón de
-     empezar. Si el navegador igual la frena, se vuelve a intentar en el gesto
-     siguiente en vez de quedar muda para siempre. */
-  const musica = $('#musica');
-  musica.volume = 0.4;
-  let sonando = false;
-
-  function arrancarMusica() {
-    if (sonando) return;
-    sonando = true;
-    const intento = musica.play();
-    if (intento && intento.catch) intento.catch(() => { sonando = false; });
+  /* ---------- música compartida ----------
+     sonido.js administra #musica (Shasta), las preferencias y el primer gesto.
+     El botón del taller refleja ese mismo estado; no instala otro reproductor. */
+  const botonMusica = $('#sonido');
+  if (botonMusica) botonMusica.dataset.audio = 'musica';
+  function sincronizarMusica() {
+    if (!botonMusica) return;
+    const silenciada = window.MUSUQ_SONIDO?.musica === false;
+    botonMusica.querySelector('use')?.setAttribute('href', silenciada ? '#ic-mudo' : '#ic-sonido');
+    botonMusica.setAttribute('aria-pressed', String(silenciada));
+    botonMusica.setAttribute('title', silenciada ? 'Activar música' : 'Silenciar música');
+    botonMusica.setAttribute('aria-label', silenciada ? 'Activar música' : 'Silenciar música');
   }
-  addEventListener('pointerdown', arrancarMusica);
-
-  $('#sonido').addEventListener('click', e => {
-    const b = e.currentTarget;
-    musica.muted = !musica.muted;
-    b.querySelector('use').setAttribute('href', musica.muted ? '#ic-mudo' : '#ic-sonido');
-    b.setAttribute('aria-pressed', String(musica.muted));
-    b.setAttribute('title', musica.muted ? 'Activar música' : 'Silenciar música');
-    b.setAttribute('aria-label', musica.muted ? 'Activar música' : 'Silenciar música');
-  });
+  addEventListener('musuq:sonido', sincronizarMusica);
+  sincronizarMusica();
+  window.MUSUQ_SONIDO?.sincronizar();
 
   /* ---------- menú de pueblos (en mobile tapa la pantalla) ---------- */
   const menu = abrir => $('#menu').classList.toggle('abierto', abrir);
@@ -180,6 +171,7 @@
   }
 
   function ondaDesdeElSimbolo() {
+    if (Fondo.cfg.quieto) return;
     const r = lienzo.getBoundingClientRect();
     Fondo.onda(r.left + r.width / 2, r.top + r.height / 2);
   }
@@ -285,7 +277,7 @@
 
   const TECLAS = { q: 'pincel', w: 'borrador', e: 'seleccion', i: 'cuentagotas' };
   addEventListener('keydown', e => {
-    if (taller.hidden || overlay.open || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
+    if (taller.hidden || overlay.open || document.querySelector('dialog[open]') || e.target.closest?.('#header') || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
     const k = e.key.toLowerCase();
     if (e.key === 'Escape') { menu(false); abrirExport(false); }
     if (TECLAS[k]) { elegirModo(TECLAS[k]); avisar(TECLAS[k]); }
@@ -395,13 +387,22 @@
   $('#entrar').addEventListener('click', entrar);
 
   /* ---------- arranque ---------- */
+  const preferenciaMovimiento = matchMedia('(prefers-reduced-motion: reduce)');
+  function sincronizarMovimiento() {
+    const quieto = preferenciaMovimiento.matches || Boolean(window.MUSUQ_A11Y?.estado.detener);
+    Simbolo.quieto = quieto;
+    Fondo.cfg.quieto = quieto;
+    Mosaico.quieto = quieto;
+  }
+  addEventListener('musuq:accesibilidad', sincronizarMovimiento);
+  preferenciaMovimiento.addEventListener('change', sincronizarMovimiento);
   Simbolo.pueblo = pueblo;
-  Simbolo.quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
   aplicarFondo(pueblo.fondo);
   armarPueblos();
   armarPaleta();
   $('#puebloActual').textContent = pueblo.nombre;
   if (!Fondo.iniciar($('#fondo'))) $('#fondo').style.display = 'none';
+  sincronizarMovimiento();
   requestAnimationFrame(cuadro);
   Mosaico.iniciar($('#mosaico'), $('#bloque'));
   leerEnlace();addEventListener('hashchange',leerEnlace);

@@ -7,12 +7,16 @@
 <meta name="description" content="Generador de símbolos en grilla para los pueblos originarios argentinos. Musuq Pacha, TIF UADE 2026.">
 <link rel="stylesheet" href="css/fuente.css?v=18">
 <link rel="stylesheet" href="css/app.css?v=18">
-<link rel="stylesheet" href="css/comunidad.css?v=pixel-suave-1">
+<link rel="stylesheet" href="css/comunidad.css?v=main-1">
+
+<link rel="stylesheet" href="../css/accesibilidad.css?v=main-1">
+<link rel="stylesheet" href="../css/sonido.css?v=audio-3">
 <link rel="stylesheet" href="../css/pixel-botones.css?v=pixel-suave-1">
+<link rel="stylesheet" href="../css/header.css?v=main-1">
 </head>
 <body>
 <!-- La interfaz comparte la identidad del home; las paletas culturales y Motor permanecen intactos. -->
-<header class="comunidad-nav"><a class="comunidad-nav__marca" href="../index.html">MUSUQ PACHA</a><nav aria-label="Secciones"><a href="../index.html">TERRITORIO</a><a href="../archivo.html">ARCHIVO</a><a href="../index.html#comunidad">COMUNIDAD</a></nav><a class="comunidad-nav__volver" href="../index.html#comunidad"><svg class="ic" aria-hidden="true"><use href="#ic-volver"/></svg> Volver al home</a></header>
+<header class="nav site-header" id="header" data-seccion="simbolos"><a class="nav__marca" href="../index.html">MUSUQ PACHA</a></header>
 
 <!-- Iconos de Material Symbols, definidos una vez y reusados con <use> -->
 <svg class="defs" aria-hidden="true"><defs>
@@ -68,7 +72,7 @@
     <span class="icono icono--falso" title="Accesibilidad" aria-hidden="true">
       <svg class="ic"><use href="#ic-accesibilidad"/></svg>
     </span>
-    <button class="icono" id="sonido" aria-pressed="false" title="Silenciar música" aria-label="Silenciar música">
+    <button class="icono" id="sonido" data-audio="musica" aria-pressed="false" title="Silenciar música" aria-label="Silenciar música">
       <svg class="ic"><use href="#ic-sonido"/></svg>
     </button>
   </header>
@@ -144,11 +148,13 @@
 <script src="js/pueblos.js?v=18"></script>
 <script src="js/mapa.js?v=18"></script>
 <script src="js/motor.js?v=18"></script>
-<script src="js/fondo.js?v=18"></script>
+<script src="../js/header-plantilla.js?v=main-1"></script><script src="../js/header.js?v=main-1"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
+
+<script src="js/fondo.js?v=main-1"></script>
 <script src="js/simbolo.js?v=18"></script>
-<script src="js/mosaico.js?v=home-1"></script>
+<script src="js/mosaico.js?v=main-1"></script>
 <script src="../js/comunidad.js?v=home-1"></script>
-<script src="js/app.js?v=home-1"></script>
+<script src="js/app.js?v=main-1"></script>
 <script src="../js/pixel-botones.js?v=pixel-suave-1"></script>
 </body>
 </html>

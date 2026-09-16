@@ -8,7 +8,8 @@ const Fondo = (() => {
   const MAX_ONDAS = 10;
   const VIDA_ONDA = 2.6;
 
-  let cv, gl, prog, quad, u = {}, raf = 0, arranque = 0;
+  let cv, gl, prog, quad, u = {}, raf = 0;
+  let tiempo = 0, ultimoTiempo = 0;
   let ondas = [];
   let raton = [-9999, -9999];
   let cfg = { fondo: '#F2EDE5', tinta: '#DCD4C6', pixel: 9, densidad: 0, quieto: false };
@@ -108,7 +109,11 @@ const Fondo = (() => {
   }
 
   function dibujar(ahora) {
-    const t = (ahora - arranque) / 1000;
+    // El reloj visual se pausa, no solo la creación de ondas. Al reanudar
+    // continúa desde el mismo cuadro, sin adelantar ruido ni ondas existentes.
+    if (!cfg.quieto) tiempo += Math.max(0, ahora - ultimoTiempo) / 1000;
+    ultimoTiempo = ahora;
+    const t = tiempo;
     const dpr = medir();
     gl.useProgram(prog);
     gl.uniform2f(u.uRes, cv.width, cv.height);
@@ -133,7 +138,7 @@ const Fondo = (() => {
 
   function bucle(ahora) {
     const t = dibujar(ahora);
-    if (!cfg.quieto && t - (bucle.ultima || -99) > 2.4 + Math.random() * 1.6) {
+    if (!cfg.quieto && t - (bucle.ultima ?? -99) > 2.4 + Math.random() * 1.6) {
       bucle.ultima = t;
       onda(Math.random() * cv.clientWidth, Math.random() * cv.clientHeight);
     }
@@ -141,7 +146,8 @@ const Fondo = (() => {
   }
 
   function onda(x, y) {
-    ondas.push({ x, y, t: (performance.now() - arranque) / 1000 });
+    if (cfg.quieto) return;
+    ondas.push({ x, y, t: tiempo });
   }
 
   function iniciar(canvas) {
@@ -167,11 +173,12 @@ const Fondo = (() => {
     ['uRes', 'uTime', 'uPixel', 'uFondo', 'uTinta', 'uRaton', 'uDensidad', 'uOndas']
       .forEach(k => u[k] = gl.getUniformLocation(prog, k));
 
-    arranque = performance.now();
+    tiempo = 0;
+    ultimoTiempo = performance.now();
     cfg.quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    addEventListener('pointermove', e => { raton = [e.clientX, e.clientY]; }, { passive: true });
-    addEventListener('pointerleave', () => { raton = [-9999, -9999]; });
+    addEventListener('pointermove', e => { if (!cfg.quieto) raton = [e.clientX, e.clientY]; }, { passive: true });
+    addEventListener('pointerleave', () => { if (!cfg.quieto) raton = [-9999, -9999]; });
     addEventListener('pointerdown', e => onda(e.clientX, e.clientY), { passive: true });
 
     raf = requestAnimationFrame(bucle);

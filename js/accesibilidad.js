@@ -1,8 +1,10 @@
 (function () {
   'use strict';
+  if (window.MUSUQ_A11Y) return;
   const root = document.documentElement;
   const dialogo = document.getElementById('menu-accesibilidad');
   const form = document.getElementById('ajustes-accesibilidad');
+  if (!dialogo || !form) return;
   const estadoUI = document.getElementById('estado-accesibilidad');
   const clave = 'musuq-pacha.accesibilidad.v1';
   const defaults = {color:'normal',tamano:100,narrador:false,silenciado:false,velocidad:1,detener:false,enlaces:false,espaciado:false};
@@ -112,11 +114,14 @@
     document.querySelectorAll('[aria-controls="menu-accesibilidad"]').forEach(b=>b.setAttribute('aria-expanded','false'));
     origen?.focus({preventScroll:true});
     if(guardar&&estado.narrador&&!estado.silenciado){
-      const contenido=document.body.classList.contains('en-mapa')?document.querySelector('.panel__nombre').textContent+'. '+document.querySelector('.panel__criterio').textContent:document.getElementById('territorio-titulo').textContent+'. '+document.querySelector('.bajada').textContent;
+      const enMapa = document.body.classList.contains('en-mapa');
+      const titulo = enMapa ? document.querySelector('.panel__nombre') : document.querySelector('main h1') || document.querySelector('h1');
+      const descripcion = enMapa ? document.querySelector('.panel__criterio') : document.querySelector('main .bajada') || document.querySelector('#detalle:not([hidden]) #detalle-contexto');
+      const contenido = [titulo?.textContent, descripcion?.textContent].filter(Boolean).join('. ') || document.title;
       narrar(contenido,true);
     }
   }
-  for(const id of ['abrir-accesibilidad','accesibilidad-mapa'])document.getElementById(id).addEventListener('click',e=>abrir(e.currentTarget));
+  for(const id of ['abrir-accesibilidad','accesibilidad-mapa'])document.getElementById(id)?.addEventListener('click',e=>abrir(e.currentTarget));
   document.getElementById('cerrar-accesibilidad').addEventListener('click',()=>cerrar());
   dialogo.addEventListener('cancel',e=>{e.preventDefault();cerrar();});
   dialogo.addEventListener('click',e=>{if(e.target===dialogo){const r=dialogo.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cerrar();}});
@@ -145,7 +150,7 @@
   let esperaResize;
   window.addEventListener('resize',()=>{clearTimeout(esperaResize);esperaResize=setTimeout(escalarTexto,120);});
   window.addEventListener('storage',e=>{if(e.key===clave&&!dialogo.open){try{guardado=normalizar(JSON.parse(e.newValue));estado={...guardado};aplicar();}catch(_){}}});
-  window.addEventListener('musuq:modo',e=>{document.getElementById('accesibilidad-mapa').hidden=!e.detail.explorando;});
+  window.addEventListener('musuq:modo',e=>{const boton=document.getElementById('accesibilidad-mapa');if(boton)boton.hidden=!e.detail.explorando;});
 
   const buscarDialogo=document.getElementById('busqueda-global'),buscar=document.getElementById('buscar-global');
   const sinAcentos=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -160,8 +165,10 @@
     document.getElementById('busqueda-vacia').hidden=!!lista.children.length;
     escalarTexto();
   }
-  document.getElementById('abrir-busqueda')?.addEventListener('click',()=>{buscarDialogo.showModal();buscar.value='';resultados();buscar.focus();});buscar.addEventListener('input',resultados);
-  document.getElementById('ingresar').addEventListener('click',()=>document.getElementById('ingreso-prototipo').showModal());
+  if (buscarDialogo && buscar) {
+    document.getElementById('abrir-busqueda')?.addEventListener('click',()=>{buscarDialogo.showModal();buscar.value='';resultados();buscar.focus();});
+    buscar.addEventListener('input',resultados);
+  }
   document.querySelectorAll('[data-cerrar-dialogo]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
   document.querySelectorAll('svg:not(.iconos-sitio)').forEach(el=>{el.setAttribute('aria-hidden','true');el.setAttribute('focusable','false');});
   aplicar();
