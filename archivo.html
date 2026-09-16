@@ -1,26 +1,53 @@
 <!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Archivo por pueblo · Musuq Pacha</title><link rel="icon" href="data:,">
-<link rel="stylesheet" href="css/fuente.css"><link rel="stylesheet" href="css/archivo.css?v=2">
-</head><body>
-<div class="fondo-archivo" id="fondo-archivo" aria-hidden="true"></div><div class="velo-archivo"></div>
-<header class="archivo-header"><a id="volver-mapa" href="index.html">← Volver al mapa</a><span>MUSUQ PACHA / ARCHIVO</span><button id="archivo-sonido" aria-pressed="false">Sonido activado</button></header>
-<main id="archivo-experiencia" aria-label="Archivo por pueblo">
- <div class="identidad"><p>EL ARCHIVO DE</p><h1 id="pueblo-nombre">Cargando pueblo…</h1></div>
- <div id="archivo-escena"><canvas id="archivo-lienzo" aria-hidden="true"></canvas><nav id="archivo-nodos" aria-label="Categorías del archivo"></nav></div>
- <div id="centro-rueda"><span>COSMOVISIÓN</span><p>Ocho entradas a un territorio.</p></div>
- <article id="archivo-lectura" hidden tabindex="-1" aria-labelledby="categoria-titulo">
-  <button id="cerrar-categoria">← Todas las categorías</button><p class="lectura-rotulo" id="categoria-pueblo"></p>
-  <h2 id="categoria-titulo"></h2><p id="categoria-intro"></p>
-  <p class="nota-revision">Archivo en construcción. Las asociaciones del relevamiento necesitan validación histórica y cultural.</p>
-  <section aria-label="Materiales del relevamiento"><h3>Materiales para explorar</h3><p id="materiales-nota"></p><div id="categoria-galeria"></div></section>
- </article>
- <div id="archivo-error" hidden><h2>No encontramos ese pueblo</h2><a href="index.html">Elegí un pueblo en el mapa</a></div>
- <div class="archivo-controles"><button id="categoria-anterior" aria-label="Categoría anterior">↑</button><p><strong id="categoria-actual">Creencias</strong><span id="archivo-ayuda">Scrolleá o arrastrá para girar · Clic para abrir</span></p><button id="categoria-siguiente" aria-label="Categoría siguiente">↓</button></div>
- <p id="archivo-estado" class="sr-only" role="status" aria-live="polite"></p>
+<title>Archivo Querandí · Musuq Pacha</title><link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/fuente.css"><link rel="stylesheet" href="css/archivo-mesa.css?v=main-1">
+<link rel="stylesheet" href="css/archivo-transicion.css?v=viaje-1">
+<script src="js/archivo-transicion.js?v=viaje-1"></script>
+<link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
+<link rel="stylesheet" href="css/sonido.css?v=audio-3">
+<link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
+<link rel="stylesheet" href="css/header.css?v=header-figma-2">
+</head><body data-vista="mesa">
+<!-- THESIS: Una mesa que se recorre, con documentos que conservan su lugar al acercarse.
+OWN-WORLD: Papel claro rugoso sobre pequeños cuadrados sólidos. Space Grotesk, negro, naranja y violeta del home.
+STORY: Pueblo → montón abierto → documento levantado, con su fuente al lado.
+FIRST VIEWPORT: Ocho grupos sueltos, rótulos apoyados; la interfaz deja el centro a los materiales.
+FORM: Mesa cenital espacial, pedida por el usuario; una escena Three.js y una cámara continua. -->
+<!-- Google Material Icons, Apache 2.0. SVGs served locally; no icon font dependency. -->
+<svg class="iconos-sitio" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="i-zoom-in" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></symbol>
+<symbol id="i-zoom-out" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"/></symbol>
+<symbol id="i-360" viewBox="0 0 24 24"><path d="M12 7C6.48 7 2 9.24 2 12c0 2.24 2.94 4.13 7 4.77V20l4-4-4-4v2.73c-3.15-.56-5-1.9-5-2.73 0-1.06 3.04-3 8-3s8 1.94 8 3c0 .73-1.46 1.89-4 2.53v2.05c3.53-.77 6-2.53 6-4.58 0-2.76-4.48-5-10-5z"/></symbol>
+<symbol id="i-volver" viewBox="0 -960 960 960"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></symbol>
+<symbol id="i-siguiente" viewBox="0 -960 960 960"><path d="m647-440-224 224 57 56 320-320-320-320-57 56 224 224H160v80h487Z"/></symbol>
+<symbol id="i-flecha" viewBox="0 -960 960 960"><path d="m216-160-56-56 464-464H360v-80h400v400h-80v-264L216-160Z"/></symbol>
+<symbol id="i-volumen" viewBox="0 -960 960 960"><path d="M560-131v-82q90-26 145-100t55-168q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 127-78 224.5T560-131ZM120-360v-240h160l200-200v640L280-360H120Zm440 40v-322q47 22 73.5 66t26.5 96q0 51-26.5 94.5T560-320Z"/></symbol>
+<symbol id="i-silencio" viewBox="0 -960 960 960"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Z"/></symbol>
+</defs></svg>
+<header class="nav site-header" id="header" data-seccion="archivo"><a class="nav__marca" href="index.html">MUSUQ PACHA</a></header>
+<main id="archivo-experiencia">
+<canvas id="mesa-escena" tabindex="0" aria-label="Mesa de imágenes en tres dimensiones. Arrastrá para recorrerla. Rueda hacia adelante para acercar, hacia atrás para alejar y volver. También podés elegir las categorías con Tab."></canvas>
+<div class="archivo-titulo"><p>ARCHIVO DEL PUEBLO</p><h1 id="pueblo-nombre">Querandí<span>.</span></h1></div>
+<nav id="categoria-opciones" aria-label="Categorías del archivo"></nav>
+<div id="categoria-cabecera" hidden><button id="volver-mesa" class="pixel-button" aria-label="Volver a la mesa"><svg class="icon" aria-hidden="true"><use href="#i-volver"/></svg><span>Volver</span></button><p id="categoria-rotulo" class="sr-only"></p><h2 id="categoria-titulo" class="sr-only"></h2><p id="categoria-resumen" class="sr-only"></p></div>
+<div id="laminas-accesibles" class="acceso-teclado" aria-label="Documentos de la categoría" hidden></div>
+<div id="hover-etiqueta" hidden aria-hidden="true"></div>
+<aside id="detalle" hidden aria-labelledby="lamina-titulo">
+<button id="volver-categoria" class="pixel-button"><svg class="icon" aria-hidden="true"><use href="#i-volver"/></svg><span>Volver al montón</span></button>
+<div class="detalle-contenido"><p id="detalle-pueblo" class="rotulo"></p><h2 id="detalle-categoria"></h2><p id="detalle-contexto"></p><div id="detalle-fuentes" class="contexto-fuentes" role="group" aria-label="Fuentes de la descripción de la categoría"></div>
+<section class="ficha-lamina"><p id="lamina-tipo" class="rotulo"></p><h3 id="lamina-titulo" tabindex="-1"></h3><p id="lamina-descripcion"></p><p id="lamina-limite" class="nota-editorial"></p><p id="lamina-credito" class="credito"></p><p id="lamina-relacion" class="nota-editorial" hidden><a target="_blank" rel="noopener noreferrer">Leer el contexto comunitario</a></p><a id="lamina-fuente" class="pixel-button" target="_blank" rel="noopener noreferrer"><span>Consultar la fuente</span><svg class="icon" aria-hidden="true"><use href="#i-flecha"/></svg></a></section>
+<div class="detalle-navegacion"><button id="lamina-anterior" class="pixel-button" aria-label="Imagen anterior"><svg class="icon" aria-hidden="true"><use href="#i-volver"/></svg></button><span id="lamina-contador"></span><button id="lamina-siguiente" class="pixel-button" aria-label="Imagen siguiente"><svg class="icon" aria-hidden="true"><use href="#i-siguiente"/></svg></button></div></div>
+</aside>
+<div id="inspector-controles" role="group" aria-label="Controles de la imagen" hidden><button id="girar-imagen" type="button" class="pixel-button" aria-label="Girar la imagen 360 grados" title="Girar 360 grados"><svg class="icon" aria-hidden="true"><use href="#i-360"/></svg></button><button id="zoom-imagen" type="button" class="pixel-button" aria-label="Acercar imagen" title="Acercar imagen"><svg class="icon" aria-hidden="true"><use href="#i-zoom-in"/></svg></button></div>
+<div id="archivo-error" hidden><h2>No pudimos abrir la mesa 3D.</h2><p id="error-mensaje">Podés consultar los documentos en el índice.</p><button id="reintentar">Reintentar</button></div>
+<div id="archivo-cargando" role="status">Preparando la mesa…</div>
+<p id="archivo-estado" class="sr-only" role="status" aria-live="polite"></p>
 </main>
-<footer class="archivo-creditos">Imágenes del relevamiento · Clasificación provisional <a href="simbolos/">Generador de símbolos</a></footer>
-<noscript>Activá JavaScript para recorrer las categorías. <a href="index.html">Volver al mapa</a>.</noscript>
-<script src="js/three.min.js"></script><script src="js/archivo-datos.js?v=1"></script><script src="js/archivo-imagenes.js?v=2"></script><script src="js/archivo.js?v=5"></script>
+<noscript>Activá JavaScript para explorar la mesa. <a href="index.html">Volver al mapa</a>.</noscript>
+<script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script>
+<script src="js/header-plantilla.js?v=header-figma-2"></script><script src="js/header.js?v=header-figma-2"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
+<script src="js/pixel-botones.js?v=pixel-suave-1"></script>
+<script src="js/three.min.js"></script><script src="js/archivo-datos.js?v=1"></script><script src="js/archivo-coleccion.js?v=mesa-three-3"></script><script src="js/archivo-objetos.js?v=cultura-1"></script><script src="js/archivo-contextos.js?v=cultura-1"></script><script src="js/archivo-mesa.js?v=main-1"></script>
 </body></html>

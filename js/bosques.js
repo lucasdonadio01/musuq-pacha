@@ -120,7 +120,13 @@
     polvo.count=0;polvo.frustumCulled=false;polvo.instanceMatrix.setUsage(T.DynamicDrawUsage);grupo.add(polvo);
     opacidad.setUsage(T.DynamicDrawUsage);
     const obj=new T.Object3D(), direccion=new T.Vector3();
-    let arboles=[], seleccion=null, inicio=0, retirada=-1, reloj=0, brotado=false;
+    let arboles=[], seleccion=null, inicio=0, retirada=-1, reloj=0, brotado=false, filtro='todo';
+    const mostrarArboles=()=>filtro==='todo'||filtro==='arboles';
+    function filtrar(tipo='todo'){
+      filtro=['todo','arboles','construcciones','flora','fauna'].includes(tipo)?tipo:'todo';
+      grupo.visible=mostrarArboles()&&arboles.length>0;
+      return filtro;
+    }
 
     function plan(zona){
       if(planes.has(zona.id))return planes.get(zona.id);
@@ -209,10 +215,10 @@
       for(const m of [polvo,...Array.from(recortes.values(),r=>r.mesh)]){
         m.visible=m.count>0;m.instanceMatrix.needsUpdate=true;
       }
-      opacidad.needsUpdate=true;grupo.visible=arboles.length>0;
+      opacidad.needsUpdate=true;grupo.visible=mostrarArboles()&&arboles.length>0;
     }
     function grupos(){
-      if(retirada>=0)return [];
+      if(!mostrarArboles()||retirada>=0)return [];
       const porGrupo=new Map();
       for(const b of arboles){
         if(b.nacimiento===undefined||reloj<b.nacimiento+0.4||!recortes.get(b.id)?.listo)continue;
@@ -227,9 +233,9 @@
         delete g.miembros;return g;
       });
     }
-    return {seleccionar,actualizar,plan,grupos,estado:()=>({zona:seleccion?.id||null,arboles:arboles.length,polvo:polvo.count,
+    return {seleccionar,actualizar,plan,grupos,filtrar,estado:()=>({zona:seleccion?.id||null,filtro,arboles:arboles.length,polvo:polvo.count,
       especies:[...new Set(arboles.map(a=>a.id))],celdas:[...new Set(arboles.map(a=>a.i))],
-      visibles:Array.from(recortes.values()).reduce((s,r)=>s+r.mesh.count,0),
+      visibles:grupo.visible?Array.from(recortes.values()).reduce((s,r)=>s+r.mesh.count,0):0,
       texturas:Array.from(recortes,([id,r])=>({id,listo:r.listo,error:r.error,url:r.mesh.material.map?.image.src})),
       drawCalls:grupo.visible?grupo.children.filter(m=>m.visible).length:0})};
   }

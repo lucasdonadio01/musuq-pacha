@@ -11,10 +11,14 @@
 <link rel="stylesheet" href="css/fuente.css">
 <link rel="stylesheet" href="css/carteles-3d.css?v=nombres-centrados-3">
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
+<link rel="stylesheet" href="css/archivo-transicion.css?v=viaje-1">
 <link rel="stylesheet" href="css/home-comunidad.css?v=ranking-figma-1">
 <link rel="stylesheet" href="css/ranking-home.css?v=cta-hover-1">
 <link rel="stylesheet" href="css/visor-simbolo.css?v=visor-1">
+<link rel="stylesheet" href="css/mapa-social.css?v=comentarios-bounce-1">
+<link rel="stylesheet" href="css/flora-querandi.css?v=flora-zoom-1">
 <link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
+<script src="js/archivo-transicion.js?v=viaje-1"></script>
 <link rel="stylesheet" href="css/header.css?v=header-figma-2">
 </head>
 <body>
@@ -43,6 +47,14 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 <symbol id="i-musica" viewBox="0 -960 960 960"><path d="M287-167q-47-47-47-113t47-113q47-47 113-47 23 0 42.5 5.5T480-418v-422h240v160H560v400q0 66-47 113t-113 47q-66 0-113-47Z"/></symbol>
 <symbol id="i-info" viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></symbol>
 <symbol id="i-arbol" viewBox="0 -960 960 960"><path d="M558-80H402v-160H120l160-240h-80l280-400 280 400h-80l160 240H558v160ZM270-320h160-76 252-76 160-420Zm0 0h420L530-560h76L480-740 354-560h76L270-320Z"/></symbol><symbol id="i-flecha-derecha" viewBox="0 -960 960 960"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></symbol>
+<!-- Google Material Icons (Apache 2.0), official material-design-icons paths. -->
+<symbol id="i-location" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
+<symbol id="i-unlock" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></symbol>
+<symbol id="i-eco" viewBox="0 0 24 24"><path d="M6.05,8.05c-2.73,2.73-2.73,7.15-0.02,9.88c1.47-3.4,4.09-6.24,7.36-7.93c-2.77,2.34-4.71,5.61-5.39,9.32c2.6,1.23,5.8,0.78,7.95-1.37C19.43,14.47,20,4,20,4S9.53,4.57,6.05,8.05z"/></symbol>
 </defs></svg>
 <header class="nav site-header" id="header" data-seccion="territorio" data-home="true"><a class="nav__marca" href="index.html">MUSUQ PACHA</a></header>
 <main>
@@ -57,7 +69,7 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
     </div>
     <p class="mapa-invitacion">UN MAPA PARA EXPLORAR <svg aria-hidden="true"><use href="#i-flecha"/></svg></p>
     <div class="vista-arbol" id="vista-arbol" inert><article class="vista-arbol__carta" aria-live="polite"><button class="vista-arbol__volver" id="vista-arbol-volver" type="button" aria-label="Volver al territorio"><svg aria-hidden="true"><use href="#i-volver"/></svg></button><p class="vista-arbol__rotulo">ÁRBOL NATIVO</p><h2 class="vista-arbol__nombre" id="vista-arbol-nombre"></h2><p class="vista-arbol__cientifico" id="vista-arbol-cientifico"></p><p class="vista-arbol__descripcion" id="vista-arbol-descripcion"></p><p class="vista-arbol__tambien" id="vista-arbol-tambien"></p></article><button class="vista-arbol__siguiente" id="vista-arbol-siguiente" type="button"><svg class="vista-arbol__siguiente-arbol" aria-hidden="true"><use href="#i-arbol"/></svg><span class="vista-arbol__siguiente-texto"><strong id="vista-arbol-siguiente-nombre"></strong><small id="vista-arbol-siguiente-sub"></small></span><svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></button></div><div class="herramientas inmersivo" id="herramientas" inert>
-      <button id="salir-mapa" class="control" type="button"><svg aria-hidden="true"><use href="#i-volver"/></svg> Salir del mapa</button>
+      <button id="salir-mapa" class="control" type="button"><svg aria-hidden="true"><use href="#i-volver"/></svg> Volver</button>
       <div class="capas"><button id="boton-relieve" class="control" type="button" aria-pressed="false">Relieve <span class="interruptor" aria-hidden="true"></span></button><button id="boton-fronteras" class="control" type="button" aria-pressed="false">Argentina y provincias <span class="interruptor" aria-hidden="true"></span></button></div>
     </div>
     <div class="fauna-controles" id="fauna-controles" hidden><span>FAUNA DEL PASTIZAL · TOCÁ PARA ACERCARTE</span><button type="button" data-fauna="venado">Venado de las pampas</button><button type="button" data-fauna="tero">Tero</button></div>
@@ -96,11 +108,9 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script>
 <script src="js/header-plantilla.js?v=header-figma-2"></script><script src="js/header.js?v=header-figma-2"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
-<script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=carteles-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=teros-espejo-4"></script><script src="js/mapa.js?v=archivo-1"></script>
+<script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=mapa-social-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=mapa-social-2"></script><script src="js/flora-querandi.js?v=flora-zoom-1"></script><script src="js/mapa.js?v=flora-zoom-1"></script>
 <script src="js/comunidad.js?v=home-1"></script><script src="js/visor-simbolo.js?v=visor-1"></script><script src="js/home-comunidad.js?v=visor-1"></script>
 <script src="js/cta-patrones.js?v=cta-hover-1"></script>
+<script src="js/mapa-social.js?v=comentarios-bounce-1"></script>
 <script src="js/pixel-botones.js?v=pixel-suave-1"></script>
 </body></html>
-
-
-

@@ -1,0 +1,14 @@
+:root{--archivo-puente-color:#e9bd76;--archivo-puente-opacity:0}
+html.archivo-saliendo::after,html.archivo-llegando::after{content:'';position:fixed;inset:0;z-index:2147483646;background:var(--archivo-puente-color);pointer-events:auto}
+html.archivo-saliendo::after{opacity:var(--archivo-puente-opacity)}
+html.archivo-llegando{background:var(--archivo-puente-color)}
+html.archivo-llegando::after{opacity:1;transition:opacity .65s ease}
+html.archivo-revelando::after{opacity:0;pointer-events:none}
+/* Mantener la ficha dentro de pantallas bajas: desplazarse hasta el enlace no debe sacar del mapa. */
+body.en-mapa .territorio{min-height:0;height:100svh}
+body.en-mapa{position:fixed;inset:0;overflow:hidden}
+html.archivo-saliendo :is(#mapa-panel,#carteles-arboles,#selector,.herramientas){opacity:0;transition:opacity .25s;pointer-events:none}
+html.archivo-llegando .archivo-titulo,html.archivo-llegando .archivo-pie{opacity:0;transition:opacity .7s}
+html.archivo-revelando .archivo-titulo,html.archivo-revelando .archivo-pie{opacity:1}
+#archivo-puente-estado{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:2147483647;font:12px 'Space Grotesk',sans-serif;color:#222;padding:10px 16px;background:#faf7ef;pointer-events:none}
+@media(prefers-reduced-motion:reduce){html.archivo-llegando::after{transition:none}}
