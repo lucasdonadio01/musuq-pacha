@@ -1,8 +1,11 @@
 /* Interfaz del mapa · referencia pixel del usuario, sin cambiar la escena Three.js. */
 :root{--mapa-naranja:#F66227;--mapa-violeta:#9E6FF8;--mapa-carbon:#202020;--mapa-negro:#1a1a1a;--mapa-lima:#E0FF42;--mapa-header:var(--site-header-height,78px)}
+.mapa-hover-bloqueado{position:fixed;z-index:24;pointer-events:none;display:flex;align-items:center;gap:12px;width:250px;box-sizing:border-box;padding:13px 15px;background:#292929;color:#ddd;box-shadow:4px 6px 12px #0003;font-family:var(--fuente,'Space Grotesk',sans-serif)}
+.mapa-hover-bloqueado[hidden]{display:none}.mapa-hover-bloqueado svg{width:28px;height:28px;flex-shrink:0;fill:currentColor}.mapa-hover-bloqueado strong{display:block;font-size:14px;font-weight:500}.mapa-hover-bloqueado small{display:block;margin-top:4px;font-size:11px;color:#bbb}
 
 
 .en-mapa .audio-mapa,.en-mapa .acceso-mapa{display:none!important}
+.en-mapa.buscador-abierto #mapa-panel{display:none}
 .en-mapa .mapa-pie{pointer-events:none;bottom:12px;left:28px;right:280px;color:#fff;font-size:10px;text-shadow:0 1px 3px #0009}
 .en-mapa .mapa-pie>span:first-child{display:none}
 .en-mapa .herramientas{position:fixed;inset:auto 28px 22px auto;z-index:16;gap:12px;pointer-events:none}
@@ -75,7 +78,7 @@
 .comentario-demo--activo .comentario-demo__cuerpo{outline:2px solid var(--mapa-naranja);outline-offset:-2px}
 .mapa-marcadores{position:fixed;inset:0;pointer-events:none;z-index:9;overflow:hidden}.mapa-comentario-marker{position:absolute;left:0;top:0;pointer-events:auto;width:31px;height:31px;padding:2px;border:1px solid #ffa273;background:#f66227d9;opacity:.84;box-shadow:2px 5px 7px #0003;transform-origin:50% 100%;transition:opacity .2s}
 .mapa-comentario-marker:hover,.mapa-comentario-marker:focus-visible,.mapa-comentario-marker--abierto{opacity:1;z-index:10}.mapa-comentario-marker__globo{position:absolute;bottom:calc(100% + 9px);left:50%;transform:translate(-50%,4px);width:190px;text-align:left;background:#fffffff0;color:#202020;box-shadow:3px 5px 10px #0002;padding:10px 12px;font-size:11px;line-height:1.4;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s,transform .15s}
-.mapa-comentario-marker:hover .mapa-comentario-marker__globo,.mapa-comentario-marker:focus-visible .mapa-comentario-marker__globo,.mapa-comentario-marker--abierto .mapa-comentario-marker__globo{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.mapa-comentario-marker--abierto .mapa-comentario-marker__globo{opacity:1;visibility:visible;transform:translate(-50%,0)}
 .mapa-elementos{position:fixed;right:28px;bottom:30px;width:202px;padding:18px 20px;color:#fff;box-sizing:border-box;z-index:20}
 .mapa-elementos:before{left:5px;top:-17px;box-shadow:-21px 31px 0 -3px var(--mapa-carbon)}.mapa-elementos:after{right:23px;top:auto;bottom:-17px;box-shadow:17px 8px 0 -3px var(--mapa-carbon)}
 .mapa-elementos__titulo{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;padding:0;border:0;color:#fff;background:none;font:500 15px var(--fuente);min-height:25px;text-align:left}

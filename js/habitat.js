@@ -40,7 +40,7 @@
   const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(pos,3));geo.setAttribute('normal',new T.Float32BufferAttribute(nor,3));geo.setAttribute('color',new T.Float32BufferAttribute(col,3));
   geo.userData.voxeles=vox.size;return geo;
  }
- function crear({escena,C,P,suelo,celdaEn,rios,lienzo,rumbo}){
+ function crear({escena,C,P,suelo,celdaEn,rios,lienzo,rumbo,alAbrir}){
   const raiz=new T.Group();raiz.name='Hábitat · tercer zoom';escena.add(raiz);raiz.visible=false;
   const escenaFauna=new T.Scene();escenaFauna.name='Fauna nítida';escenaFauna.visible=false;
   const escenaFaunaFrente=new T.Scene();escenaFaunaFrente.name='Fauna delante del árbol';escenaFaunaFrente.visible=false;
@@ -86,16 +86,13 @@
   const detalles=[];const objetos=[{id:'venado',obj:venado,radio:.17},{id:'tero',obj:aves[0].obj,radio:.075}];
   const punto=new T.Vector3(),direccion=new T.Vector3(),derecha=new T.Vector3(),origen=new T.Vector3(),camPos=new T.Vector3(),camMira=new T.Vector3(),puntoFoco=new T.Vector3();
   const mat=new T.Object3D(),color=new T.Color();let clave='',zonaActual=null,grupoActual=null,edad=0,reloj=0,reducido=false,foco=null,zoom=0,transicion=0;let ruta=null,activa=false,filtro='todo';
-  const panel=document.getElementById('vista-fauna'),controles=document.getElementById('fauna-controles');
-  const botones=Array.from(document.querySelectorAll('[data-fauna]'));
+  const panel=document.getElementById('vista-fauna');
   const mostrarFauna=()=>activa&&(filtro==='todo'||filtro==='fauna')&&zonaActual?.id===14;
   function aplicarFiltro(){
    raiz.visible=activa&&(filtro==='todo'||filtro==='flora');
    const faunaVisible=mostrarFauna();
    escenaFauna.visible=escenaFaunaFrente.visible=faunaVisible;
    if(!faunaVisible){cerrar();zoom=0;venado.visible=false;aves.forEach(a=>a.obj.visible=false);}
-   botones.forEach(b=>b.disabled=!faunaVisible||!spritesListos);
-   controles.hidden=!faunaVisible||!!foco||transicion<.94;
   }
   function filtrar(tipo='todo'){
    filtro=['todo','arboles','construcciones','flora','fauna'].includes(tipo)?tipo:'todo';
@@ -155,14 +152,15 @@
   function abrir(id){
    if(!mostrarFauna()||!spritesListos||transicion<.94)return;
    const item=objetos.find(o=>o.id===id);if(!item||!item.obj.visible)return;
+   alAbrir?.();
    foco=item;camPos.copy(item.obj.position);item.obj.getWorldPosition(puntoFoco);puntoFoco.y+=id==='venado'?.105:.065;
    const f=fichas[id];for(const campo of ['nombre','cientifico','ambiente','texto'])document.getElementById('fauna-'+campo).textContent=f[campo];
    const a=document.getElementById('fauna-fuente');a.href=f.fuente;
-   panel.hidden=false;panel.inert=false;controles.hidden=true;document.body.classList.add('en-fauna');
+   panel.hidden=false;panel.inert=false;document.body.classList.add('en-fauna');
    document.getElementById('fauna-volver').focus({preventScroll:true});window.MUSUQ_A11Y?.narrar(f.nombre+'. '+f.texto);
   }
   function cerrar(){if(!foco)return false;foco=null;panel.inert=true;panel.hidden=true;document.body.classList.remove('en-fauna');return true;}
-  document.getElementById('fauna-volver').addEventListener('click',cerrar);botones.forEach(b=>b.addEventListener('click',()=>abrir(b.dataset.fauna)));
+  document.getElementById('fauna-volver').addEventListener('click',cerrar);
   function actualizar({dt,instantaneo,zona,grupo,base,dir,cercania,arbolVisual}){
    reducido=instantaneo;transicion=cercania;activa=!!grupo&&!!zona&&cercania>.45;
    if(!activa){clave='';aplicarFiltro();return;}
@@ -226,7 +224,7 @@
     if(Math.hypot(event.clientX-px,event.clientY-py)<32){abrir(item.id);return true;}
    }return false;
   }
-  return {actualizar,aplicarCamara,detectar,cerrar,abrir,bioma,filtrar,render(renderer,camara,delante=false){if(mostrarFauna())renderer.render(delante?escenaFaunaFrente:escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,filtro,activo:activa&&(raiz.visible||mostrarFauna()),flora:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:mostrarFauna(),foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray(),distanciaVenadoRio:distanciaRio(venado.position.x,venado.position.z),venadoLateral:(venado.position.x-origen.x)*derecha.x+(venado.position.z-origen.z)*derecha.z,bandada:aves.slice(1).map(a=>({delante:a.delante,visible:a.obj.visible}))})};
+  return {get seleccion(){return foco?.id||null;},get disponible(){return mostrarFauna()&&spritesListos&&transicion>=.94;},actualizar,aplicarCamara,detectar,cerrar,abrir,bioma,filtrar,render(renderer,camara,delante=false){if(mostrarFauna())renderer.render(delante?escenaFaunaFrente:escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,filtro,activo:activa&&(raiz.visible||mostrarFauna()),flora:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:mostrarFauna(),foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray(),distanciaVenadoRio:distanciaRio(venado.position.x,venado.position.z),venadoLateral:(venado.position.x-origen.x)*derecha.x+(venado.position.z-origen.z)*derecha.z,bandada:aves.slice(1).map(a=>({delante:a.delante,visible:a.obj.visible}))})};
  }
  window.MUSUQ_HABITAT={crear,bioma,fichas};
 })();

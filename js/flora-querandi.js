@@ -14,7 +14,7 @@
       fuente:'https://www.portalguarani.com/2015_roberto_quevedo__/17337_derrotero_y_viaje_al_rio_de_la_plata_y_paraguay__ulrico_schmidl__edicion_dirigida_y_prologada_por_roberto_quevedo__ano_1983.html',credito:'Schmidl · Derrotero y viaje, cap. 7 y nota 42',
       revision:'https://ri.conicet.gov.ar/bitstream/handle/11336/217904/CONICET_Digital_Nro.1bf865b5-f752-41c3-a51f-7beb8e9aa688_B.pdf?isAllowed=y&sequence=2#page=8'}
   ];
-  function crear({escena,lienzo,posicion,sueloCerca}) {
+  function crear({escena,lienzo,posicion,sueloCerca,alAbrir}) {
     const T=window.THREE,raiz=new T.Group(),escenaCerca=new T.Scene(),loader=new T.TextureLoader(),punto=new T.Vector3();
     raiz.name='Flora Querandí · ilustraciones documentadas';escena.add(raiz);
     let filtro='todo',activa=false,seleccion=null,ultimoBoton=null,camaraActual=null;
@@ -34,7 +34,7 @@
       return item;
     });
     function abrir(item){
-      if(!activa)return;seleccion=item;ultimoBoton=item.boton;const d=item.dato;
+      if(!activa||!item)return;alAbrir?.();seleccion=item;ultimoBoton=item.boton;const d=item.dato;
       ficha.querySelector('.flora-imagen').src='assets/flora/'+d.id+'.png';ficha.querySelector('.flora-imagen').alt='Ilustración interpretativa de '+d.nombre;
       ficha.querySelector('h2').textContent=d.nombre;ficha.querySelector('.flora-cientifico').textContent=d.cientifico;ficha.querySelector('.flora-texto').textContent=d.texto;ficha.querySelector('.flora-nota').textContent=d.nota;
       const a=ficha.querySelector('.flora-fuente');a.href=d.fuente;a.textContent='Fuente · '+d.credito;
@@ -46,7 +46,9 @@
     ficha.addEventListener('wheel',e=>e.stopPropagation(),{passive:true});ficha.addEventListener('touchmove',e=>e.stopPropagation(),{passive:true});
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&seleccion){e.stopImmediatePropagation();e.preventDefault();cerrar(true);} },true);
     return {
+      get seleccion(){return seleccion?.dato.id||null;},
       filtrar(tipo){filtro=tipo;if(!['todo','flora'].includes(tipo))cerrar();},cerrar,
+      abrir(id){abrir(nodos.find(n=>n.dato.id===id));},
       render(renderer,camara){if(activa&&raiz.parent===escenaCerca)renderer.render(escenaCerca,camara);},
       detectar(e){
         if(!activa||!camaraActual)return false;

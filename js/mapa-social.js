@@ -69,6 +69,7 @@
   }
   function abrirBuscador(valor, enfocar = true) {
     abierto = valor;
+    document.body.classList.toggle('buscador-abierto', valor);
     selector.classList.toggle('selector--abierto', valor);
     selector.querySelector('.buscador-trigger').setAttribute('aria-expanded', String(valor));
     const contenido = selector.querySelector('.selector__contenido'); contenido.inert = !valor;
@@ -129,6 +130,8 @@
     const criterio = panel.querySelector('.panel__criterio');
     if (criterio) criterio.classList.add('ficha-ubicacion');
     protegerScroll(panel);
+    const siguiente=document.getElementById('vista-arbol-siguiente');
+    document.getElementById('vista-arbol-descripcion')?.after(siguiente);
   }
   function construirComentarios() {
     panelComentarios = crear('aside', 'mapa-comentarios'); panelComentarios.id = 'mapa-comentarios'; panelComentarios.setAttribute('aria-label', 'Comentarios de ejemplo');
@@ -180,21 +183,27 @@
       detalle.append(crear('span','mapa-globo__texto',dato.texto),cifras);globo.append(firma,detalle);marker.append(globo);
       marker.setAttribute('aria-expanded','false');
       const pausar = ()=>{marker.getAnimations().forEach(a=>a.cancel());};
-      marker.addEventListener('pointerenter',pausar);marker.addEventListener('focus',pausar);
-      marker.addEventListener('click', () => {
-        document.querySelectorAll('.comentario-demo--activo').forEach(el => el.classList.remove('comentario-demo--activo'));
-        fila.classList.add('comentario-demo--activo');
-        listaComentarios.scrollTop = fila.offsetTop - listaComentarios.offsetTop;
-        const abrir=!marker.classList.contains('mapa-comentario-marker--abierto');
-        marcadores.forEach(m=>{m.marker.classList.remove('mapa-comentario-marker--abierto');m.marker.setAttribute('aria-expanded','false');});
-        marker.classList.toggle('mapa-comentario-marker--abierto',abrir);marker.setAttribute('aria-expanded',String(abrir));
+      const cerrar = ()=>{marker.classList.remove('mapa-comentario-marker--abierto');marker.setAttribute('aria-expanded','false');};
+      const mostrar = ()=>{
+        pausar();
+        marcadores.forEach(m=>m.cerrar());
+        marker.classList.add('mapa-comentario-marker--abierto');marker.setAttribute('aria-expanded','true');
+      };
+      // El clic no fija el globo. En pantallas táctiles se lee desde el panel.
+      marker.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')mostrar();});
+      marker.addEventListener('pointerleave',cerrar);
+      marker.addEventListener('pointercancel',cerrar);
+      marker.addEventListener('focus',()=>{if(marker.matches(':focus-visible'))mostrar();});
+      marker.addEventListener('blur',cerrar);
+      marker.addEventListener('keydown',e=>{
+        if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cerrar();marker.blur();}
       });
-      marker.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();marker.classList.remove('mapa-comentario-marker--abierto');marker.setAttribute('aria-expanded','false');marker.blur();}});
-      capaComentarios.append(marker); marcadores.push({dato, marker, zona:null,proximo:performance.now()+2000+i*1750,animacion:null});
+      capaComentarios.append(marker); marcadores.push({dato, marker, cerrar, zona:null,proximo:performance.now()+2000+i*1750,animacion:null});
     });
     toggle.addEventListener('click', () => {
       comentariosActivos = !comentariosActivos;
       detenerRebotes();
+      marcadores.forEach(m=>m.cerrar());
       toggle.setAttribute('aria-pressed', String(comentariosActivos));
       panelComentarios.classList.toggle('mapa-comentarios--oculto', !comentariosActivos);
       listaComentarios.hidden = !comentariosActivos; aviso.hidden = !comentariosActivos;
@@ -252,12 +261,25 @@
     });
     estadoFiltros = crear('p', 'mapa-elementos__estado'); estadoFiltros.hidden = true; estadoFiltros.setAttribute('aria-live','polite');
     filtros.append(titulo, opciones, estadoFiltros); document.body.append(filtros); protegerScroll(filtros);
+    const especies=crear('div','mapa-especies');especies.id='especies-opciones';especies.hidden=true;
+    for(const [tipo,datos] of [['fauna',Object.entries(window.MUSUQ_HABITAT?.fichas||{}).map(([id,d])=>({id,nombre:d.nombre}))],['flora',window.MUSUQ_FLORA?.plantas||[]]]){
+      const grupo=crear('div','mapa-especies__grupo');grupo.append(crear('p','mapa-especies__rotulo',tipo==='fauna'?'Animales':'Plantas'));
+      datos.forEach(d=>{
+        const b=crear('button','mapa-especie');b.type='button';b.dataset.especie=d.id;b.dataset.tipo=tipo;b.setAttribute('aria-pressed','false');
+        b.innerHTML=(tipo==='flora'?icono('eco'):`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${trazos.fauna}"/></svg>`);
+        b.append(crear('span','',d.nombre));
+        b.addEventListener('click',()=>ui?.verEspecie(tipo,d.id));grupo.append(b);
+      });especies.append(grupo);
+    }
+    const vacio=crear('p','mapa-especies__vacio','Todavía no hay especies disponibles en esta vista.');vacio.hidden=true;especies.append(vacio);
+    filtros.append(especies);
+    titulo.addEventListener('click',()=>{especies.inert=filtros.classList.contains('mapa-elementos--cerrado');});
     if (matchMedia('(max-width:760px)').matches) { filtros.classList.add('mapa-elementos--cerrado'); titulo.setAttribute('aria-expanded','false'); opciones.inert = true; }
   }
   function actualizarEstado() {
     if (!iniciado || !ui) return;
     const estado = ui.estado();
-    const clave = [estado.explorando, estado.zonaId, estado.nivel, estado.arbol, sesion].join('|');
+    const clave = [estado.explorando, estado.zonaId, estado.nivel, estado.arbol, estado.fauna, estado.faunaLista, estado.flora, estado.filtro, sesion].join('|');
     if (clave === estadoAnterior) return;
     estadoAnterior = clave;
     if (estado.zonaId && !document.body.classList.contains('mapa-con-pueblo') && matchMedia('(max-width:760px)').matches) {
@@ -270,6 +292,21 @@
     const mostrarElementos = estado.explorando && !!estado.zonaId;
     filtros.hidden = !mostrarElementos; filtros.inert = !mostrarElementos;
     filtros.classList.toggle('mapa-ui-activo', mostrarElementos);
+    const detalle=estado.nivel>=2,especies=filtros.querySelector('.mapa-especies'),opciones=filtros.querySelector('fieldset'),titulo=filtros.querySelector('.mapa-elementos__titulo');
+    filtros.classList.toggle('mapa-elementos--especies',detalle);
+    filtros.setAttribute('aria-label',detalle?'Fauna & flora':'Filtrar elementos del mapa');
+    titulo.querySelector('span').textContent=detalle?'Fauna & flora':'Elementos';
+    titulo.setAttribute('aria-controls',detalle?'especies-opciones':'elementos-opciones');
+    opciones.hidden=detalle;especies.hidden=!detalle;
+    especies.inert=!detalle||filtros.classList.contains('mapa-elementos--cerrado');
+    estadoFiltros.hidden=detalle||!estadoFiltros.textContent;
+    especies.querySelectorAll('.mapa-especies__grupo').forEach(g=>g.hidden=estado.zonaId!==14);
+    especies.querySelector('.mapa-especies__vacio').hidden=estado.zonaId===14;
+    especies.querySelectorAll('[data-especie]').forEach(b=>{
+      b.setAttribute('aria-pressed',String(estado[b.dataset.tipo]===b.dataset.especie));
+      b.disabled=b.dataset.tipo==='fauna'&&!estado.faunaLista;
+    });
+    opciones.querySelectorAll('input').forEach(input=>input.checked=input.value===estado.filtro);
     const zona = ui.zonas.find(z => z.id === estado.zonaId);
     const badge = document.getElementById('ficha-progreso');
     if (badge) {
@@ -285,7 +322,7 @@
       const visibles = estado.explorando && Number(estado.nivel) < 2;
       for (const m of marcadores) {
         if (!m.zona) m.zona = ui.zonas.find(z => normalizar(z.nombre).includes(m.dato.pueblo));
-        if (!visibles || !m.zona || (estado.zonaId && estado.zonaId !== m.zona.id)) { m.marker.hidden = true; m.animacion?.cancel(); continue; }
+        if (!visibles || !m.zona || (estado.zonaId && estado.zonaId !== m.zona.id)) { m.marker.hidden = true; m.cerrar(); m.animacion?.cancel(); continue; }
         const p = ui.proyectarZona(m.zona.id, m.dato.dx, m.dato.dz);
         const mostrar = p?.visible && p.x > 22 && p.x < innerWidth - 22 && p.y > document.getElementById('header').getBoundingClientRect().bottom + 12 && p.y < innerHeight - 34;
         m.marker.hidden = !mostrar;
@@ -299,7 +336,7 @@
             m.animacion=m.marker.animate([{translate:'0 0',offset:0},{translate:'0 -6px',offset:.32},{translate:'0 0',offset:.60},{translate:'0 -2px',offset:.79},{translate:'0 0',offset:1}],{duration:850,easing:'cubic-bezier(.37,0,.63,1)'});
             m.proximo=ahora+14000+Math.random()*12000;siguienteRebote=ahora+1600+Math.random()*1100;
           }
-        }else m.animacion?.cancel();
+        }else {m.cerrar();m.animacion?.cancel();}
       }
       actualizarEstado();
     }

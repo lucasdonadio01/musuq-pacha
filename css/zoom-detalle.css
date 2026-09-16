@@ -1,0 +1,48 @@
+/* Zoom 2 / 3: fichas de la misma familia visual que el territorio. */
+.en-mapa :is(.vista-arbol__carta,.vista-fauna),.en-arbol .flora-ficha{
+  box-sizing:border-box;background:var(--mapa-carbon);color:#fff;border:0;border-radius:0;
+  padding:26px 26px 30px;box-shadow:7px 9px 18px #0003;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,calc(100% - 16px) 12px,100% 12px,100% 100%,12px 100%,12px calc(100% - 12px),0 calc(100% - 12px));
+  scrollbar-width:thin;scrollbar-color:var(--mapa-violeta) var(--mapa-carbon);
+}
+.en-mapa .vista-arbol__carta,.en-mapa .vista-fauna{
+  left:clamp(28px,4vw,64px);bottom:64px;width:min(380px,calc(100vw - 56px));
+  max-height:calc(100svh - var(--mapa-header) - 105px);
+}
+.en-mapa :is(.vista-arbol__nombre,#fauna-nombre){color:var(--mapa-lima);font-size:clamp(32px,3vw,46px);font-weight:500;line-height:1.08;margin:8px 0}
+.en-mapa :is(.vista-arbol__rotulo,.fauna__rotulo){color:#c8acff;font-size:10px;letter-spacing:.06em}
+.en-mapa :is(.vista-arbol__cientifico,#fauna-cientifico){color:#c8acff;font-size:12px;margin:8px 0 18px}
+.en-mapa :is(.vista-arbol__descripcion,#fauna-texto){color:#fff;font-size:13px;line-height:1.65}
+.en-mapa :is(.vista-arbol__tambien,#fauna-ambiente){color:#ccc;border-color:#545454;font-size:11px;line-height:1.5}
+.en-mapa .vista-fauna .fauna__nota{color:#bbb;font-size:11px;line-height:1.55}
+.en-mapa #fauna-fuente{color:#c8acff;display:inline-block;margin-top:8px}
+.en-mapa :is(.vista-arbol__volver,#fauna-volver){background:var(--mapa-naranja);color:var(--mapa-negro);border-radius:0;min-height:44px;min-width:44px;margin-bottom:20px}
+.en-mapa :is(.vista-arbol__volver,#fauna-volver):hover{background:#fff;color:var(--mapa-negro)}
+.en-mapa .vista-arbol__siguiente{
+  position:static;inset:auto;transform:none;width:100%;margin:22px 0 0;
+  padding:14px 16px;gap:12px;min-height:64px;justify-content:space-between;
+}
+.en-mapa .vista-arbol__siguiente strong{font-size:17px}.en-mapa .vista-arbol__siguiente small{font-size:11px;line-height:1.4}
+.en-mapa :is(.vista-arbol,.vista-fauna,.mapa-especies) :focus-visible{outline:2px solid var(--mapa-naranja);outline-offset:3px}
+.en-arbol .flora-ficha{left:clamp(28px,4vw,64px);right:auto;top:auto;bottom:64px;width:min(380px,calc(100vw - 56px));max-height:calc(100svh - var(--mapa-header) - 105px)}
+.en-arbol .flora-imagen{width:120px;height:110px;margin:10px auto}
+.en-arbol .flora-texto{font-size:13px;line-height:1.65}
+.en-mapa .mapa-elementos--especies{width:240px;right:28px;bottom:40px;top:auto;left:auto}
+.mapa-especies{max-height:calc(100svh - var(--mapa-header) - 170px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--mapa-violeta) var(--mapa-carbon)}
+.mapa-especies__rotulo{font-size:10px;color:#c8acff;margin:20px 0 7px}
+.mapa-especie{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:10px 8px;border:0;background:transparent;color:#fff;text-align:left;font:500 12px/1.4 var(--fuente,'Space Grotesk',sans-serif);cursor:pointer}
+.mapa-especie svg{color:var(--mapa-violeta)}
+.mapa-especie[aria-pressed=true]{background:#3b304d}.mapa-especie[aria-pressed=true] svg{color:var(--mapa-lima)}
+.mapa-especie:hover{background:#fff;color:#1a1a1a}.mapa-especie:hover svg{color:#1a1a1a}
+.mapa-especie:disabled{opacity:.45;cursor:wait}
+.mapa-especies__vacio{font-size:12px;line-height:1.5;color:#ccc}
+.mapa-especies[hidden],.mapa-especies [hidden],.mapa-elementos--especies fieldset,.mapa-elementos--cerrado .mapa-especies{display:none}
+@media(max-width:760px){
+  .en-mapa .mapa-elementos--especies{top:calc(var(--mapa-header) + 20px);right:20px;left:auto;bottom:auto;width:min(230px,calc(100vw - 40px));padding:14px 16px}
+  .mapa-especies{max-height:29svh}.mapa-especies__rotulo{margin-top:12px}
+  .en-mapa .vista-arbol__carta,.en-mapa .vista-fauna,.en-arbol .flora-ficha{left:20px;right:20px;bottom:68px;width:auto;max-height:39svh;padding:20px 20px 26px}
+  .en-mapa :is(.vista-arbol__nombre,#fauna-nombre){font-size:32px}
+  .en-mapa :is(.vista-arbol__volver,#fauna-volver){margin-bottom:12px}
+  .en-mapa .vista-arbol__siguiente{position:static;margin-top:16px;min-height:60px}
+  .en-arbol .flora-imagen{float:right;width:85px;height:85px;margin:26px 0 12px 12px}
+}

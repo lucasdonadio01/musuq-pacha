@@ -15,8 +15,9 @@
 <link rel="stylesheet" href="css/home-comunidad.css?v=ranking-figma-1">
 <link rel="stylesheet" href="css/ranking-home.css?v=cta-hover-1">
 <link rel="stylesheet" href="css/visor-simbolo.css?v=visor-1">
-<link rel="stylesheet" href="css/mapa-social.css?v=comentarios-bounce-1">
+<link rel="stylesheet" href="css/mapa-social.css?v=buscador-ficha-1">
 <link rel="stylesheet" href="css/flora-querandi.css?v=flora-zoom-1">
+<link rel="stylesheet" href="css/zoom-detalle.css?v=zoom-detalle-1">
 <link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
 <script src="js/archivo-transicion.js?v=viaje-1"></script>
 <link rel="stylesheet" href="css/header.css?v=header-figma-2">
@@ -72,7 +73,6 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
       <button id="salir-mapa" class="control" type="button"><svg aria-hidden="true"><use href="#i-volver"/></svg> Volver</button>
       <div class="capas"><button id="boton-relieve" class="control" type="button" aria-pressed="false">Relieve <span class="interruptor" aria-hidden="true"></span></button><button id="boton-fronteras" class="control" type="button" aria-pressed="false">Argentina y provincias <span class="interruptor" aria-hidden="true"></span></button></div>
     </div>
-    <div class="fauna-controles" id="fauna-controles" hidden><span>FAUNA DEL PASTIZAL · TOCÁ PARA ACERCARTE</span><button type="button" data-fauna="venado">Venado de las pampas</button><button type="button" data-fauna="tero">Tero</button></div>
     <article class="vista-fauna" id="vista-fauna" hidden inert aria-label="Ficha del animal"><button type="button" id="fauna-volver"><svg aria-hidden="true"><use href="#i-volver"/></svg>Volver al árbol</button><p class="fauna__rotulo">FAUNA NATIVA · DETALLE</p><div aria-live="polite"><h2 id="fauna-nombre"></h2><p id="fauna-cientifico"></p></div><p id="fauna-texto"></p><p id="fauna-ambiente"></p><p class="fauna__nota">Especie del paisaje representado, no exclusiva del pueblo Querandí. Ilustración animada; no registro de presencia en este punto del mapa.</p><a id="fauna-fuente" target="_blank" rel="noopener">Fuente · Parques Nacionales</a></article>
     <aside class="panel panel--resumen inmersivo" id="mapa-panel" inert aria-label="Información del pueblo">
       <span class="panel__muestra" aria-hidden="true"><svg><use href="#i-flecha"/></svg></span><p class="panel__rotulo">EL TERRITORIO Y SUS PUEBLOS</p>
@@ -108,9 +108,9 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script>
 <script src="js/header-plantilla.js?v=header-figma-2"></script><script src="js/header.js?v=header-figma-2"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
-<script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=mapa-social-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=mapa-social-2"></script><script src="js/flora-querandi.js?v=flora-zoom-1"></script><script src="js/mapa.js?v=flora-zoom-1"></script>
+<script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=mapa-social-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=zoom-detalle-1"></script><script src="js/flora-querandi.js?v=zoom-detalle-1"></script><script src="js/mapa.js?v=hover-bloqueados-1"></script>
 <script src="js/comunidad.js?v=home-1"></script><script src="js/visor-simbolo.js?v=visor-1"></script><script src="js/home-comunidad.js?v=visor-1"></script>
 <script src="js/cta-patrones.js?v=cta-hover-1"></script>
-<script src="js/mapa-social.js?v=comentarios-bounce-1"></script>
+<script src="js/mapa-social.js?v=buscador-ficha-1"></script>
 <script src="js/pixel-botones.js?v=pixel-suave-1"></script>
 </body></html>
