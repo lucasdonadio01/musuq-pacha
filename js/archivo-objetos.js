@@ -7,6 +7,10 @@
   const commons = 'https://commons.wikimedia.org/wiki/File:';
   const comunidad = 'https://ffyh.unc.edu.ar/publicaciones/wp-content/uploads/sites/35/2026/03/pueblo-querandi_compressed.pdf';
   const laNoria = 'https://buenosaires.gob.ar/gcaba_historico/cultura/patrimonio-de-la-ciudad/espacio-la-noria';
+  const estudio = 'https://ri.conicet.gov.ar/handle/11336/121783';
+  const estudioPDF = 'https://ri.conicet.gov.ar/bitstream/handle/11336/121783/CONICET_Digital_Nro.96a9f075-677e-44f3-ad62-537c31ad11a6_A.pdf?isAllowed=y&sequence=2';
+  const creditoEstudio = 'Camino, Schávelzon, Azkarate, Loponte, Solaun, Martínez, Sánchez y Cavallotto · Revista de Antropología del Museo de Entre Ríos 4 (2), 2018 · Figura extraída del PDF, sin reconstrucción.';
+  const creditoComunidad = 'Comunidad Telomian Condic · Grupo Mirrí · FFyH, UNC, 2025 · Fotografía sin autor individual indicado.';
   const objetos = [
     {
       categoria: 'creencias', id: 'QUo001',
@@ -137,6 +141,138 @@
       fecha: 'Publicación de 2025', atribucion: 'Publicación comunitaria contemporánea'
     }
   ];
+
+  objetos.push(
+    {
+      categoria: 'viviendas', id: 'QUo012',
+      titulo: 'La Noria · Huellas de posibles refugios',
+      imagen: base + 'VIV-la-noria-postes.jpg',
+      descripcion: 'La fotografía registra agujeros que podrían haber sostenido postes. Los investigadores señalan una distribución subcircular compatible con un posible refugio o vivienda.',
+      limite: 'Hipótesis arqueológica, no una vivienda reconstruida. La línea punteada pertenece a la figura publicada; no demuestra por sí sola el contorno de una casa querandí. La escala mide cinco metros.',
+      fuente: estudioPDF + '#page=19', fuenteRelacion: estudio,
+      fuenteRelacionNombre: 'Consultar la investigación de La Noria',
+      credito: creditoEstudio + ' Figura 21, p. 102.',
+      licencia: 'CC BY-NC 2.5', licenciaURL: 'https://creativecommons.org/licenses/by-nc/2.5/',
+      fecha: 'Publicación de 2018', atribucion: 'Fotografía arqueológica · Posibles postes'
+    },
+    {
+      categoria: 'viviendas', id: 'QUo013',
+      titulo: 'Excavar un antiguo campamento',
+      imagen: base + 'VIV-la-noria-excavacion.jpg',
+      descripcion: 'Excavación de La Noria en 2017. La investigación interpreta el sitio como uno o más campamentos de cazadores-recolectores del Holoceno tardío.',
+      limite: 'Las personas y herramientas son del trabajo arqueológico actual. Las estructuras modernas visibles no son viviendas prehispánicas. Se conserva la comparación fotográfica incluida por los autores.',
+      fuente: estudioPDF + '#page=9', fuenteRelacion: estudio,
+      fuenteRelacionNombre: 'Leer la interpretación del campamento',
+      credito: creditoEstudio + ' Figura 6, p. 92.',
+      licencia: 'CC BY-NC 2.5', licenciaURL: 'https://creativecommons.org/licenses/by-nc/2.5/',
+      fecha: '2017 · Publicada en 2018', atribucion: 'Excavación arqueológica contemporánea'
+    },
+    {
+      categoria: 'creencias', id: 'QUo014',
+      titulo: 'Trabajar el barro · El vínculo con la tierra',
+      imagen: base + 'CRE-arcilla-comunitaria.png',
+      descripcion: 'Manos trabajando una vasija en la publicación comunitaria. En su relato de 2023, integrantes de Telomian Condic vinculan la alfarería con Memechu, Madre Tierra, y la continuidad de los materiales.',
+      limite: 'Práctica contemporánea fotografiada, no una ceremonia ni una reliquia. La fuente no identifica esta vasija como objeto ritual. Se extrajo únicamente la fotografía, sin el texto de la página.',
+      fuente: comunidad + '#page=20',
+      fuenteRelacion: 'https://portal.amelica.org/ameli/journal/785/7854257004/movil/',
+      fuenteRelacionNombre: 'Leer el relato comunitario sobre la alfarería',
+      credito: creditoComunidad + ' P. 16. Recorte de la fotografía, sin retoque.',
+      licencia: 'CC BY-NC-SA 4.0', licenciaURL: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+      fecha: 'Publicación de 2025', atribucion: 'Alfarería comunitaria contemporánea'
+    },
+    {
+      categoria: 'muerte', id: 'QUo015',
+      titulo: 'Tandil · Paisaje y memoria ancestral',
+      imagen: base + 'MUER-tandil.jpg',
+      descripcion: 'Paisaje actual de Tandil. La memoria comunitaria sitúa al sur de esta zona el kairuz y recuerda allí enterratorios ancestrales.',
+      limite: 'Referencia geográfica amplia: esta foto no identifica el kairuz, una sepultura ni un lugar funerario preciso. No permite reconstruir ritos. Se incluye como paisaje regional vinculado al relato, no como evidencia de enterramientos.',
+      fuente: commons + 'Tandil_Buenos_Aires_Argentina.jpg',
+      fuenteRelacion: comunidad + '#page=10',
+      credito: 'MDavidHC · 14/04/2023 · Wikimedia Commons. Fotografía completa, sin recorte.',
+      licencia: 'CC0 1.0', licenciaURL: 'https://creativecommons.org/publicdomain/zero/1.0/',
+      fecha: '2023', atribucion: 'Paisaje contemporáneo · Contexto regional'
+    },
+    {
+      categoria: 'personajes', id: 'QUo016', portada: true,
+      titulo: 'Voces querandíes · Recuperar la lengua',
+      imagen: base + 'PER-voces-2022.jpg',
+      descripcion: 'Encuentro de las II Jornadas de Investigaciones sobre Lenguas Indígenas en Argentina, en noviembre de 2022. La comunidad documenta su participación en espacios de recuperación y visibilización lingüística.',
+      limite: 'Fotografía contemporánea de un encuentro colectivo. No se asignan nombres a las personas sin una identificación individual en el pie de foto; no representa un consejo ancestral.',
+      fuente: comunidad + '#page=30',
+      credito: creditoComunidad + ' P. 26. Fotografía extraída, sin los afiches de la página.',
+      licencia: 'CC BY-NC-SA 4.0', licenciaURL: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+      fecha: '2022 · Publicada en 2025', atribucion: 'Voces comunitarias actuales',
+      contexto: 'Personas y voces vinculadas a la historia y a la continuidad del pueblo querandí.'
+    },
+    {
+      categoria: 'personajes', id: 'QUo017',
+      titulo: 'La palabra presente · Derechos lingüísticos',
+      imagen: base + 'PER-lenguas-2023.jpg',
+      descripcion: 'Mesa sobre derechos lingüísticos y lenguas indígenas, septiembre de 2023. La imagen publicada por la comunidad registra un espacio de intercambio sobre revitalización, recuperación y visibilización.',
+      limite: 'Registro de un encuentro actual, no un retrato de personajes precolombinos. El paño visible forma parte de la presentación contemporánea; no se lo atribuye a una tradición gráfica antigua.',
+      fuente: comunidad + '#page=30',
+      credito: creditoComunidad + ' P. 26. Fotografía extraída del PDF, sin reconstrucción.',
+      licencia: 'CC BY-NC-SA 4.0', licenciaURL: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+      fecha: '2023 · Publicada en 2025', atribucion: 'Encuentro comunitario contemporáneo'
+    },
+    {
+      categoria: 'naturaleza', id: 'QUo018',
+      titulo: 'Ñapartalú · Compartir saberes de carpintería',
+      imagen: base + 'NAT-carpinteria-2023.jpg',
+      descripcion: 'Fotografía que acompaña el ciclo de carpintería de 2023. La comunidad comparte saberes para reconocer y transformar ramas en objetos, mediante el trabajo manual.',
+      limite: 'Encuentro contemporáneo. El fuego visible no se presenta como ceremonia: la publicación ubica esta imagen en el relato de carpintería, sin identificar un ritual.',
+      fuente: comunidad + '#page=21',
+      credito: creditoComunidad + ' P. 17. Fotografía extraída del PDF, sin recorte.',
+      licencia: 'CC BY-NC-SA 4.0', licenciaURL: 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+      fecha: 'Ciclo de 2023 · Publicación de 2025', atribucion: 'Transmisión comunitaria de saberes'
+    },
+    {
+      categoria: 'fauna', id: 'QUo019',
+      titulo: 'Guanaco · Recorridos de caza',
+      imagen: base + 'FAU-guanaco.jpg',
+      descripcion: 'El estudio de La Noria registra guanaco y lo vincula con recorridos de caza por la Pampa Ondulada. La foto actual permite reconocer la especie.',
+      limite: 'No es una fotografía de La Noria ni de una cacería querandí. La relación alimentaria procede de la arqueología; no se atribuye al animal un significado sagrado.',
+      fuente: commons + 'Guanaco_in_Argentina.jpg',
+      fuenteRelacion: estudio, fuenteRelacionNombre: 'Leer el estudio de fauna de La Noria',
+      credito: 'David (longhorndave) · Flickr / Wikimedia Commons · 26/01/2008. Versión reducida, sin recorte.',
+      licencia: 'CC BY 2.0', licenciaURL: 'https://creativecommons.org/licenses/by/2.0/',
+      fecha: '2008', atribucion: 'Referencia contemporánea de fauna'
+    },
+    {
+      categoria: 'fauna', id: 'QUo020',
+      titulo: 'Ñandú · Fauna aprovechada',
+      imagen: base + 'FAU-nandu.jpg',
+      descripcion: 'El ñandú también está documentado entre la fauna aprovechada en La Noria. Esta imagen actual de Rhea americana acompaña esa evidencia arqueológica.',
+      limite: 'Fotografía tomada en otro lugar de Argentina. No documenta una práctica histórica, ni demuestra usos ceremoniales o significados compartidos por todos los querandíes.',
+      fuente: commons + 'Rhea_americana,_Las_Lajites,_Argentina.jpg',
+      fuenteRelacion: estudio, fuenteRelacionNombre: 'Consultar la evidencia arqueológica de fauna',
+      credito: 'Ron Knight · 30/10/2008 · Wikimedia Commons. Fotografía completa, sin recorte.',
+      licencia: 'CC BY 2.0', licenciaURL: 'https://creativecommons.org/licenses/by/2.0/',
+      fecha: '2008', atribucion: 'Referencia contemporánea de fauna'
+    },
+    {
+      categoria: 'patrones', id: 'QUo021',
+      titulo: 'Surco rítmico · Marcas sobre la arcilla',
+      imagen: base + 'PAT-la-noria-incisiones.jpg',
+      descripcion: 'Fragmentos de La Noria decorados mediante incisión por surco rítmico. La fotografía permite comparar marcas y conservar la escala de las piezas.',
+      limite: 'Se reproduce la figura original, no una página de texto. No se reconstruyen recipientes completos ni se asignan significados sagrados a sus diseños.',
+      fuente: estudioPDF + '#page=14',
+      credito: creditoEstudio + ' Figura 15, p. 97.',
+      licencia: 'CC BY-NC 2.5', licenciaURL: 'https://creativecommons.org/licenses/by-nc/2.5/',
+      fecha: 'Publicación de 2018', atribucion: 'Cerámica arqueológica · Procedencia La Noria'
+    },
+    {
+      categoria: 'patrones', id: 'QUo022',
+      titulo: 'Líneas y guardas · Cerámicas de La Noria',
+      imagen: base + 'PAT-la-noria-decoracion.jpg',
+      descripcion: 'Otra selección de fragmentos decorados de La Noria. Sus superficies muestran líneas quebradas, trazos paralelos y distintas formas de organizar la decoración.',
+      limite: 'Se conserva la escala publicada. Las marcas son evidencia material; su significado no está demostrado y no se presentan como un alfabeto o emblema querandí.',
+      fuente: estudioPDF + '#page=15',
+      credito: creditoEstudio + ' Figura 16, p. 98.',
+      licencia: 'CC BY-NC 2.5', licenciaURL: 'https://creativecommons.org/licenses/by-nc/2.5/',
+      fecha: 'Publicación de 2018', atribucion: 'Cerámica arqueológica · Procedencia La Noria'
+    }
+  );
 
   window.MUSUQ_OBJETOS = objetos;
   if (Array.isArray(window.MUSUQ_MESA)) {

@@ -84,6 +84,7 @@
   const cactus=new T.Group();cactus.name='Cardones · noroeste';raiz.add(cactus);
   const geoCactus=parte([[0,.4,0,.12,.4,.12],[-.23,.46,0,.1,.25,.09],[-.12,.3,0,.2,.08,.09],[.22,.63,0,.085,.21,.085],[.11,.47,0,.2,.075,.09]],(x,y,z)=>Math.abs(z)>.07?'#688e55':'#7c9c5a',.055);
   const detalles=[];const objetos=[{id:'venado',obj:venado,radio:.17},{id:'tero',obj:aves[0].obj,radio:.075}];
+  objetos.forEach(item=>{item.cartel=window.MUSUQ_ESPECIE_CARTEL.crear({nombre:fichas[item.id].nombre,icono:'fauna',lienzo,alTocar:()=>abrir(item.id)});});
   const punto=new T.Vector3(),direccion=new T.Vector3(),derecha=new T.Vector3(),origen=new T.Vector3(),camPos=new T.Vector3(),camMira=new T.Vector3(),puntoFoco=new T.Vector3();
   const mat=new T.Object3D(),color=new T.Color();let clave='',zonaActual=null,grupoActual=null,edad=0,reloj=0,reducido=false,foco=null,zoom=0,transicion=0;let ruta=null,activa=false,filtro='todo';
   const panel=document.getElementById('vista-fauna');
@@ -224,7 +225,10 @@
     if(Math.hypot(event.clientX-px,event.clientY-py)<32){abrir(item.id);return true;}
    }return false;
   }
-  return {get seleccion(){return foco?.id||null;},get disponible(){return mostrarFauna()&&spritesListos&&transicion>=.94;},actualizar,aplicarCamara,detectar,cerrar,abrir,bioma,filtrar,render(renderer,camara,delante=false){if(mostrarFauna())renderer.render(delante?escenaFaunaFrente:escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,filtro,activo:activa&&(raiz.visible||mostrarFauna()),flora:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:mostrarFauna(),foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray(),distanciaVenadoRio:distanciaRio(venado.position.x,venado.position.z),venadoLateral:(venado.position.x-origen.x)*derecha.x+(venado.position.z-origen.z)*derecha.z,bandada:aves.slice(1).map(a=>({delante:a.delante,visible:a.obj.visible}))})};
+  function actualizarCarteles(camara,dt,ocultos=false){
+   for(const item of objetos){punto.copy(item.obj.position);punto.y+=item.id==='venado'?.26:.16;item.cartel.actualizar({camara,punto,visible:!ocultos&&mostrarFauna()&&spritesListos&&transicion>.94&&item.obj.visible&&!foco&&zoom<.05,dt,instantaneo:reducido});}
+  }
+  return {get seleccion(){return foco?.id||null;},get disponible(){return mostrarFauna()&&spritesListos&&transicion>=.94;},actualizar,actualizarCarteles,aplicarCamara,detectar,cerrar,abrir,bioma,filtrar,render(renderer,camara,delante=false){if(mostrarFauna())renderer.render(delante?escenaFaunaFrente:escenaFauna,camara);},get enFauna(){return !!foco||zoom>.02;},get zoom(){return zoom;},estado:()=>({zona:zonaActual?.id,filtro,activo:activa&&(raiz.visible||mostrarFauna()),flora:raiz.visible,pasto:pasto.count,cactus:cactus.children.length,fauna:mostrarFauna(),foco:foco?.id||null,zoom,aves:aves.filter(a=>a.obj.visible).length,venado:venado.position.toArray(),tero:aves[0].obj.position.toArray(),distanciaVenadoRio:distanciaRio(venado.position.x,venado.position.z),venadoLateral:(venado.position.x-origen.x)*derecha.x+(venado.position.z-origen.z)*derecha.z,bandada:aves.slice(1).map(a=>({delante:a.delante,visible:a.obj.visible}))})};
  }
  window.MUSUQ_HABITAT={crear,bioma,fichas};
 })();

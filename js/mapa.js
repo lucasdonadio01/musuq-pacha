@@ -1605,7 +1605,7 @@
   const focoArbol = new THREE.Vector2();
   let cercania = 0;
   let filtroElementos = 'todo', solicitarFauna = false;
-  let floraMapa = null, camaraSocial = camara;
+  let floraMapa = null, camaraSocial = camara, plantaPendiente = null;
   let estadoSocialAnterior = '';
   const frenteSuelo = new THREE.Vector3(ejes.adelante.x, 0, ejes.adelante.z).normalize();
   const derechaSuelo = new THREE.Vector3(ejes.derecha.x, 0, ejes.derecha.z).normalize();
@@ -2351,7 +2351,7 @@
       esperaRueda = ahora + 350;
       return;
     }
-    if(habitat?.cerrar()){esperaRueda=ahora+900;return;}
+    if(floraMapa?.cerrar()||habitat?.cerrar()){esperaRueda=ahora+900;return;}
     if (arbolFoco) {
       cerrarArbol();
       esperaRueda = ahora + 900;
@@ -2369,7 +2369,7 @@
   lienzo.addEventListener('touchstart',e=>{inicioTacto=e.touches[0].clientY;},{passive:true});
   lienzo.addEventListener('touchmove',e=>{
     if(explorando&&inicioTacto!==null&&Math.abs(e.touches[0].clientY-inicioTacto)>45){
-      if(!habitat?.cerrar()){if(arbolFoco)cerrarArbol();else if(zonaFijada)fijarZona(null);else cambiarModo(false);}
+      if(!floraMapa?.cerrar()&&!habitat?.cerrar()){if(arbolFoco)cerrarArbol();else if(zonaFijada)fijarZona(null);else cambiarModo(false);}
       inicioTacto=null;
     }
   },{passive:true});
@@ -2662,13 +2662,15 @@
   }
 
   const inicio = performance.now();
-  let anterior = inicio;
+  let anterior = null;
   let objetivoAnterior = 0;
   let rafaga = 0;
   let objetivoArbolAnterior = 0;
 
   function cuadroAnimacion(ahora) {
-    const dt = Math.min(0.05, (ahora - anterior) / 1000);
+    // El primer timestamp de rAF puede preceder a performance.now() de la carga.
+    // No avanzar hacia atrás: contaminaría la ráfaga y el desenfoque con NaN.
+    const dt = anterior === null ? 0 : Math.max(0, Math.min(0.05, (ahora - anterior) / 1000));
     anterior = ahora;
     const instantaneo = movimientoReducido.matches;
     const kHover = instantaneo ? 1 : 1 - Math.exp(-dt * suavidadHover);
@@ -2699,7 +2701,7 @@
         despliegue.inert = panelResumido;
       }
     }
-    const rafagaObjetivo = !instantaneo && acercamientoObjetivo === 1 && acercamiento < 1 ? Math.pow(Math.sin(Math.PI * acercamiento), 1.5) : 0;
+    const rafagaObjetivo = !instantaneo && acercamientoObjetivo === 1 && acercamiento < 1 ? Math.pow(Math.max(0, Math.sin(Math.PI * acercamiento)), 1.5) : 0;
     rafaga += (rafagaObjetivo - rafaga) * (instantaneo ? 1 : 1 - Math.exp(-dt * 14));
     if (rafaga < 0.001) rafaga = 0;
     const cercaniaObjetivo = arbolFoco && explorando && zonaFijada ? 1 : 0;
@@ -2849,6 +2851,24 @@
     matNiebla.uniforms.tiempo.value = tiempo;
     matNiebla.uniforms.movimiento.value = instantaneo ? 0 : 1;
     matNiebla.uniforms.presencia.value = 1 - enfoque;
+    // Los sprites del árbol pueden terminar de cargar después de la planta.
+    // Conservar el clic hasta que esté listo el entorno de su vista de detalle.
+    if(plantaPendiente){
+      if(!floraMapa?.seleccion||arbolFoco)plantaPendiente=null;
+      else{
+        bosques?.filtrar('todo');
+        const grupos=gruposZona(),grupo=grupos[0];
+        bosques?.filtrar(filtroElementos);
+        if(grupo&&matCuadro.uniforms.avanceBrote.value>=1){
+          // Esperar a que el brote termine: un grupo incompleto puede ubicar
+          // la cámara dentro de los árboles que todavía están apareciendo.
+          const firma=[grupos.length,grupo.clave,grupo.n,...[grupo.x,grupo.z,grupo.base,grupo.alto].map(v=>v.toFixed(2))].join(':');
+          plantaPendiente.estable=firma===plantaPendiente.firma?plantaPendiente.estable+dt:0;
+          plantaPendiente.firma=firma;
+          if(instantaneo||plantaPendiente.estable>=.4){abrirArbol(grupo);plantaPendiente=null;}
+        }
+      }
+    }
     const enArbol = !!arbolVisto && cercania > 0;
     if (enArbol) {
       ubicarCamaraCerca(tiempo);
@@ -2869,7 +2889,10 @@
       if (primerGrupo) { solicitarFauna = false; abrirArbol(primerGrupo); }
     }
     if (filtroElementos === 'fauna') heroe.visible = false;
-    floraMapa?.actualizar({camara:camaraActiva,explorando,zonaId:zonaFijada?.id,cercania,enfoque,tiempo,instantaneo,base:heroe.position,dir:direccionHeroe,enArbol});
+    floraMapa?.actualizar({camara:camaraActiva,explorando,zonaId:zonaFijada?.id,cercania,enfoque,tiempo,instantaneo,base:heroe.position,dir:direccionHeroe,enArbol,dt,brote:matCuadro.uniforms.avanceBrote.value});
+    floraMapa?.aplicarCamara(camaraActiva,dt);
+    floraMapa?.actualizarCarteles(camaraActiva,dt,habitat?.enFauna);
+    habitat?.actualizarCarteles(camaraActiva,dt,floraMapa?.enFlora);
     const estadoSocial = [explorando,zonaFijada?.id,!!arbolFoco,filtroElementos,habitat?.seleccion,habitat?.disponible,floraMapa?.seleccion].join(':');
     if (estadoSocial !== estadoSocialAnterior) {
       estadoSocialAnterior = estadoSocial;
@@ -2879,7 +2902,7 @@
     if (cambioArbol && cambioArbol.cambia) {
       opacidadHeroe *= THREE.MathUtils.smoothstep(Math.abs(cambioArbol.t - 0.5), 0.02, 0.3);
     }
-    matHeroe.uniforms.opacidad.value = opacidadHeroe*(1-(habitat?.zoom||0));
+    matHeroe.uniforms.opacidad.value = opacidadHeroe*(1-Math.max(habitat?.zoom||0,floraMapa?.zoom||0));
     const heroeAmbiente = enArbol && arbolHeroe ? { grupo: arbolHeroe, base: heroe.position, dir: direccionHeroe, alto: heroe.scale.y, ancho: heroe.scale.x, visibilidad: opacidadHeroe * (1 - (habitat?.zoom || 0)) } : null;
     ambiente?.actualizar({ dt, instantaneo, tiempo, zona: zonaFijada, heroe: heroeAmbiente, camaraCerca, cercania });
     vientoVisible?.actualizar({ dt, instantaneo, camaraMapa: camara, cercania: arbolVisto ? cercania : 0, heroe: heroeAmbiente });
@@ -2893,7 +2916,7 @@
     }
     matFoco.uniforms.rafaga.value = Math.min(2.0, rafaga + rafagaArbol * 1.85);
     matFoco.uniforms.lejania.value = lejania*(1-(habitat?.zoom||0));
-    const mostrarVista = filtroElementos !== 'fauna' && !habitat?.enFauna && !!arbolFoco && (!cambioArbol || cambioArbol.t > 0.7) && cercania >= 0.9;
+    const mostrarVista = filtroElementos !== 'fauna' && !habitat?.enFauna && !floraMapa?.enFlora && !!arbolFoco && (!cambioArbol || cambioArbol.t > 0.7) && cercania >= 0.9;
     if (vistaArbol && vistaArbol.classList.contains('visible') !== mostrarVista) {
       vistaArbol.classList.toggle('visible', mostrarVista);
       vistaArbol.inert = !mostrarVista;
@@ -2942,10 +2965,12 @@
       renderer.clearDepth();
       renderer.render(escenaHeroe, camaraCerca);
       renderer.clearDepth();
-      floraMapa?.render(renderer,camaraCerca);
       habitat?.render(renderer,camaraCerca,true);
       vientoVisible?.renderCerca(renderer, camaraCerca);
     }
+    renderer.clearDepth();
+    floraMapa?.render(renderer,camaraActiva);
+    window.MUSUQ_ESPECIE_CARTEL?.render(renderer,camaraActiva);
     requestAnimationFrame(cuadroAnimacion);
   }
 
@@ -2968,7 +2993,7 @@
   }
   window.MUSUQ_MAPA_UI={
     zonas:zonas.map(({id,nombre,criterio})=>({id,nombre,criterio})),
-    estado:()=>({explorando,zonaId:zonaFijada?.id||null,nivel:arbolFoco?2:zonaFijada?1:0,arbol:arbolFoco?.id||null,filtro:filtroElementos,fauna:habitat?.seleccion||null,flora:floraMapa?.seleccion||null,faunaLista:!!habitat?.disponible}),
+    estado:()=>({explorando,zonaId:zonaFijada?.id||null,nivel:floraMapa?.seleccion||habitat?.seleccion?3:arbolFoco?2:zonaFijada?1:0,arbol:arbolFoco?.id||null,filtro:filtroElementos,fauna:habitat?.seleccion||null,flora:floraMapa?.seleccion||null,faunaLista:!!habitat?.disponible}),
     verEspecie(tipo,id){
       if(!arbolFoco||zonaFijada?.id!==14)return;
       this.filtrar('todo');
@@ -2990,7 +3015,10 @@
     },
     salir:()=>cambiarModo(false)
   };
-  floraMapa=window.MUSUQ_FLORA?.crear({escena,lienzo,posicion:posicionSocial,alAbrir:()=>habitat?.cerrar(),sueloCerca:(x,z)=>{const i=celdaEn(x,-z);return i===undefined?null:sueloCelda(i);}})||null;
+  floraMapa=window.MUSUQ_FLORA?.crear({escena,lienzo,posicion:posicionSocial,alAbrir:(planta)=>{
+    habitat?.cerrar();
+    if(!arbolFoco)plantaPendiente={firma:null,estable:0};
+  },sueloCerca:(x,z)=>{const i=celdaEn(x,-z);return i===undefined?null:sueloCelda(i);}})||null;
   window.dispatchEvent(new CustomEvent('musuq:mapa-listo'));
   const puebloInicial = zonas.find((z) => z.id === Number(new URLSearchParams(location.search).get('pueblo')));
   if (puebloInicial) {

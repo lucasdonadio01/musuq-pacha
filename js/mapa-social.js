@@ -293,6 +293,11 @@
     filtros.hidden = !mostrarElementos; filtros.inert = !mostrarElementos;
     filtros.classList.toggle('mapa-ui-activo', mostrarElementos);
     const detalle=estado.nivel>=2,especies=filtros.querySelector('.mapa-especies'),opciones=filtros.querySelector('fieldset'),titulo=filtros.querySelector('.mapa-elementos__titulo');
+    const especieActual=estado.flora||estado.fauna||'';
+    if(especieActual&&especieActual!==filtros.dataset.especieActual&&matchMedia('(max-width:760px)').matches){
+      filtros.classList.add('mapa-elementos--cerrado');titulo.setAttribute('aria-expanded','false');opciones.inert=true;
+    }
+    filtros.dataset.especieActual=especieActual;
     filtros.classList.toggle('mapa-elementos--especies',detalle);
     filtros.setAttribute('aria-label',detalle?'Fauna & flora':'Filtrar elementos del mapa');
     titulo.querySelector('span').textContent=detalle?'Fauna & flora':'Elementos';

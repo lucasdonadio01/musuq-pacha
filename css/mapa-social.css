@@ -12,6 +12,7 @@
 .en-mapa .herramientas .capas{position:fixed;right:28px;top:calc(var(--mapa-header) + 374px);display:flex;gap:14px;pointer-events:auto}
 .en-mapa #salir-mapa{position:fixed;left:28px;bottom:20px;pointer-events:auto;background:var(--mapa-carbon);color:#fff;border:0;border-radius:0;min-height:42px}
 .en-mapa .control-cuadrados{background:transparent;color:#fff;flex-direction:row-reverse;padding:2px 0;border:0;border-radius:0;gap:7px;font-size:10px;min-height:32px;text-shadow:0 1px 4px #0009}
+.en-mapa .mapa-comentarios .capas{padding:7px 9px;box-sizing:border-box;background:rgba(26,26,26,.42);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);box-shadow:0 5px 14px #0002}
 .en-mapa .control-cuadrados .interruptor{width:35px;height:20px;border-radius:0;background:#747474}
 .en-mapa .control-cuadrados .interruptor:after{height:25px;width:25px;top:-3px;left:0;border-radius:0;background:#bcbaba;transform:none;transition:transform .18s ease-out,background .18s}
 .en-mapa .control-cuadrados[aria-pressed=true] .interruptor{background:#ec906a}
