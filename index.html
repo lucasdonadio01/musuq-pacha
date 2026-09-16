@@ -11,7 +11,8 @@
 <link rel="stylesheet" href="css/fuente.css">
 <link rel="stylesheet" href="css/carteles-3d.css?v=nombres-centrados-3">
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
-<link rel="stylesheet" href="css/home-comunidad.css?v=home-1">
+<link rel="stylesheet" href="css/home-comunidad.css?v=pixel-suave-1">
+<link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
 </head>
 <body>
 <!-- THESIS: territorio vivo, comunidad pixel. OWN-WORLD: HOME de tp2, naranja/violeta sobre negro.
@@ -52,13 +53,13 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 </header>
 <main>
   <section class="territorio" id="territorio" aria-labelledby="territorio-titulo">
-    <div class="home-pixeles" aria-hidden="true"><img class="pixel-esquina pixel-esquina--izq" src="assets/ui/pixel-pantalla.svg" alt=""><img class="pixel-esquina pixel-esquina--der" src="assets/ui/pixel-pantalla.svg" alt=""><img class="pixel-esquina pixel-esquina--pie" src="assets/ui/pixel-pantalla.svg" alt=""><i></i><i></i><i></i></div>
+    <div class="home-pixeles" aria-hidden="true"><img class="pixel-esquina pixel-esquina--izq" src="assets/ui/pixel-pantalla.svg?v=pixel-suave-1" alt=""><span class="pixel-esquina pixel-esquina--der"></span><img class="pixel-esquina pixel-esquina--pie" src="assets/ui/pixel-pantalla.svg?v=pixel-suave-1" alt=""><i></i><i></i><i></i></div>
     <div class="territorio__mapa" id="mapa-marco"><canvas id="mapa-lienzo" aria-label="Mapa interactivo de Argentina y países limítrofes"></canvas></div><div class="carteles-arboles" id="carteles-arboles"></div>
     <div class="territorio__texto" id="presentacion">
       <p class="rotulo">TERRITORIO</p>
       <h1 class="titulo" id="territorio-titulo" tabindex="-1">Re-descubrí el<br>territorio Argentino</h1>
       <p class="bajada">Un territorio, muchas historias. Explorá las zonas habitadas por los pueblos originarios y conocé sus culturas, costumbres y tradiciones.</p>
-      <div class="acciones"><button class="boton boton--primario" id="entrar-mapa" type="button"><img src="assets/ui/mapa.svg" width="20" height="20" alt="">Entrar al mapa</button><a class="boton boton--secundario" href="archivo.html"><img src="assets/ui/archivo.svg" width="20" height="20" alt="">Explorar el archivo</a></div>
+      <div class="acciones"><button class="boton boton--primario" id="entrar-mapa" type="button"><span class="icono-figma icono-figma--mapa" aria-hidden="true"></span>Entrar al mapa</button><a class="boton boton--secundario" href="archivo.html"><span class="icono-figma icono-figma--archivo" aria-hidden="true"></span>Explorar el archivo</a></div>
     </div>
     <p class="mapa-invitacion">UN MAPA PARA EXPLORAR <svg aria-hidden="true"><use href="#i-flecha"/></svg></p>
     <div class="vista-arbol" id="vista-arbol" inert><article class="vista-arbol__carta" aria-live="polite"><button class="vista-arbol__volver" id="vista-arbol-volver" type="button" aria-label="Volver al territorio"><svg aria-hidden="true"><use href="#i-volver"/></svg></button><p class="vista-arbol__rotulo">ÁRBOL NATIVO</p><h2 class="vista-arbol__nombre" id="vista-arbol-nombre"></h2><p class="vista-arbol__cientifico" id="vista-arbol-cientifico"></p><p class="vista-arbol__descripcion" id="vista-arbol-descripcion"></p><p class="vista-arbol__tambien" id="vista-arbol-tambien"></p></article><button class="vista-arbol__siguiente" id="vista-arbol-siguiente" type="button"><svg class="vista-arbol__siguiente-arbol" aria-hidden="true"><use href="#i-arbol"/></svg><span class="vista-arbol__siguiente-texto"><strong id="vista-arbol-siguiente-nombre"></strong><small id="vista-arbol-siguiente-sub"></small></span><svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></button></div><div class="herramientas inmersivo" id="herramientas" inert>
@@ -123,4 +124,5 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 <p class="solo-lectores" id="estado-accesibilidad" role="status"></p>
 <script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/accesibilidad.js"></script><script src="js/sonido.js?v=audio-3"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=carteles-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=teros-espejo-4"></script><script src="js/mapa.js?v=archivo-1"></script>
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script><script src="js/comunidad.js?v=home-1"></script><script src="js/home-comunidad.js?v=home-1"></script>
+<script src="js/pixel-botones.js?v=pixel-suave-1"></script>
 </body></html>
