@@ -6,6 +6,7 @@
 .site-header .nav__marca{font-size:20px;font-weight:600;letter-spacing:-.04em;white-space:nowrap;grid-area:auto}
 .site-header .nav__links{display:flex;gap:28px;align-items:center;justify-content:center;grid-area:auto;min-height:0;overflow:visible;color:var(--site-violet);font-size:12px;letter-spacing:.05em;white-space:nowrap}
 .site-header .nav__links a{min-height:44px;display:inline-flex;align-items:center}
+.site-header .nav__pendiente{min-height:44px;display:inline-flex;align-items:center;color:var(--site-violet);cursor:default}
 .site-header .nav__links a:hover{color:white}
 .site-header .nav__links a[aria-current=page]{color:var(--site-orange)}
 .site-header .nav__acciones{display:flex;align-items:center;justify-self:end;grid-area:auto;gap:8px;min-width:0}

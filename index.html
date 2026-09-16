@@ -11,9 +11,10 @@
 <link rel="stylesheet" href="css/fuente.css">
 <link rel="stylesheet" href="css/carteles-3d.css?v=nombres-centrados-3">
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
-<link rel="stylesheet" href="css/home-comunidad.css?v=pixel-suave-1">
+<link rel="stylesheet" href="css/home-comunidad.css?v=ranking-figma-1">
+<link rel="stylesheet" href="css/ranking-home.css?v=ranking-figma-1">
 <link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
-<link rel="stylesheet" href="css/header.css?v=main-1">
+<link rel="stylesheet" href="css/header.css?v=ranking-figma-1">
 </head>
 <body>
 <!-- THESIS: territorio vivo, comunidad pixel. OWN-WORLD: HOME de tp2, naranja/violeta sobre negro.
@@ -75,9 +76,9 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
     <div class="mapa-pie inmersivo" id="mapa-pie" inert><span><i></i> Argentina <i></i> Países limítrofes</span><span>Hacé scroll para salir · Esc</span></div>
   </section>
   <section class="comunidad" id="comunidad" aria-labelledby="comunidad-titulo">
-    <div class="comunidad__cabecera"><div><p class="comunidad__rotulo" id="tablero-rotulo">Ranking semanal · Vista previa</p><h2 id="comunidad-titulo">Mejores símbolos</h2><p class="comunidad__bajada" id="tablero-nota">Explorá las posibilidades del generador y sumá tu creación al tablero de este navegador. El concurso público todavía no está habilitado.</p></div><div class="comunidad__cta"><div><strong>PARTICIPÁ AQUÍ</strong><p>Armá tu símbolo y compartí tu propia mirada.</p></div><a class="boton boton--primario" href="simbolos/">PARTICIPAR <svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></a></div></div>
-    <div class="tablero" id="tablero" aria-label="Tablero de símbolos"><p>Cargando símbolos…</p></div>
-    <p class="comunidad__aclaracion">Creaciones contemporáneas inspiradas en patrones. No son piezas históricas ni símbolos atribuidos a una comunidad.</p>
+    <div class="comunidad__cabecera"><div><p class="comunidad__rotulo" id="tablero-rotulo">Ranking semanal</p><h2 id="comunidad-titulo">Mejores símbolos</h2><p class="comunidad__bajada" id="tablero-nota">¡Compartí tus símbolos con la comunidad y participá del concurso semanal para recibir recompensas dentro del juego!</p></div><div class="comunidad__cta"><div><strong>PARTICIPÁ AQUÍ</strong><p>Armá tu símbolo, publicalo y esperá los resultados</p></div><a class="boton boton--primario" href="simbolos/">PARTICIPAR <span class="ranking-flecha" aria-hidden="true"></span></a></div></div>
+    <div class="tablero" id="tablero" aria-label="Ranking semanal de símbolos"><p>Cargando símbolos…</p></div>
+    <section class="comunidad-local" id="comunidad-local" aria-labelledby="local-titulo" hidden><h3 id="local-titulo">Tus símbolos, acá</h3><p>Guardados en este navegador. No participan del ranking de la maqueta.</p><div id="tablero-local" class="tablero-local"></div></section>
     <noscript><p>Activá JavaScript para ver el tablero. <a href="simbolos/">Abrir símbolos de la comunidad</a>.</p></noscript>
   </section>
 </main>
@@ -93,8 +94,8 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script>
-<script src="js/header-plantilla.js?v=main-1"></script><script src="js/header.js?v=main-1"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
+<script src="js/header-plantilla.js?v=ranking-figma-1"></script><script src="js/header.js?v=ranking-figma-1"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
 <script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=carteles-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=teros-espejo-4"></script><script src="js/mapa.js?v=archivo-1"></script>
-<script src="js/comunidad.js?v=home-1"></script><script src="js/home-comunidad.js?v=home-1"></script>
+<script src="js/comunidad.js?v=home-1"></script><script src="js/home-comunidad.js?v=ranking-figma-1"></script>
 <script src="js/pixel-botones.js?v=pixel-suave-1"></script>
 </body></html>

@@ -1,25 +1,55 @@
+/* Ranking de demostración: valores y autor de HOME en Figma, no votos en vivo.
+   Las publicaciones locales se conservan en un tablero aparte. */
 (() => {
-  const tablero=document.getElementById('tablero');
-  function ejemplos() {
-    return PUEBLOS.slice(0,5).map((p,i)=>{
-      const m=Motor.crear(9);m.quieto=true;m.generar(0,1907+i*31,Motor.paletaContra(p.colores,p.fondo,3));
-      return {v:1,nombre:['Cruce','Encuentro','Trama','Semilla','Ronda'][i],pueblo:p.nombre,lado:9,fondo:p.fondo,celdas:[...m.grilla].map(([k,h])=>[...k.split(',').map(Number),h]),ejemplo:true};
+  const tablero = document.getElementById('tablero');
+  const ranking = [
+    {puesto:1,likes:421,imagen:1}, {puesto:2,likes:383,imagen:3},
+    {puesto:3,likes:356,imagen:4}, {puesto:4,likes:216,imagen:5},
+    {puesto:5,likes:124,imagen:6}
+  ];
+  const imagen = (archivo, clase = '') => {
+    const img = document.createElement('img');
+    img.src = 'assets/ranking/' + archivo; img.alt = ''; img.className = clase;
+    return img;
+  };
+  tablero.replaceChildren();
+  ranking.forEach(d => {
+    const ficha = document.createElement('article');
+    ficha.className = 'ranking-tarjeta ranking-tarjeta--' + d.puesto;
+    ficha.setAttribute('aria-label', d.puesto + '° puesto, ' + d.likes + ' likes, @miaumiaumichi. Datos de la maqueta.');
+    const puesto = document.createElement('h3'); puesto.className = 'ranking-puesto';
+    puesto.textContent = d.puesto + '° PUESTO';
+    const likes = document.createElement('p'); likes.className = 'ranking-likes';
+    likes.append(String(d.likes), imagen('icono-3.svg'));
+    const autor = document.createElement('p'); autor.className = 'ranking-autor';
+    autor.append(imagen('imagen-2.png'), '@miaumiaumichi');
+    const datos = document.createElement('div'); datos.className = 'ranking-datos';
+    datos.append(likes, autor);
+    ficha.append(imagen('imagen-' + d.imagen + '.png', 'ranking-simbolo'), puesto, datos);
+    if (d.puesto === 1) {
+      const medalla = document.createElement('span'); medalla.className = 'ranking-medalla';
+      medalla.setAttribute('aria-hidden', 'true'); medalla.append(imagen('icono-4.svg'));
+      ficha.append(medalla);
+    }
+    tablero.append(ficha);
+  });
+  const guardados = document.getElementById('comunidad-local');
+  const lista = document.getElementById('tablero-local');
+  function renderLocales() {
+    const locales = Comunidad.leer(); guardados.hidden = !locales.length;
+    lista.replaceChildren();
+    locales.forEach(d => {
+      const a = document.createElement('a'); a.className = 'simbolo-local';
+      a.href = Comunidad.enlace(d, 'simbolos/');
+      const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
+      Comunidad.dibujar(cv, d);
+      const titulo = document.createElement('strong'); titulo.textContent = d.nombre;
+      const pie = document.createElement('small'); pie.textContent = d.pueblo;
+      const texto = document.createElement('div'); texto.append(titulo, pie);
+      a.append(cv, texto); lista.append(a);
     });
   }
-  function render() {
-    const locales=Comunidad.leer();const muestras=ejemplos();
-    const items=locales.length?[...locales,...muestras].slice(0,Math.max(5,locales.length)):muestras;
-    document.getElementById('tablero-rotulo').textContent=locales.length?'Comunidad · En este navegador':'Ranking semanal · Vista previa';
-    document.getElementById('comunidad-titulo').textContent=locales.length?'Tus símbolos, acá':'Mejores símbolos';
-    if(locales.length)document.getElementById('tablero-nota').textContent='Tus creaciones, de la más reciente a la primera. Este tablero es local: compartí el enlace de cada símbolo para que otras personas lo vean.';
-    tablero.replaceChildren();
-    items.forEach((d,i)=>{
-      const a=document.createElement('a');a.className='simbolo-tarjeta';a.href=Comunidad.enlace(d,'simbolos/');
-      const cv=document.createElement('canvas');cv.setAttribute('aria-hidden','true');Comunidad.dibujar(cv,d);
-      const texto=document.createElement('div'),titulo=document.createElement('strong'),pie=document.createElement('small'),tipo=document.createElement('span');
-      titulo.textContent=d.nombre;pie.textContent=d.pueblo;tipo.textContent=d.ejemplo?'EJEMPLO · VER SÍMBOLO':'TU CREACIÓN · COMPARTIR';
-      texto.append(titulo,pie,tipo);a.append(cv,texto);tablero.append(a);
-    });
-  }
-  render();addEventListener('storage',e=>{if(e.key===Comunidad.KEY)render();});addEventListener('pageshow',render);
+  renderLocales();
+  addEventListener('storage', e => { if (e.key === Comunidad.KEY || e.key === null) renderLocales(); });
+  addEventListener('pageshow', renderLocales);
 })();

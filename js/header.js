@@ -16,8 +16,7 @@
   document.body.insertAdjacentHTML('beforeend', plantillas.iconos + plantillas.accesibilidad);
   const destinos = {
     territorio:enHome ? '#territorio' : local('index.html#territorio'),
-    archivo:local('archivo.html'), comunidad:enHome ? '#comunidad' : local('index.html#comunidad'),
-    simbolos:local(base.protocol === 'file:' ? 'simbolos/index.html' : 'simbolos/')
+    archivo:local('archivo.html')
   };
   header.querySelector('.nav__marca').href = enHome ? '#territorio' : local('index.html');
   for (const enlace of header.querySelectorAll('[data-seccion-link]')) {
@@ -29,7 +28,7 @@
   // Comunidad está dentro del home; no se pierde el estado activo al saltar a ella.
   function seccionHome() {
     if (!enHome) return;
-    const actual = location.hash === '#comunidad' ? 'comunidad' : 'territorio';
+    const actual = 'territorio';
     header.querySelectorAll('[data-seccion-link]').forEach(a => {
       if (a.dataset.seccionLink === actual) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
