@@ -16,6 +16,10 @@
   ranking.forEach(d => {
     const ficha = document.createElement('article');
     ficha.className = 'ranking-tarjeta ranking-tarjeta--' + d.puesto;
+    ficha.setAttribute('role', 'button'); ficha.tabIndex = 0;
+    const abrir = () => VisorSimbolo.open({src:'assets/ranking/imagen-' + d.imagen + '.png', title:d.puesto + '° puesto · @miaumiaumichi', filename:'musuq-pacha-puesto-' + d.puesto + '.png'}, ficha);
+    ficha.addEventListener('click', abrir);
+    ficha.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
     ficha.setAttribute('aria-label', d.puesto + '° puesto, ' + d.likes + ' likes, @miaumiaumichi. Datos de la maqueta.');
     const puesto = document.createElement('h3'); puesto.className = 'ranking-puesto';
     puesto.textContent = d.puesto + '° PUESTO';
@@ -39,10 +43,10 @@
     const locales = Comunidad.leer(); guardados.hidden = !locales.length;
     lista.replaceChildren();
     locales.forEach(d => {
-      const a = document.createElement('a'); a.className = 'simbolo-local';
-      a.href = Comunidad.enlace(d, 'simbolos/');
+      const a = document.createElement('button'); a.type = 'button'; a.className = 'simbolo-local';
       const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
       Comunidad.dibujar(cv, d);
+      a.addEventListener('click', () => VisorSimbolo.open({src:cv.toDataURL('image/png'), title:d.nombre, filename:'musuq-pacha-simbolo.png'}, a));
       const titulo = document.createElement('strong'); titulo.textContent = d.nombre;
       const pie = document.createElement('small'); pie.textContent = d.pueblo;
       const texto = document.createElement('div'); texto.append(titulo, pie);

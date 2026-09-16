@@ -1,0 +1,16 @@
+.visor-simbolo{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:#fff;overflow:hidden}
+.visor-simbolo::backdrop{background:rgba(26,26,26,.91);backdrop-filter:blur(12px)}
+.visor-simbolo__escena{position:absolute;inset:76px 0 0;display:flex;align-items:center;justify-content:center;touch-action:none}
+.visor-simbolo__escena canvas{display:block;width:100%;height:100%}
+.visor-simbolo__acciones{position:absolute;inset:24px 32px auto;display:flex;justify-content:space-between;pointer-events:none}
+.visor-simbolo__acciones :is(button,a){display:grid;place-items:center;width:48px;height:48px;padding:0;border:0;background:#202020;color:#F66227;cursor:pointer;pointer-events:auto;transition:background .25s,color .25s}
+.visor-simbolo__acciones :is(button,a):hover{background:white;color:#1a1a1a}
+.visor-simbolo__acciones :is(button,a):focus-visible{outline:2px solid #9E6FF8;outline-offset:4px}
+.visor-simbolo__acciones svg{width:24px;height:24px;fill:currentColor}
+.visor-simbolo__estado{position:absolute;inset:50% 24px auto;text-align:center;font:400 16px/1.5 Archivo,Arial,sans-serif}
+.visor-simbolo__estado[hidden]{display:none}
+.visor-simbolo__fallback{max-width:78%;max-height:70%;object-fit:contain;border:12px solid #f1ebdf;box-shadow:12px 20px 32px #0005;image-rendering:pixelated}
+.ranking-tarjeta[role=button],.simbolo-local[type=button]{cursor:pointer}
+.ranking-tarjeta[role=button]:focus-visible,.simbolo-local:focus-visible{outline:3px solid #9E6FF8;outline-offset:6px}
+.simbolo-local[type=button]{border:0;text-align:left;font:inherit}
+@media(max-width:600px){.visor-simbolo__acciones{inset:16px 20px auto}.visor-simbolo__escena{top:64px}}
