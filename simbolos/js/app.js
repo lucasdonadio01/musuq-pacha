@@ -57,8 +57,8 @@
     c.clearRect(0, 0, cols * paso, filas * paso);
 
     const marca = String(MAPA.orden.indexOf(pueblo.id) + 1);
-    const t = Simbolo.aRgb(tinta);
-    const apagado = `rgba(${t[0]},${t[1]},${t[2]},0.20)`;
+    // El mapa vive sobre el panel oscuro, no sobre el fondo editable del lienzo.
+    const apagado = 'rgba(238,238,238,0.34)';
     MAPA.filas.forEach((fila, y) => {
       for (let x = 0; x < fila.length; x++) {
         if (fila[x] === '.') continue;
@@ -285,7 +285,7 @@
 
   const TECLAS = { q: 'pincel', w: 'borrador', e: 'seleccion', i: 'cuentagotas' };
   addEventListener('keydown', e => {
-    if (taller.hidden || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
+    if (taller.hidden || overlay.open || e.metaKey || e.ctrlKey || e.altKey || /input|select|textarea/i.test(e.target.tagName)) return;
     const k = e.key.toLowerCase();
     if (e.key === 'Escape') { menu(false); abrirExport(false); }
     if (TECLAS[k]) { elegirModo(TECLAS[k]); avisar(TECLAS[k]); }
@@ -322,29 +322,56 @@
   }
 
   const overlay = $('#exportar');
-  const abrirExport = abrir => { overlay.hidden = !abrir; };
+  let compartido = null;
+  const nombreSimbolo = $('#simbolo-nombre');
+  function datosActuales() {
+    return {v:1,nombre:nombreSimbolo.value,pueblo:pueblo.nombre,lado:Simbolo.lado,fondo,
+      celdas:[...Simbolo.grilla].map(([k,h])=>[...k.split(',').map(Number),h])};
+  }
+  const abrirExport = abrir => {
+    if (!abrir) { overlay.close(); return; }
+    compartido = datosActuales();
+    if (!Comunidad.validar(compartido)) { avisar('Generá o pintá un símbolo antes de compartirlo.');return; }
+    mostrarCompartido();
+  };
+  function mostrarCompartido() {
+    nombreSimbolo.value = compartido.nombre;
+    Comunidad.dibujar($('#compartir-preview'),compartido);
+    $('#compartir-pueblo').textContent = 'Inspiración · '+compartido.pueblo;
+    $('#compartir-estado').textContent = '';
+    $('.enlace-manual').hidden = true;
+    $('#publicar-simbolo').disabled = false;
+    if (/^(localhost|127\.|\[::1\])/.test(location.hostname)) {
+      $('#enlace-simbolo').textContent = 'Copiar enlace local';
+      $('.compartir__nota').textContent = 'Este tablero se guarda en tu navegador. Estás en una vista local: el enlace solo abre en esta computadora. Para compartirlo con otras personas, usá el sitio publicado. No hay concurso público habilitado.';
+    }
+    overlay.showModal();
+  }
   $('#png').addEventListener('click', () => abrirExport(true));
   $('#cancelarExport').addEventListener('click', () => abrirExport(false));
   overlay.addEventListener('click', e => { if (e.target === overlay) abrirExport(false); });
 
-  $('.formatos').addEventListener('click', e => {
-    const b = e.target.closest('button');
-    if (!b) return;
-    abrirExport(false);
-    bajar(b.dataset.formato);
+  nombreSimbolo.addEventListener('input',()=>{
+    if (compartido) compartido.nombre = nombreSimbolo.value;
+    $('#publicar-simbolo').disabled = false;
   });
-
-  function bajar(formato) {
-    const W = 1080;
-    const H = formato === '1:1' ? 1080 : 1920;
-    componerCuadro(W, H, performance.now(), true).toBlob(b => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(b);
-      a.download = 'musuq-pacha-' + pueblo.id + '-' + Simbolo.firmaSemilla + '-' + formato.replace(':', 'x') + '.png';
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      avisar('PNG guardado · ' + formato);
-    }, 'image/png');
+  $('#publicar-simbolo').addEventListener('click',()=>{
+    try { Comunidad.guardar(compartido);$('#compartir-estado').textContent='Listo. Tu símbolo está en el tablero de este navegador.';$('#publicar-simbolo').disabled=true; }
+    catch(e){$('#compartir-estado').textContent=e.message;}
+  });
+  $('#enlace-simbolo').addEventListener('click',async()=>{
+    try {
+      if(location.protocol==='file:')throw Error('Para compartir un enlace abrí el sitio desde el servidor o la web publicada. El editor funciona sin conexión.');
+      const url=Comunidad.enlace(compartido,'./index.html');
+      try { await navigator.clipboard.writeText(url);$('#compartir-estado').textContent=/^(localhost|127\.|\[::1\])/.test(location.hostname)?'Enlace local copiado. Solo funciona en esta computadora; compartilo desde el sitio publicado para que otras personas puedan abrirlo.':'Enlace copiado. Quien lo abra podrá ver este símbolo, sin depender de tu tablero local.'; }
+      catch { $('.enlace-manual').hidden=false;$('#enlace-manual').value=url;$('#enlace-manual').focus();$('#enlace-manual').select();$('#compartir-estado').textContent='El navegador bloqueó la copia automática. Copiá el enlace del campo.'; }
+    } catch(e){$('#compartir-estado').textContent=e.message;}
+  });
+  function leerEnlace() {
+    if(!location.hash.startsWith('#simbolo='))return;
+    compartido=Comunidad.decodificar(location.hash);
+    if(compartido)mostrarCompartido();
+    else { avisar('El enlace del símbolo no es válido. Podés crear uno nuevo.');$('#bloque .bajada').textContent='No pudimos leer ese símbolo. Podés empezar y crear el tuyo.'; }
   }
 
   /* ---------- portada ---------- */
@@ -377,6 +404,7 @@
   if (!Fondo.iniciar($('#fondo'))) $('#fondo').style.display = 'none';
   requestAnimationFrame(cuadro);
   Mosaico.iniciar($('#mosaico'), $('#bloque'));
+  leerEnlace();addEventListener('hashchange',leerEnlace);
 
   // gancho para inspeccionar desde la consola
   window.__mp = { Simbolo, Fondo, Mosaico, componerCuadro, entrar, get pueblo() { return pueblo; } };

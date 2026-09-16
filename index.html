@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#e7ebe2"><title>Musuq Pacha · El territorio</title>
+<meta name="theme-color" content="#202020"><title>Musuq Pacha · El territorio</title>
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/estilos.css">
 <link rel="stylesheet" href="css/accesibilidad.css">
@@ -11,8 +11,12 @@
 <link rel="stylesheet" href="css/fuente.css">
 <link rel="stylesheet" href="css/carteles-3d.css?v=nombres-centrados-3">
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
+<link rel="stylesheet" href="css/home-comunidad.css?v=home-1">
 </head>
 <body>
+<!-- THESIS: territorio vivo, comunidad pixel. OWN-WORLD: HOME de tp2, naranja/violeta sobre negro.
+STORY: explorar territorio → crear → compartir. FIRST VIEWPORT: mapa real, título editorial y dos accesos.
+FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue ejemplos de publicaciones locales. -->
 <a class="saltar-contenido" href="#territorio-titulo">Saltar al contenido</a>
 <svg class="iconos-sitio" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
 <symbol id="i-buscar" viewBox="0 -960 960 960"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></symbol>
@@ -38,22 +42,23 @@
 </defs></svg>
 <header class="nav" id="header">
   <a class="nav__marca" href="#territorio">MUSUQ PACHA</a>
-  <nav class="nav__links" aria-label="Secciones"><a href="#territorio" aria-current="page">EL TERRITORIO</a><a href="#archivo">EL ARCHIVO</a><span>EL JUEGO</span><span>COMUNIDAD</span><span>EVENTOS</span></nav>
+  <nav class="nav__links" aria-label="Secciones"><a href="#territorio" aria-current="page">TERRITORIO</a><a href="archivo.html">ARCHIVO</a><a href="#comunidad">COMUNIDAD</a><a href="simbolos/">SÍMBOLOS</a></nav>
   <div class="nav__acciones">
     <button class="boton-icono boton-audio" id="boton-sonido" data-audio="efectos" type="button" aria-label="Silenciar sonidos" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-volumen"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-volumen-lleno"/></svg></button>
     <button class="boton-icono boton-audio" id="boton-musica" data-audio="musica" type="button" aria-label="Silenciar música" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-musica"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-musica"/></svg></button>
     <button class="boton-icono" id="abrir-accesibilidad" type="button" aria-label="Abrir menú de accesibilidad" aria-haspopup="dialog" aria-controls="menu-accesibilidad" aria-expanded="false"><svg><use href="#i-acceso"/></svg></button>
-    <button class="nav__ingresar" id="ingresar" type="button">Ingresar</button>
+    <button class="nav__ingresar" id="ingresar" type="button">INICIAR <svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></button>
   </div>
 </header>
 <main>
   <section class="territorio" id="territorio" aria-labelledby="territorio-titulo">
+    <div class="home-pixeles" aria-hidden="true"><img class="pixel-esquina pixel-esquina--izq" src="assets/ui/pixel-pantalla.svg" alt=""><img class="pixel-esquina pixel-esquina--der" src="assets/ui/pixel-pantalla.svg" alt=""><img class="pixel-esquina pixel-esquina--pie" src="assets/ui/pixel-pantalla.svg" alt=""><i></i><i></i><i></i></div>
     <div class="territorio__mapa" id="mapa-marco"><canvas id="mapa-lienzo" aria-label="Mapa interactivo de Argentina y países limítrofes"></canvas></div><div class="carteles-arboles" id="carteles-arboles"></div>
     <div class="territorio__texto" id="presentacion">
-      <p class="rotulo"><span class="punto"></span> EL TERRITORIO</p>
-      <h1 class="titulo" id="territorio-titulo" tabindex="-1">Un título de dos líneas que ocupa este espacio</h1>
-      <p class="bajada">Un territorio, muchas historias. Explorá las zonas de los pueblos originarios y sus vínculos con el paisaje.</p>
-      <div class="acciones"><button class="boton boton--primario" id="entrar-mapa" type="button">Entrar al mapa <svg aria-hidden="true"><use href="#i-flecha"/></svg></button><a class="boton boton--secundario" href="#archivo">Explorar el archivo</a></div>
+      <p class="rotulo">TERRITORIO</p>
+      <h1 class="titulo" id="territorio-titulo" tabindex="-1">Re-descubrí el<br>territorio Argentino</h1>
+      <p class="bajada">Un territorio, muchas historias. Explorá las zonas habitadas por los pueblos originarios y conocé sus culturas, costumbres y tradiciones.</p>
+      <div class="acciones"><button class="boton boton--primario" id="entrar-mapa" type="button"><img src="assets/ui/mapa.svg" width="20" height="20" alt="">Entrar al mapa</button><a class="boton boton--secundario" href="archivo.html"><img src="assets/ui/archivo.svg" width="20" height="20" alt="">Explorar el archivo</a></div>
     </div>
     <p class="mapa-invitacion">UN MAPA PARA EXPLORAR <svg aria-hidden="true"><use href="#i-flecha"/></svg></p>
     <div class="vista-arbol" id="vista-arbol" inert><article class="vista-arbol__carta" aria-live="polite"><button class="vista-arbol__volver" id="vista-arbol-volver" type="button" aria-label="Volver al territorio"><svg aria-hidden="true"><use href="#i-volver"/></svg></button><p class="vista-arbol__rotulo">ÁRBOL NATIVO</p><h2 class="vista-arbol__nombre" id="vista-arbol-nombre"></h2><p class="vista-arbol__cientifico" id="vista-arbol-cientifico"></p><p class="vista-arbol__descripcion" id="vista-arbol-descripcion"></p><p class="vista-arbol__tambien" id="vista-arbol-tambien"></p></article><button class="vista-arbol__siguiente" id="vista-arbol-siguiente" type="button"><svg class="vista-arbol__siguiente-arbol" aria-hidden="true"><use href="#i-arbol"/></svg><span class="vista-arbol__siguiente-texto"><strong id="vista-arbol-siguiente-nombre"></strong><small id="vista-arbol-siguiente-sub"></small></span><svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></button></div><div class="herramientas inmersivo" id="herramientas" inert>
@@ -76,11 +81,17 @@
     </aside>
     <div class="mapa-pie inmersivo" id="mapa-pie" inert><span><i></i> Argentina <i></i> Países limítrofes</span><span>Hacé scroll para salir · Esc</span></div>
   </section>
-  <section class="continuacion" id="archivo"><p class="rotulo">EL ARCHIVO</p><h2>Lo que se está hablando esta semana</h2><p>Prototipo del territorio interactivo · Las demás secciones todavía no están conectadas.</p><p class="nota">Cartografía de base: Natural Earth. Relieve: ETOPO1. Zonas según la referencia del proyecto, pendientes de validación histórica.</p></section>
+  <section class="comunidad" id="comunidad" aria-labelledby="comunidad-titulo">
+    <div class="comunidad__cabecera"><div><p class="comunidad__rotulo" id="tablero-rotulo">Ranking semanal · Vista previa</p><h2 id="comunidad-titulo">Mejores símbolos</h2><p class="comunidad__bajada" id="tablero-nota">Explorá las posibilidades del generador y sumá tu creación al tablero de este navegador. El concurso público todavía no está habilitado.</p></div><div class="comunidad__cta"><div><strong>PARTICIPÁ AQUÍ</strong><p>Armá tu símbolo y compartí tu propia mirada.</p></div><a class="boton boton--primario" href="simbolos/">PARTICIPAR <svg aria-hidden="true"><use href="#i-flecha-derecha"/></svg></a></div></div>
+    <div class="tablero" id="tablero" aria-label="Tablero de símbolos"><p>Cargando símbolos…</p></div>
+    <p class="comunidad__aclaracion">Creaciones contemporáneas inspiradas en patrones. No son piezas históricas ni símbolos atribuidos a una comunidad.</p>
+    <noscript><p>Activá JavaScript para ver el tablero. <a href="simbolos/">Abrir símbolos de la comunidad</a>.</p></noscript>
+  </section>
 </main>
 <footer class="continuacion" aria-label="Micrositios de Musuq Pacha">
   <p class="rotulo">SEGUÍ EXPLORANDO</p>
-  <a href="simbolos/">Generador de símbolos <svg width="20" height="20" aria-hidden="true" style="vertical-align:middle;fill:currentColor"><use href="#i-flecha"/></svg></a>
+  <a href="simbolos/">Símbolos de la comunidad <svg width="20" height="20" aria-hidden="true" style="vertical-align:middle;fill:currentColor"><use href="#i-flecha"/></svg></a>
+  <p class="nota">MUSUQ PACHA · Un territorio, muchas historias.</p>
 </footer>
 <div class="audio-mapa" id="audio-mapa" hidden><button class="boton-icono boton-audio" data-audio="efectos" type="button" aria-label="Silenciar sonidos" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-volumen"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-volumen-lleno"/></svg></button><button class="boton-icono boton-audio" data-audio="musica" type="button" aria-label="Silenciar música" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-musica"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-musica"/></svg></button></div>
 <button class="acceso-mapa boton-icono" id="accesibilidad-mapa" type="button" aria-label="Abrir menú de accesibilidad" aria-haspopup="dialog" aria-controls="menu-accesibilidad" aria-expanded="false" hidden><svg><use href="#i-acceso"/></svg></button>
@@ -111,4 +122,5 @@
 <dialog class="dialogo-simple" id="ingreso-prototipo" aria-labelledby="titulo-ingreso"><div class="accesibilidad__cabecera"><h2 id="titulo-ingreso">Ingresar</h2><button class="boton-icono" type="button" data-cerrar-dialogo aria-label="Cerrar"><svg><use href="#i-cerrar"/></svg></button></div><p>El acceso a cuentas todavía no está conectado en este prototipo. Podés explorar el territorio sin iniciar sesión.</p><button class="boton boton--primario" type="button" data-cerrar-dialogo>Seguir explorando</button></dialog>
 <p class="solo-lectores" id="estado-accesibilidad" role="status"></p>
 <script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/accesibilidad.js"></script><script src="js/sonido.js?v=audio-3"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=carteles-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=teros-espejo-4"></script><script src="js/mapa.js?v=archivo-1"></script>
+<script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script><script src="js/comunidad.js?v=home-1"></script><script src="js/home-comunidad.js?v=home-1"></script>
 </body></html>

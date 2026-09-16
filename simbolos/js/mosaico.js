@@ -23,7 +23,7 @@ const Mosaico = (() => {
   let cv, ctx, bloque, baldosas = [], indice = new Map();
   let raton = { x: -1, y: -1 };
   let cayendo = false, arranqueCaida = 0, ultimoCuadro = 0, finCaida = null;
-  let cols = 0, filas = 0, tam = 100, ox = 0, oy = 0;
+  let cols = 0, filas = 0, tam = 100, ox = 0, oy = 0, ancho = 0, alto = 0;
   let hueco = { c0: 0, f0: 0, cw: 0, fh: 0 };
   let raf = 0, reloj = 0, vivo = false;
 
@@ -95,25 +95,27 @@ const Mosaico = (() => {
 
   function medir() {
     const d = dpr();
-    cv.width = Math.round(innerWidth * d);
-    cv.height = Math.round(innerHeight * d);
+    const r = cv.getBoundingClientRect(); ancho = r.width; alto = r.height;
+    cv.width = Math.round(ancho * d);
+    cv.height = Math.round(alto * d);
     ctx = cv.getContext('2d');
     ctx.setTransform(d, 0, 0, d, 0, 0);
 
     // el mosaico no llega a los bordes: queda un marco por donde se ve el
     // PixelBlast moverse alrededor de las baldosas, como en la referencia
-    const marco = Math.round(Math.min(innerWidth, innerHeight) * 0.055);
-    const anchoUtil = innerWidth - marco * 2, altoUtil = innerHeight - marco * 2;
-    const tentativo = Math.max(78, Math.min(132, Math.round(innerWidth / 13)));
+    const marco = Math.round(Math.min(ancho, alto) * 0.025);
+    const anchoUtil = ancho - marco * 2, altoUtil = alto - marco * 2;
+    const tentativo = Math.max(78, Math.min(132, Math.round(ancho / 13)));
     cols = Math.max(4, Math.round(anchoUtil / tentativo));
     filas = Math.max(3, Math.round(altoUtil / tentativo));
     tam = Math.min(anchoUtil / cols, altoUtil / filas);
-    ox = (innerWidth - cols * tam) / 2;
-    oy = (innerHeight - filas * tam) / 2;
+    ox = (ancho - cols * tam) / 2;
+    oy = (alto - filas * tam) / 2;
 
     // el bloque del título ocupa baldosas enteras, como en la referencia
-    hueco.cw = Math.max(3, Math.min(cols - 2, Math.round(cols * 0.36)));
-    hueco.fh = Math.max(2, Math.min(filas - 2, Math.round(filas * 0.34)));
+    hueco.cw = Math.min(cols, Math.max(3, Math.ceil(cols * 0.72)));
+    if ((cols - hueco.cw) % 2 && hueco.cw > 3) hueco.cw--;
+    hueco.fh = Math.min(filas, Math.max(3, Math.ceil((ancho < 700 ? 290 : 350) / tam)));
     hueco.c0 = Math.floor((cols - hueco.cw) / 2);
     hueco.f0 = Math.floor((filas - hueco.fh) / 2);
 
@@ -251,20 +253,21 @@ const Mosaico = (() => {
     cv = canvas; bloque = elBloque; vivo = true;
     medir();
     addEventListener('resize', medir);
-    cv.addEventListener('pointermove', e => { raton = { x: e.clientX, y: e.clientY }; });
+    cv.addEventListener('pointermove', e => { const r=cv.getBoundingClientRect();raton = { x: e.clientX-r.left, y: e.clientY-r.top }; });
     cv.addEventListener('pointerleave', () => { raton = { x: -1, y: -1 }; });
     cv.addEventListener('pointerdown', e => {
-      const b = baldosaEn(e.clientX, e.clientY);
+      const r=cv.getBoundingClientRect();const b = baldosaEn(e.clientX-r.left, e.clientY-r.top);
       if (b) regenerar(b, performance.now());     // un click, una generación nueva
     });
     raf = requestAnimationFrame(bucle);
-    reloj = setInterval(tanda, CADA);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) reloj = setInterval(tanda, CADA);
   }
 
   /* Se sueltan todas las baldosas. Devuelve una promesa que se cumple cuando
      la ultima salio de pantalla, para que quien entra al juego sepa cuando
      puede sacar la portada de encima. */
   function caer() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
     if (cayendo) return Promise.resolve();
     clearInterval(reloj);                        // que no se regeneren cayendo
     raton = { x: -1, y: -1 };
