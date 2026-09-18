@@ -36,6 +36,7 @@
     const T=window.THREE;
     const camara=new T.PerspectiveCamera(38,1,.005,1500),modelos=new Map();
     const auxiliar=new T.PerspectiveCamera(),direccion=new T.Vector3();
+    let camaraTerritorio=null;
     let seleccionado=null,interior=false,progreso=1,viaje=null,orbita=.48,inclinacion=.32,arrastre=null,reducido=false,ultimoAspecto=0;
     const objetivo=new T.Vector3(),posicion=new T.Vector3(),rotacion=new T.Quaternion(),euler=new T.Euler(0,0,0,'YXZ');
     const ficha=document.createElement('section');ficha.id='vivienda-ficha';ficha.className='vivienda-ficha';ficha.hidden=true;
@@ -57,6 +58,7 @@
     }
     function abrir(id,baseCamara){
       if(!modelos.has(id)||!datos[id])return false;
+      camaraTerritorio=baseCamara;
       seleccionado=id;interior=false;orbita=.48;inclinacion=.32;viaje=null;
       destinoExterior();
       // Same camera morph as the native-tree zoom: match the orthographic view
@@ -106,10 +108,18 @@
     function cerrar(todo=false){
       if(!seleccionado)return false;
       if(interior&&!todo){entrar();return true;}
+      if(!todo&&!reducido&&camaraTerritorio){
+        if(viaje?.tipo==='regreso')return true;
+        const distancia=Math.max(.1,camara.position.distanceTo(objetivo));
+        const hacia=camara.getWorldDirection(new T.Vector3());
+        viaje={tipo:'regreso',miraInicio:camara.position.clone().addScaledVector(hacia,distancia),direccionInicio:hacia.negate(),distanciaInicio:distancia,alturaInicio:distancia*Math.tan(T.MathUtils.degToRad(camara.fov/2)),duracion:1.2,offsetX:camara.view?.enabled?camara.view.offsetX/camara.view.fullWidth:0,offsetY:camara.view?.enabled?camara.view.offsetY/camara.view.fullHeight:0};
+        progreso=0;arrastre=null;ficha.hidden=true;ayuda.hidden=true;visorTeclado.hidden=true;
+        return true;
+      }
       seleccionado=null;interior=false;arrastre=null;viaje=null;ficha.hidden=true;ayuda.hidden=true;visorTeclado.hidden=true;document.body.classList.remove('en-vivienda');
       document.querySelector('#liberar-zona')?.focus({preventScroll:true});avisar();return true;
     }
-    ficha.querySelector('.vivienda-volver').addEventListener('click',()=>cerrar(true));
+    ficha.querySelector('.vivienda-volver').addEventListener('click',()=>{if(interior)entrar();else cerrar();});
     ficha.querySelector('.vivienda-entrar').addEventListener('click',entrar);
     ['wheel','touchmove','pointerdown','pointerup'].forEach(tipo=>ficha.addEventListener(tipo,e=>e.stopPropagation(),{passive:true}));
     function mirar(dx,dy){
@@ -124,6 +134,20 @@
     function actualizar(dt,instantaneo){
       reducido=instantaneo;if(!seleccionado)return;
       const ancho=lienzo.clientWidth,alto=lienzo.clientHeight,movil=ancho<760;
+      if(viaje?.tipo==='regreso'){
+        progreso=instantaneo?1:Math.min(1,progreso+dt/viaje.duracion);
+        const t=progreso*progreso*(3-2*progreso),hacia=camaraTerritorio.getWorldDirection(new T.Vector3());
+        const fin=camaraTerritorio.position.clone().addScaledVector(hacia,300);
+        const distancia=Math.exp(T.MathUtils.lerp(Math.log(viaje.distanciaInicio),Math.log(1200),t));
+        const altura=Math.exp(T.MathUtils.lerp(Math.log(viaje.alturaInicio),Math.log(camaraTerritorio.top/camaraTerritorio.zoom),t));
+        objetivo.lerpVectors(viaje.miraInicio,fin,t);direccion.lerpVectors(viaje.direccionInicio,hacia.negate(),t).normalize();
+        camara.aspect=ancho/alto;camara.position.copy(objetivo).addScaledVector(direccion,distancia);camara.lookAt(objetivo);
+        camara.fov=T.MathUtils.radToDeg(2*Math.atan(altura/distancia));camara.clearViewOffset();
+        camara.setViewOffset(ancho,alto,ancho*viaje.offsetX*(1-t),alto*viaje.offsetY*(1-t),ancho,alto);
+        camara.updateProjectionMatrix();camara.updateMatrixWorld();
+        if(progreso===1)cerrar(true);
+        return;
+      }
       camara.aspect=ancho/alto;camara.fov=interior?modelos.get(seleccionado).camara.fov:38;
       if(!interior&&!viaje&&Math.abs(ultimoAspecto-camara.aspect)>.001){destinoExterior();camara.position.copy(posicion);camara.quaternion.copy(rotacion);}
       ultimoAspecto=camara.aspect;
