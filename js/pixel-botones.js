@@ -3,9 +3,17 @@
    El contenido original nunca se duplica, oculta o reemplaza. */
 (() => {
   'use strict';
-  const selector = '.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton';
+  const selector = '.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton,.juego-descarga__boton';
   const estados = new Set();
   const permiteHover = matchMedia('(hover:hover)');
+  // También alcanza botones claros que no usan el mosaico (archivo y visores).
+  const marcarClaros=raiz=>raiz.querySelectorAll('button,a.boton,a[download]').forEach(b=>{
+    if(!b.getClientRects().length)return;
+    const rgb=getComputedStyle(b).backgroundColor.match(/[\d.]+/g)?.map(Number);
+    if(rgb&&rgb[0]>230&&rgb[1]>230&&rgb[2]>230&&(rgb.length===3||rgb[3]>.85))b.setAttribute('data-boton-blanco','');
+  });
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>marcarClaros(document),{once:true});else marcarClaros(document);
+  document.addEventListener('pointerover',e=>{const b=e.target.closest('button,a.boton,a[download]');if(b&&!b.hasAttribute('data-boton-blanco')){const rgb=getComputedStyle(b).backgroundColor.match(/[\d.]+/g)?.map(Number);if(rgb&&rgb.slice(0,3).every(c=>c>230)&&(rgb.length===3||rgb[3]>.85))b.setAttribute('data-boton-blanco','');}});
 
   document.querySelectorAll(selector).forEach(boton => {
     const capa = document.createElement('span');

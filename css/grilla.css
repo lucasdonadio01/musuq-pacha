@@ -1,0 +1,43 @@
+/* Grilla editorial compartida: Figma HOME / JUEGO final.
+   8 columnas stretch, margen de escritorio 120 px, gutter 32 px.
+   Los lienzos inmersivos siguen siendo full-bleed; su interfaz comparte márgenes. */
+:root{--site-margin:120px;--site-gutter:32px;--site-columns:8;--site-column:calc((100vw - 2 * var(--site-margin) - 7 * var(--site-gutter))/8);--margen:var(--site-margin)}
+@media(max-width:1439px){:root{--site-margin:64px}}
+@media(max-width:1100px){:root{--site-margin:32px}}
+@media(max-width:700px){:root{--site-margin:20px;--site-gutter:24px;--site-columns:4}}
+@media(max-width:370px){:root{--site-margin:12px;--site-gutter:16px}}
+.site-header.nav,.en-mapa .site-header.nav{padding-inline:var(--site-margin)}
+.site-header .perfil-demo{right:var(--site-margin)}
+.territorio__texto{left:var(--site-margin)}
+.territorio__texto .acciones{gap:var(--site-gutter)}
+.comunidad{padding-inline:var(--site-margin)}
+.comunidad__cabecera{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--site-gutter);margin-left:0;margin-bottom:var(--site-gutter)}
+.tablero{gap:var(--site-gutter);grid-template-columns:repeat(3,minmax(0,1fr))}
+.tablero-local{gap:var(--site-gutter)}
+.continuacion{padding-inline:var(--site-margin)}
+.archivo-titulo,#categoria-cabecera{left:var(--site-margin)}
+#detalle{padding-inline:var(--site-gutter) var(--site-margin)}
+.biblioteca-intro,.biblioteca-intro~main,.biblioteca-intro~footer{max-width:none;padding-inline:var(--site-margin)}
+.galeria{gap:var(--site-gutter)}
+/* El taller conserva sus controles laterales; alinea la barra al mismo marco. */
+#taller .barra{padding-inline:var(--site-margin);gap:var(--site-gutter)}
+@media(min-width:1101px){
+  .en-mapa :is(.selector,.panel,.vista-arbol__carta,.vista-fauna),.en-arbol .flora-ficha{left:var(--site-margin)}
+  .en-mapa :is(.mapa-comentarios,.mapa-elementos,.mapa-elementos--especies){right:var(--site-margin)}
+  .en-mapa #salir-mapa{left:var(--site-margin)}
+  .ranking-tarjeta{padding-inline:24px;column-gap:20px}
+}
+@media(max-width:1500px) and (min-width:1051px){
+  .ranking-tarjeta{padding-inline:18px;column-gap:14px;grid-template-columns:72px 1fr}
+  .ranking-simbolo{width:72px;height:74px}
+  .ranking-tarjeta--1{grid-template-columns:48% 1fr}
+  .ranking-tarjeta--1 .ranking-puesto{padding-left:0}
+  .comunidad__cta{flex-wrap:wrap}
+}
+@media(max-width:1050px){.tablero{grid-template-columns:repeat(2,minmax(0,1fr))}.comunidad__cabecera{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .territorio__texto{right:var(--site-margin)}
+  #detalle{padding-inline:var(--site-margin)}
+  #taller .barra{gap:8px}
+}
+@media(max-width:600px){.tablero{grid-template-columns:1fr}}

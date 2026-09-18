@@ -1,0 +1,29 @@
+/* Fichas de viviendas: misma familia de carbón, lima y recortes pixel del mapa. */
+.sobre-vivienda{cursor:pointer!important}
+.mapa-elementos--cerrado .mapa-viviendas{display:none}
+.en-vivienda :is(#selector,#mapa-panel,#carteles-arboles,#mapa-elementos,#mapa-comentarios,.flora-marcadores,.mapa-pie,.herramientas .capas,#salir-mapa,.mapa-bloqueo-hover){display:none!important}
+.vivienda-ficha{position:fixed;z-index:32;left:clamp(28px,4vw,64px);bottom:40px;width:380px;max-width:calc(100vw - 56px);max-height:calc(100svh - var(--mapa-header,72px) - 72px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;background:var(--mapa-carbon,#202020);color:#fff;padding:26px 26px 30px;box-shadow:7px 9px 18px #0003;clip-path:polygon(0 0,calc(100% - 16px) 0,calc(100% - 16px) 12px,100% 12px,100% 100%,12px 100%,12px calc(100% - 12px),0 calc(100% - 12px));font-family:var(--fuente,'Space Grotesk',sans-serif);scrollbar-width:thin;scrollbar-color:#9c6afa #202020}
+.vivienda-ficha[hidden],.vivienda-ayuda[hidden],.vivienda-mirar[hidden],.mapa-viviendas[hidden]{display:none}
+.vivienda-ficha button{cursor:pointer;font-family:inherit}
+.vivienda-volver{display:grid;place-items:center;background:var(--mapa-naranja,#ff5d21);color:#161616;width:44px;height:44px;border:0;margin-bottom:20px}
+.vivienda-ficha svg{width:24px;height:24px;flex-shrink:0}
+.vivienda-rotulo{color:#c8acff;font-size:10px;letter-spacing:.06em;margin:0}
+.vivienda-ficha h2{font-size:clamp(32px,3vw,46px);font-weight:500;line-height:1.08;color:var(--mapa-lima,#e4fe44);margin:8px 0}
+.vivienda-materiales{font-size:12px;line-height:1.5;color:#c8acff;margin:12px 0 18px}
+.vivienda-descripcion{font-size:13px;line-height:1.65;margin:0}
+.vivienda-entrar{display:flex;align-items:center;gap:14px;width:100%;min-height:54px;padding:12px 16px;margin:22px 0 0;border:0;background:#353b2f;color:#fff;font-size:15px;font-weight:500;text-align:left}
+.vivienda-ficha h3{font-size:14px;line-height:1.4;font-weight:500;margin:26px 0 12px}
+.vivienda-galeria{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+.vivienda-foto{margin:0;min-width:0}.vivienda-foto .especie-foto__abrir{display:block;position:relative;padding:0;border:0;background:#121212;width:100%;height:105px;cursor:zoom-in}
+.vivienda-foto img{width:100%;height:100%;object-fit:cover}.vivienda-foto figcaption{font-size:11px;line-height:1.4;color:#d2c1ee;margin-top:7px}
+.vivienda-foto .especie-foto__expandir{width:28px;height:28px;bottom:4px;right:4px}.vivienda-foto .especie-foto__expandir svg{width:18px;height:18px}
+.vivienda-nota{color:#ccc;font-size:11px;line-height:1.55;margin:24px 0 0}
+.vivienda-entrar:hover,.vivienda-volver:hover{background:#fff;color:#161616}
+.vivienda-entrar:disabled{background:#353b2f;color:#ccc;cursor:wait}
+.vivienda-ficha :focus-visible,.vivienda-mirar:focus-visible{outline:3px solid #e4fe44;outline-offset:3px}
+.en-vivienda #mapa-lienzo{touch-action:none;cursor:grab!important}.en-vivienda #mapa-lienzo:active{cursor:grabbing!important}
+.vivienda-ayuda{position:fixed;right:28px;bottom:22px;z-index:31;margin:0;padding:10px 14px;background:#202020e8;color:#fff;font:12px/1.5 var(--fuente,'Space Grotesk',sans-serif);pointer-events:none}
+.vivienda-mirar{position:fixed;right:28px;top:calc(var(--mapa-header,72px) + 20px);z-index:31;padding:12px 16px;min-height:44px;background:#202020;color:#fff;border:0;font:12px/1.4 var(--fuente,'Space Grotesk',sans-serif);cursor:grab}
+.vivienda-mirar:not(:focus-visible){clip-path:inset(50%);width:1px;height:1px;min-height:0;padding:0;overflow:hidden;white-space:nowrap}
+.mapa-viviendas{margin-top:18px;border-top:1px solid #555;padding-top:10px}.mapa-viviendas button{display:block;width:100%;min-height:44px;background:transparent;border:0;color:#fff;text-align:left;font:12px/1.4 var(--fuente,'Space Grotesk',sans-serif);cursor:pointer}.mapa-viviendas button:hover{background:#fff;color:#161616}
+@media(max-width:760px){.vivienda-ficha{left:20px;right:20px;bottom:16px;width:auto;max-width:none;max-height:43svh;padding:20px 20px 26px}.vivienda-ficha h2{font-size:32px}.vivienda-volver{margin-bottom:12px}.vivienda-ayuda{right:20px;top:calc(var(--mapa-header,72px) + 14px);bottom:auto;font-size:10px;padding:6px 10px}.vivienda-mirar{right:20px}.vivienda-galeria{gap:16px 12px}}

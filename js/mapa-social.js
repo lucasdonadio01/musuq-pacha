@@ -20,6 +20,26 @@
   const marcadores = [];
   const movimientoReducido = matchMedia('(prefers-reduced-motion: reduce)');
   let siguienteRebote = 0;
+  let comentarioPendiente = null;
+  const likesKey='musuq-comentarios-likes-v1';
+  let likesLocales={};try{likesLocales=JSON.parse(localStorage.getItem(likesKey)||'{}')||{};}catch{}
+  const sinMovimiento=()=>movimientoReducido.matches||document.documentElement.dataset.detener==='true';
+  function animarPanel(panel){
+    let alto=panel.getBoundingClientRect().height,animacion;
+    new MutationObserver(()=>{
+      const desde=animacion?panel.getBoundingClientRect().height:alto;
+      animacion?.cancel();animacion=null;
+      const destino=panel.getBoundingClientRect().height,visible=!panel.hidden&&panel.classList.contains('mapa-ui-activo');
+      if(!visible){alto=0;return;}
+      alto=destino;
+      if(sinMovimiento()||Math.abs(destino-desde)<2)return;
+      animacion=panel.animate([{height:Math.max(40,desde)+'px'},{height:destino+'px'}],{duration:440,easing:'cubic-bezier(.22,1.22,.36,1)'});
+      animacion.onfinish=()=>{animacion=null;};
+      for(const contenido of panel.querySelectorAll('.mapa-comentarios__lista,.mapa-elementos__opciones,.mapa-especies,.mapa-viviendas')){
+        if(contenido.getClientRects().length)contenido.animate([{opacity:.2,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:320,easing:'cubic-bezier(.16,1,.3,1)'});
+      }
+    }).observe(panel,{attributes:true,attributeFilter:['class','hidden'],subtree:true});
+  }
   function detenerRebotes(){marcadores.forEach(m=>{m.animacion?.cancel();m.animacion=null;m.proximo=performance.now()+2500+Math.random()*12000;});}
   movimientoReducido.addEventListener('change',detenerRebotes);
   addEventListener('musuq:accesibilidad',detenerRebotes);
@@ -48,9 +68,10 @@
     const ctx = canvas.getContext('2d');
     if (!ctx) return canvas;
     if (typeof Motor !== 'undefined' && typeof PUEBLOS !== 'undefined' && PUEBLOS.length) {
-      const p = PUEBLOS[indice % PUEBLOS.length];
+      const paletas=[{fondo:'#d6c2ff',colores:['#473267','#8b5ad4','#f8eecc']},{fondo:'#afcfb8',colores:['#254d43','#627b38','#f9d478']},{fondo:'#c2d7ee',colores:['#243854','#7271bc','#f8e8b8']},{fondo:'#edc096',colores:['#663e39','#aa5439','#efe2b7']},{fondo:'#dfe781',colores:['#415647','#92764c','#fcf3c7']},{fondo:'#d4b8cf',colores:['#60345b','#3f5756','#f4e4c4']}];
+      const p = paletas[indice % paletas.length];
       const m = Motor.crear(9); m.quieto = true;
-      m.generar(0, semilla, Motor.paletaContra(p.colores, p.fondo, 3));
+      m.generar(0, semilla, Motor.paletaContra(p.colores.map((h,i)=>({h,n:'Perfil '+i})), p.fondo, 3));
       ctx.fillStyle = p.fondo; ctx.fillRect(0, 0, 81, 81);
       for (const [k, h] of m.grilla) {
         const [x, y] = k.split(',').map(Number);
@@ -167,38 +188,64 @@
     comentarios.forEach((dato, i) => {
       const fila = crear('article', 'comentario-demo'); fila.id = 'comentario-demo-' + i;
       const autor = crear('div', 'comentario-demo__autor'); autor.append(avatar(902 + i * 83, i), crear('span', '', dato.usuario));
-      const cuerpo = crear('div', 'comentario-demo__cuerpo'); cuerpo.append(crear('p', '', dato.texto));
+      const cuerpo = crear('div', 'comentario-demo__cuerpo');
+      const enlace=crear('button','comentario-demo__abrir',dato.texto);enlace.type='button';enlace.setAttribute('aria-label','Ver en el mapa: '+dato.texto);cuerpo.append(enlace);
       const numeros = crear('div', 'comentario-demo__numeros');
-      numeros.innerHTML = `<span>${dato.respuestas}${icono('chat')}</span><span>${dato.likes}${icono('heart')}</span>`;
-      numeros.setAttribute('aria-label', `${dato.respuestas} respuestas y ${dato.likes} reacciones simuladas`);
+      numeros.innerHTML = `<span>${dato.respuestas}${icono('chat')}</span>`;
+      const like=crear('button','comentario-like');like.type='button';numeros.append(like);
       cuerpo.append(numeros); fila.append(autor, cuerpo); listaComentarios.append(fila);
-      const marker = crear('button', 'mapa-comentario-marker'); marker.type = 'button';
+      const marker = crear('div', 'mapa-comentario-marker');marker.setAttribute('role','group');
       marker.setAttribute('aria-label', `${dato.usuario}, comentario de ejemplo: ${dato.texto}`);
-      marker.append(avatar(902 + i * 83, i));
+      const pin=crear('button','mapa-comentario-marker__pin');pin.type='button';pin.setAttribute('aria-label',`Leer comentario de ${dato.usuario}`);pin.append(avatar(902+i*83,i));marker.append(pin);
       const globo = crear('span', 'mapa-comentario-marker__globo');
       const firma = crear('span','mapa-globo__autor');firma.append(avatar(902+i*83,i),crear('span','',dato.usuario));
       const detalle = crear('span','mapa-globo__detalle');
       const cifras = crear('span','mapa-globo__cifras');cifras.innerHTML=`<span>${dato.respuestas}${icono('chat')}</span><span>${dato.likes}${icono('heart')}</span>`;
       cifras.setAttribute('aria-label',`${dato.respuestas} respuestas y ${dato.likes} likes de ejemplo`);
+      const likeMapa=crear('button','comentario-like');likeMapa.type='button';cifras.lastElementChild.replaceWith(likeMapa);
+      const refrescarLike=()=>{
+        const activo=likesLocales[dato.usuario]===true,n=dato.likes+Number(activo);
+        like.innerHTML='<span>'+n+'</span>'+icono('heart');like.setAttribute('aria-pressed',String(activo));like.setAttribute('aria-label',(activo?'Quitar mi like':'Dar like')+' al comentario de '+dato.usuario);
+        cifras.lastElementChild.innerHTML=n+icono('heart');cifras.lastElementChild.classList.toggle('comentario-like--activo',activo);
+        likeMapa.setAttribute('aria-pressed',String(activo));likeMapa.setAttribute('aria-label',like.getAttribute('aria-label'));
+        cifras.setAttribute('aria-label',`${dato.respuestas} respuestas y ${n} likes de ejemplo`);
+      };
+      refrescarLike();
+      like.addEventListener('click',e=>{
+        e.stopPropagation();likesLocales[dato.usuario]=!likesLocales[dato.usuario];
+        try{localStorage.setItem(likesKey,JSON.stringify(likesLocales));}catch{}
+        refrescarLike();like.getAnimations().forEach(a=>a.cancel());
+        if(!sinMovimiento())like.animate([{scale:1},{scale:1.3,offset:.35},{scale:.94,offset:.7},{scale:1}],{duration:390,easing:'ease-out'});
+      });
+      likeMapa.addEventListener('click',e=>{e.stopPropagation();like.click();if(!sinMovimiento())likeMapa.animate([{scale:1},{scale:1.25},{scale:1}],{duration:340,easing:'ease-out'});});
       detalle.append(crear('span','mapa-globo__texto',dato.texto),cifras);globo.append(firma,detalle);marker.append(globo);
-      marker.setAttribute('aria-expanded','false');
+      pin.setAttribute('aria-expanded','false');
       const pausar = ()=>{marker.getAnimations().forEach(a=>a.cancel());};
-      const cerrar = ()=>{marker.classList.remove('mapa-comentario-marker--abierto');marker.setAttribute('aria-expanded','false');};
+      const cerrar = ()=>{marker.classList.remove('mapa-comentario-marker--abierto');pin.setAttribute('aria-expanded','false');};
       const mostrar = ()=>{
         pausar();
         marcadores.forEach(m=>m.cerrar());
-        marker.classList.add('mapa-comentario-marker--abierto');marker.setAttribute('aria-expanded','true');
+        marker.classList.add('mapa-comentario-marker--abierto');pin.setAttribute('aria-expanded','true');
       };
       // El clic no fija el globo. En pantallas táctiles se lee desde el panel.
       marker.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')mostrar();});
       marker.addEventListener('pointerleave',cerrar);
       marker.addEventListener('pointercancel',cerrar);
-      marker.addEventListener('focus',()=>{if(marker.matches(':focus-visible'))mostrar();});
-      marker.addEventListener('blur',cerrar);
+      pin.addEventListener('focus',()=>{if(pin.matches(':focus-visible'))mostrar();});
+      pin.addEventListener('click',()=>mostrar());
+      marker.addEventListener('focusout',e=>{if(!marker.contains(e.relatedTarget))cerrar();});
       marker.addEventListener('keydown',e=>{
-        if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cerrar();marker.blur();}
+        if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cerrar();document.activeElement?.blur();}
       });
-      capaComentarios.append(marker); marcadores.push({dato, marker, cerrar, zona:null,proximo:performance.now()+2000+i*1750,animacion:null});
+      const registro={dato,marker,cerrar,mostrar,zona:null,proximo:performance.now()+2000+i*1750,animacion:null};
+      enlace.addEventListener('click',()=>{
+        registro.zona ||= ui.zonas.find(z=>normalizar(z.nombre).includes(dato.pueblo));
+        if(!registro.zona)return;
+        document.querySelectorAll('.comentario-demo--activo').forEach(el=>el.classList.remove('comentario-demo--activo'));fila.classList.add('comentario-demo--activo');
+        comentarioPendiente=registro;abrirBuscador(false,false);ui.verPueblo(registro.zona.id);
+      });
+      fila.addEventListener('click',e=>{if(!e.target.closest('button'))enlace.click();});
+      capaComentarios.append(marker); marcadores.push(registro);
     });
     toggle.addEventListener('click', () => {
       comentariosActivos = !comentariosActivos;
@@ -218,6 +265,7 @@
       }
     });
     document.body.append(capaComentarios, panelComentarios);
+    animarPanel(panelComentarios);
     protegerScroll(panelComentarios);
   }
   function construirFiltros() {
@@ -244,7 +292,7 @@
       input.addEventListener('change', () => {
         if (!input.checked) return;
         filtro = valor; ui?.filtrar(valor);
-        estadoFiltros.textContent = valor === 'construcciones' ? 'Todavía no hay construcciones documentadas en esta vista.' : valor === 'flora' ? 'Elegí Querandí para explorar las plantas y sus usos.' : valor === 'fauna' ? 'Fauna de Querandí · Elegí un animal para conocerlo.' : '';
+        estadoFiltros.textContent = valor === 'construcciones' ? (ui?.estado().zonaId===2?'Aldea de piedra · Entrá para recorrerla.':ui?.estado().zonaId===14?'Maloka y carpa de pieles · modelos 3D.':'Elegí Omaguaca o Querandí para ver las viviendas.') : valor === 'flora' ? 'Elegí Querandí para explorar las plantas y sus usos.' : valor === 'fauna' ? 'Fauna de Querandí · Elegí un animal para conocerlo.' : '';
         estadoFiltros.hidden = !estadoFiltros.textContent;
         if (matchMedia('(max-width:760px)').matches) {
           filtros.classList.add('mapa-elementos--cerrado');
@@ -273,13 +321,14 @@
     }
     const vacio=crear('p','mapa-especies__vacio','Todavía no hay especies disponibles en esta vista.');vacio.hidden=true;especies.append(vacio);
     filtros.append(especies);
+    animarPanel(filtros);
     titulo.addEventListener('click',()=>{especies.inert=filtros.classList.contains('mapa-elementos--cerrado');});
     if (matchMedia('(max-width:760px)').matches) { filtros.classList.add('mapa-elementos--cerrado'); titulo.setAttribute('aria-expanded','false'); opciones.inert = true; }
   }
   function actualizarEstado() {
     if (!iniciado || !ui) return;
     const estado = ui.estado();
-    const clave = [estado.explorando, estado.zonaId, estado.nivel, estado.arbol, estado.fauna, estado.faunaLista, estado.flora, estado.filtro, sesion].join('|');
+    const clave = [estado.explorando, estado.zonaId, estado.nivel, estado.arbol, estado.fauna, estado.faunaLista, estado.flora, estado.filtro, estado.vivienda, sesion].join('|');
     if (clave === estadoAnterior) return;
     estadoAnterior = clave;
     if (estado.zonaId && !document.body.classList.contains('mapa-con-pueblo') && matchMedia('(max-width:760px)').matches) {
@@ -312,6 +361,17 @@
       b.disabled=b.dataset.tipo==='fauna'&&!estado.faunaLista;
     });
     opciones.querySelectorAll('input').forEach(input=>input.checked=input.value===estado.filtro);
+    let viviendas=filtros.querySelector('.mapa-viviendas');
+    if(!viviendas){
+      viviendas=document.createElement('div');viviendas.className='mapa-viviendas';viviendas.setAttribute('aria-label','Viviendas del territorio');
+      viviendas.addEventListener('click',e=>{const b=e.target.closest('[data-vivienda]');if(b)ui.verVivienda(b.dataset.vivienda);});filtros.append(viviendas);
+    }
+    const lugares=window.MUSUQ_VIVIENDAS?.lugares.filter(d=>d.zona===estado.zonaId)||[];
+    if(viviendas.dataset.zona!==String(estado.zonaId)){
+      viviendas.dataset.zona=String(estado.zonaId);viviendas.replaceChildren();
+      lugares.forEach(d=>{const boton=document.createElement('button');boton.type='button';boton.dataset.vivienda=d.id;boton.textContent='Ver '+d.nombre+' ↗';viviendas.append(boton);});
+    }
+    viviendas.hidden=detalle||!lugares.length||estado.filtro!=='construcciones';
     const zona = ui.zonas.find(z => z.id === estado.zonaId);
     const badge = document.getElementById('ficha-progreso');
     if (badge) {
@@ -336,6 +396,7 @@
           const ancho=Math.min(340,innerWidth-32),centro=Math.max(ancho/2+16,Math.min(innerWidth-ancho/2-16,p.x));
           m.marker.style.setProperty('--globo-desplazamiento',(centro-p.x).toFixed(1)+'px');
           m.marker.classList.toggle('globo-abajo',p.y<200);
+          if(comentarioPendiente===m){m.marker.querySelector('.mapa-comentario-marker__pin').focus({preventScroll:true});m.mostrar();comentarioPendiente=null;}
           const leyendo=m.marker.matches(':hover,:focus-visible')||m.marker.classList.contains('mapa-comentario-marker--abierto');
           if(!movimientoReducido.matches&&!window.MUSUQ_A11Y?.estado.detener&&!leyendo&&ahora>m.proximo&&ahora>siguienteRebote){
             m.animacion=m.marker.animate([{translate:'0 0',offset:0},{translate:'0 -6px',offset:.32},{translate:'0 0',offset:.60},{translate:'0 -2px',offset:.79},{translate:'0 0',offset:1}],{duration:850,easing:'cubic-bezier(.37,0,.63,1)'});

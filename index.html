@@ -13,14 +13,18 @@
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
 <link rel="stylesheet" href="css/archivo-transicion.css?v=viaje-1">
 <link rel="stylesheet" href="css/home-comunidad.css?v=ranking-figma-1">
-<link rel="stylesheet" href="css/ranking-home.css?v=cta-hover-1">
-<link rel="stylesheet" href="css/visor-simbolo.css?v=visor-1">
-<link rel="stylesheet" href="css/mapa-social.css?v=especies-3d-1">
+<link rel="stylesheet" href="css/ranking-home.css?v=correcciones-1">
+<link rel="stylesheet" href="css/visor-simbolo.css?v=correcciones-1">
+<link rel="stylesheet" href="css/home-descarga.css?v=correcciones-1">
+<link rel="stylesheet" href="css/mapa-social.css?v=correcciones-1">
 <link rel="stylesheet" href="css/flora-querandi.css?v=especies-3d-1">
 <link rel="stylesheet" href="css/zoom-detalle.css?v=zoom-detalle-1">
-<link rel="stylesheet" href="css/pixel-botones.css?v=pixel-suave-1">
+<link rel="stylesheet" href="css/fotos-especies.css?v=correcciones-1">
+<link rel="stylesheet" href="css/viviendas.css?v=omaguaca-1">
+<link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
 <script src="js/archivo-transicion.js?v=viaje-1"></script>
 <link rel="stylesheet" href="css/header.css?v=header-figma-2">
+<link rel="stylesheet" href="css/grilla.css?v=juego-1">
 </head>
 <body>
 <!-- THESIS: territorio vivo, comunidad pixel. OWN-WORLD: HOME de tp2, naranja/violeta sobre negro.
@@ -78,7 +82,6 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
       <span class="panel__muestra" aria-hidden="true"><svg><use href="#i-flecha"/></svg></span><p class="panel__rotulo">EL TERRITORIO Y SUS PUEBLOS</p>
       <div aria-live="polite" aria-atomic="true"><h2 class="panel__nombre">Explorá el mapa</h2><p class="panel__criterio">Pasá por una zona o elegí un pueblo de la lista.</p></div><div class="panel__despliegue" id="panel-despliegue" inert><div><div class="panel__ficha" id="panel-ficha" hidden><p class="ficha__descripcion" data-ficha="descripcion"></p><dl class="ficha__datos"><div><dt>Superficie</dt><dd data-ficha="superficie"></dd></div><div><dt>Bioma</dt><dd data-ficha="bioma"></dd></div><div><dt>Árboles nativos</dt><dd data-ficha="arboles"></dd></div><div><dt>Flora</dt><dd data-ficha="flora"></dd></div></dl><button class="ficha__arboles" id="ver-arboles" type="button">Ver árboles nativos <svg aria-hidden="true"><use href="#i-flecha"/></svg></button><a class="ficha__arboles" id="ver-archivo" href="archivo.html">Ver archivo <svg aria-hidden="true"><use href="#i-flecha"/></svg></a></div>
       <div class="panel__detalle"><span>TERRITORIO</span><p>Zonas aproximadas de la referencia histórica.</p></div>
-      <p class="panel__nota">Estas áreas no representan límites exclusivos ni la distribución actual de las comunidades.</p>
       <button class="panel__liberar" id="liberar-zona" type="button" hidden>Desfijar selección <svg aria-hidden="true"><use href="#i-cerrar"/></svg></button></div></div><p class="panel__gesto">Pasá para descubrir · Clic para fijar</p>
     </aside>
     <aside class="selector inmersivo" id="selector" inert aria-label="Elegir pueblo">
@@ -100,6 +103,23 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
   <a href="simbolos/">Símbolos de la comunidad <svg width="20" height="20" aria-hidden="true" style="vertical-align:middle;fill:currentColor"><use href="#i-flecha"/></svg></a>
   <p class="nota">MUSUQ PACHA · Un territorio, muchas historias.</p>
 </footer>
+      <section class="home-descarga juego-descarga" aria-labelledby="home-descarga-titulo" id="descarga">
+        <canvas id="home-pixel-blast" aria-hidden="true"></canvas>
+        <div class="juego-descarga__contenido">
+          <h2 id="home-descarga-titulo">Descargá ahora<strong>MUSUQ PACHA</strong></h2>
+          <div class="juego-descarga__acciones">
+            <button type="button" class="juego-descarga__boton" data-plataforma="Windows" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--windows" aria-hidden="true"></span><span>DESCARGAR PARA WINDOWS</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+            <button type="button" class="juego-descarga__boton juego-descarga__boton--mac" data-plataforma="Mac" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--mac" aria-hidden="true"></span><span>DESCARGAR PARA MAC</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+          </div>
+          <dl class="juego-datos">
+            <div><dt><span class="juego-icono juego-icono--package" aria-hidden="true"></span>VERSIÓN</dt><dd>1.0 · 7 de septiembre de 2026</dd></div>
+            <div><dt><span class="juego-icono juego-icono--drive" aria-hidden="true"></span>TAMAÑO</dt><dd>2,4 GB</dd></div>
+            <div><dt><span class="juego-icono juego-icono--translate" aria-hidden="true"></span>IDIOMA</dt><dd>Español rioplatense · subtítulos</dd></div>
+          </dl>
+          <img class="juego-plataformas" src="assets/juego/plataformas.png" width="1252" height="127" alt="Referencia de plataformas: PlayStation 5, PC, Xbox Series X/S, Google Play Games, App Store, Google Play y Epic Games Store. Clasificación de referencia: Teen. Imagen del prototipo, sin enlaces de descarga.">
+          <p class="solo-lectores" id="home-descarga-prototipo">Solo prototipo: no hay archivos de descarga disponibles.</p>
+        </div>
+      </section>
 <div class="audio-mapa" id="audio-mapa" hidden><button class="boton-icono boton-audio" data-audio="efectos" type="button" aria-label="Silenciar sonidos" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-volumen"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-volumen-lleno"/></svg></button><button class="boton-icono boton-audio" data-audio="musica" type="button" aria-label="Silenciar música" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-musica"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-musica"/></svg></button></div>
 <button class="acceso-mapa boton-icono" id="accesibilidad-mapa" type="button" aria-label="Abrir menú de accesibilidad" aria-haspopup="dialog" aria-controls="menu-accesibilidad" aria-expanded="false" hidden><svg><use href="#i-acceso"/></svg></button>
 
@@ -107,10 +127,13 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=18"></script>
-<script src="js/header-plantilla.js?v=header-figma-2"></script><script src="js/header.js?v=header-figma-2"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
-<script src="js/three.min.js"></script><script src="js/datos-mapa.js"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=mapa-social-2"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/especie-cartel.js?v=flora-zoom3-1"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=hojas-2"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/habitat.js?v=especies-3d-1"></script><script src="js/flora-querandi.js?v=flora-zoom3-1"></script><script src="js/mapa.js?v=flora-zoom3-1"></script>
-<script src="js/comunidad.js?v=home-1"></script><script src="js/visor-simbolo.js?v=visor-1"></script><script src="js/home-comunidad.js?v=visor-1"></script>
+<script src="js/header-plantilla.js?v=juego-1"></script><script src="js/header.js?v=juego-1"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
+<script src="js/three.min.js"></script><script src="js/GLTFLoader.js?v=r128"></script><script src="js/viviendas-detalle.js?v=campamento-1"></script><script src="js/viviendas-querandi.js?v=campamento-1"></script><script src="js/datos-mapa.js"></script><script src="js/omaguaca-territorio.js?v=omaguaca-1"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=omaguaca-1"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/especie-cartel.js?v=flora-zoom3-1"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=omaguaca-1"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/fotos-especies.js?v=correcciones-1"></script><script src="js/habitat.js?v=omaguaca-1"></script><script src="js/flora-querandi.js?v=fotos-1"></script><script src="js/mapa.js?v=correcciones-1"></script>
+<script src="js/patron-vivo.js?v=correcciones-1"></script>
+<script src="js/comunidad.js?v=home-1"></script><script src="js/visor-simbolo.js?v=correcciones-1"></script><script src="js/home-comunidad.js?v=correcciones-1"></script>
 <script src="js/cta-patrones.js?v=cta-hover-1"></script>
-<script src="js/mapa-social.js?v=especies-3d-1"></script>
-<script src="js/pixel-botones.js?v=pixel-suave-1"></script>
+<script src="simbolos/js/fondo.js?v=18"></script>
+<script src="js/home-ambiente.js?v=correcciones-1"></script>
+<script src="js/mapa-social.js?v=correcciones-1"></script>
+<script src="js/pixel-botones.js?v=correcciones-1"></script>
 </body></html>

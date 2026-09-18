@@ -1,0 +1,6 @@
+/* Lectura a 12 pt; los títulos mantienen Space Grotesk. */
+body[data-vista]{font-family:Archivo,Arial,sans-serif;font-size:16px}
+#archivo-experiencia :is(p,li,dd,dt,figcaption,.credito,.nota-editorial,.contexto-fuentes,.contexto-fuentes-rotulo,#lamina-fuente,.detalle-navegacion){font-family:Archivo,Arial,sans-serif;font-size:16px;line-height:1.55}
+#archivo-experiencia :is(h1,h2,h3,.categoria-etiqueta){font-family:'Space Grotesk',Arial,sans-serif}
+#archivo-experiencia .archivo-titulo p{font-size:16px;line-height:1.4}
+#detalle{scrollbar-gutter:stable}

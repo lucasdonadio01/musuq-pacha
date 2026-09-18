@@ -35,12 +35,13 @@
       ficha.querySelector('h2').textContent=d.nombre;ficha.querySelector('.flora-cientifico').textContent=d.cientifico;ficha.querySelector('.flora-texto').textContent=d.texto;ficha.querySelector('.flora-nota').textContent=d.nota;
       const a=ficha.querySelector('.flora-fuente');a.href=d.fuente;a.textContent='Fuente · '+d.credito;
       const r=ficha.querySelector('.flora-revision');r.hidden=!d.revision;if(d.revision)r.href=d.revision;
+      window.MUSUQ_FOTOS_ESPECIES?.mostrar(ficha,d.id,'.flora-texto');
       ficha.hidden=false;ficha.inert=false;document.body.classList.add('con-flora-ficha');ficha.querySelector('h2').focus({preventScroll:true});
     }
     function cerrar(restaurar=false){if(!seleccion)return false;seleccion=null;ficha.hidden=true;ficha.inert=true;document.body.classList.remove('con-flora-ficha');if(restaurar&&activa)ultimoBoton?.focus({preventScroll:true});return true;}
     ficha.querySelector('button').addEventListener('click',()=>cerrar(true));
     ficha.addEventListener('wheel',e=>e.stopPropagation(),{passive:true});ficha.addEventListener('touchmove',e=>e.stopPropagation(),{passive:true});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&seleccion){e.stopImmediatePropagation();e.preventDefault();cerrar(true);} },true);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&seleccion&&!document.querySelector('dialog[open]')){e.stopImmediatePropagation();e.preventDefault();cerrar(true);} },true);
     function encontrar(e){
       if(!activa||!camaraActual||seleccion)return null;
       const r=lienzo.getBoundingClientRect();puntero.set((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2);raycaster.setFromCamera(puntero,camaraActual);

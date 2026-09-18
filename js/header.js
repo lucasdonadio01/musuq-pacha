@@ -16,7 +16,8 @@
   document.body.insertAdjacentHTML('beforeend', plantillas.iconos + plantillas.accesibilidad);
   const destinos = {
     territorio:enHome ? '#territorio' : local('index.html#territorio'),
-    archivo:local('archivo.html')
+    archivo:local('archivo.html'),
+    juego:local('juego.html')
   };
   header.querySelector('.nav__marca').href = enHome ? '#territorio' : local('index.html');
   for (const enlace of header.querySelectorAll('[data-seccion-link]')) {

@@ -7,8 +7,8 @@
   transition:color 240ms ease-out, border-color 460ms ease-out;
 }
 .pixel-boton[data-pixel-activo="true"] {
-  color:#1a1a1a!important;
-  border-color:#fff!important;
+  color:var(--pixel-hover-tinta,#1a1a1a)!important;
+  border-color:var(--pixel-hover,#fff)!important;
   opacity:1;
 }
 .pixel-boton > .pixel-boton__mosaico {
@@ -22,7 +22,7 @@
 .pixel-boton__celda {
   position:absolute;
   display:block;
-  background:#fff;
+  background:var(--pixel-hover,#fff);
   opacity:0;
   transition:opacity 80ms ease-out;
   transition-delay:calc(var(--pixel-orden) * 370ms);
@@ -39,3 +39,5 @@
 }
 html[data-detener="true"] :is(.pixel-boton,.pixel-boton__celda),
 .sin-animaciones :is(.pixel-boton,.pixel-boton__celda) { transition:none!important; }
+.juego-descarga__boton--mac,.boton--blanco,[data-boton-blanco]{--pixel-hover:#7542bd;--pixel-hover-tinta:#fff}
+:is(.juego-descarga__boton--mac,.boton--blanco,[data-boton-blanco]):is(:hover,:focus-visible){background:#7542bd;color:#fff}

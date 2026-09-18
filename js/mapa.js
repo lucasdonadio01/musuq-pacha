@@ -1605,7 +1605,7 @@
   const focoArbol = new THREE.Vector2();
   let cercania = 0;
   let filtroElementos = 'todo', solicitarFauna = false;
-  let floraMapa = null, camaraSocial = camara, plantaPendiente = null;
+  let floraMapa = null, viviendasMapa = null, camaraSocial = camara, plantaPendiente = null;
   let estadoSocialAnterior = '';
   const frenteSuelo = new THREE.Vector3(ejes.adelante.x, 0, ejes.adelante.z).normalize();
   const derechaSuelo = new THREE.Vector3(ejes.derecha.x, 0, ejes.derecha.z).normalize();
@@ -2070,6 +2070,7 @@
   }
 
   function fijarZona(zona) {
+    viviendasMapa?.cerrar(true);
     floraMapa?.cerrar();
     if (filtroElementos === 'fauna') solicitarFauna = true;
     if (zona !== zonaFijada) {
@@ -2157,6 +2158,8 @@
   }
 
   lienzo.addEventListener('pointermove', (e) => {
+    if(viviendasMapa?.seleccion)return;
+    lienzo.classList.toggle('sobre-vivienda',!!viviendasMapa?.hover(e));
     const r = lienzo.getBoundingClientRect();
     puntero.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     punteroAdentro = true;
@@ -2182,7 +2185,7 @@
   });
 
   function detectarZona() {
-    if (arbolFoco || cercania > 0) {
+    if (arbolFoco || cercania > 0 || viviendasMapa?.seleccion) {
       return;
     }
     if(Math.abs(inmersion-inmersionObjetivo)>0.005)return;
@@ -2283,6 +2286,7 @@
   const claveCuadro=(x,y)=>Math.round((x-C.x[0])/P.q)+':'+Math.round((y-C.y[0])/P.q);
   const indiceCuadros = new Map(C.x.map((x, i) => [claveCuadro(x,C.y[i]), i]));
   lienzo.addEventListener('click', (e) => {
+    if (viviendasMapa?.detectar(e)) return;
     if (floraMapa?.detectar(e)) return;
     if(!explorando){
       const elegida = zonaBajoCursor;
@@ -2321,6 +2325,7 @@
     window.dispatchEvent(new CustomEvent('musuq:modo',{detail:{explorando:valor}}));
     document.getElementById('header').inert=false;
     if (!valor) floraMapa?.cerrar();
+    if (!valor) viviendasMapa?.cerrar(true);
     document.getElementById('presentacion').inert=valor;
     document.querySelectorAll('.inmersivo').forEach(el=>el.inert=!valor);
     balanceoObjetivo.set(0,0);balanceo.set(0,0);
@@ -2344,8 +2349,9 @@
   let esperaRueda = 0;
   window.addEventListener('wheel',e=>{
     if(document.querySelector('dialog[open]'))return;
-    if(!explorando||e.target.closest('#selector,#mapa-panel,#carteles-arboles,#vista-arbol,#vista-fauna,#fauna-controles,#header,#mapa-comentarios,#mapa-elementos,#flora-ficha,.mapa-social,.flora-marcadores')||Math.abs(e.deltaY)<4)return;
+    if(!explorando||e.target.closest('#selector,#mapa-panel,#carteles-arboles,#vista-arbol,#vista-fauna,#fauna-controles,#header,#mapa-comentarios,#mapa-elementos,#flora-ficha,#vivienda-ficha,.mapa-social,.flora-marcadores')||Math.abs(e.deltaY)<4)return;
     e.preventDefault();
+    if(viviendasMapa?.seleccion)return;
     const ahora = performance.now();
     if (ahora < esperaRueda) {
       esperaRueda = ahora + 350;
@@ -2368,6 +2374,7 @@
   let inicioTacto=null;
   lienzo.addEventListener('touchstart',e=>{inicioTacto=e.touches[0].clientY;},{passive:true});
   lienzo.addEventListener('touchmove',e=>{
+    if(viviendasMapa?.seleccion)return;
     if(explorando&&inicioTacto!==null&&Math.abs(e.touches[0].clientY-inicioTacto)>45){
       if(!floraMapa?.cerrar()&&!habitat?.cerrar()){if(arbolFoco)cerrarArbol();else if(zonaFijada)fijarZona(null);else cambiarModo(false);}
       inicioTacto=null;
@@ -2376,6 +2383,7 @@
   document.addEventListener('keydown', (e) => {
     if(document.querySelector('dialog[open]'))return;
     if (e.key === 'Escape') {
+      if(viviendasMapa?.cerrar()){e.preventDefault();return;}
       if(habitat?.cerrar()){e.preventDefault();return;}
       if (arbolFoco) {
         cerrarArbol();
@@ -2384,7 +2392,7 @@
       } else {
         cambiarModo(false);
       }
-    }else if(explorando && ['PageDown','PageUp'].includes(e.key) && !e.target.closest('#selector')){
+    }else if(explorando && ['PageDown','PageUp'].includes(e.key) && !e.target.closest('#selector,#vivienda-ficha')&&!viviendasMapa?.seleccion){
       cambiarModo(false);
     }
   });
@@ -2536,6 +2544,7 @@
   }
 
   function abrirArbol(grupo) {
+    viviendasMapa?.cerrar(true);
     if (!zonaFijada || !grupo || !window.MUSUQ_BOSQUES) {
       return;
     }
@@ -2827,7 +2836,8 @@
 
     balanceo.lerp(balanceoObjetivo, instantaneo ? 1 : 1 - Math.exp(-dt * 2.5));
     actualizarBloqueoHover();
-    bosques?.actualizar(dt,instantaneo,arbolVisto&&cercania>0?camaraCerca:camara);
+    bosques?.filtrar(viviendasMapa?.seleccion?'todo':filtroElementos);
+    bosques?.actualizar(dt,instantaneo,viviendasMapa?.camara||(arbolVisto&&cercania>0?camaraCerca:camara),viviendasMapa?.foco);
     ubicarCamara();
     actualizarCarteles(ahora);
     const tiempo = instantaneo ? 0 : (ahora - inicio) / 1000;
@@ -2873,7 +2883,7 @@
     if (enArbol) {
       ubicarCamaraCerca(tiempo);
     }
-    const camaraActiva = enArbol ? camaraCerca : camara;
+    let camaraActiva = enArbol ? camaraCerca : camara;
     heroe.visible = enArbol;
     if (enArbol && arbolHeroe) {
       sitioHeroe(arbolHeroe, heroe.position, direccionHeroe);
@@ -2890,10 +2900,12 @@
     }
     if (filtroElementos === 'fauna') heroe.visible = false;
     floraMapa?.actualizar({camara:camaraActiva,explorando,zonaId:zonaFijada?.id,cercania,enfoque,tiempo,instantaneo,base:heroe.position,dir:direccionHeroe,enArbol,dt,brote:matCuadro.uniforms.avanceBrote.value});
+    viviendasMapa?.actualizar({explorando,zonaId:zonaFijada?.id,cercania,dt,instantaneo,brote:matCuadro.uniforms.avanceBrote.value,camara:camaraActiva});
+    if(viviendasMapa?.camara)camaraActiva=viviendasMapa.camara;
     floraMapa?.aplicarCamara(camaraActiva,dt);
-    floraMapa?.actualizarCarteles(camaraActiva,dt,habitat?.enFauna);
+    floraMapa?.actualizarCarteles(camaraActiva,dt,habitat?.enFauna||!!viviendasMapa?.seleccion);
     habitat?.actualizarCarteles(camaraActiva,dt,floraMapa?.enFlora);
-    const estadoSocial = [explorando,zonaFijada?.id,!!arbolFoco,filtroElementos,habitat?.seleccion,habitat?.disponible,floraMapa?.seleccion].join(':');
+    const estadoSocial = [explorando,zonaFijada?.id,!!arbolFoco,filtroElementos,habitat?.seleccion,habitat?.disponible,floraMapa?.seleccion,viviendasMapa?.seleccion,viviendasMapa?.interior].join(':');
     if (estadoSocial !== estadoSocialAnterior) {
       estadoSocialAnterior = estadoSocial;
       window.dispatchEvent(new CustomEvent('musuq:estado',{detail:window.MUSUQ_MAPA_UI.estado()}));
@@ -2906,7 +2918,7 @@
     const heroeAmbiente = enArbol && arbolHeroe ? { grupo: arbolHeroe, base: heroe.position, dir: direccionHeroe, alto: heroe.scale.y, ancho: heroe.scale.x, visibilidad: opacidadHeroe * (1 - (habitat?.zoom || 0)) } : null;
     ambiente?.actualizar({ dt, instantaneo, tiempo, zona: zonaFijada, heroe: heroeAmbiente, camaraCerca, cercania });
     vientoVisible?.actualizar({ dt, instantaneo, camaraMapa: camara, cercania: arbolVisto ? cercania : 0, heroe: heroeAmbiente });
-    matCielo.uniforms.presencia.value = THREE.MathUtils.smoothstep(cercania, 0.2, 0.75);
+    matCielo.uniforms.presencia.value = viviendasMapa?.seleccion?1:THREE.MathUtils.smoothstep(cercania, 0.2, 0.75);
     matHeroe.uniforms.tiempo.value = tiempo;
     matNubeCielo.uniforms.tiempo.value = tiempo;
     matNubeCielo.uniforms.movimiento.value = instantaneo ? 0 : 1;
@@ -2923,11 +2935,11 @@
     }
     document.body.classList.toggle('en-arbol', !!arbolVisto && cercania > 0.02);
 
-    const conFoco = enfoque > 0.001 || rafaga > 0.001 || rafagaArbol > 0.001 || lejania > 0.001;
+    const conFoco = !viviendasMapa?.seleccion&&(enfoque > 0.001 || rafaga > 0.001 || rafagaArbol > 0.001 || lejania > 0.001);
     renderer.setRenderTarget(conFoco ? objetivoFoco : null);
     renderer.clear();
-    if (enArbol) {
-      renderer.render(escenaCielo, camaraCerca);
+    if (enArbol||viviendasMapa?.seleccion) {
+      renderer.render(escenaCielo, camaraActiva);
     }
     renderer.render(escenaAgua, camaraActiva);
     renderer.render(escena, camaraActiva);
@@ -2945,7 +2957,7 @@
     renderer.clearDepth();
     presenciaFronteras = instantaneo ? Number(mostrarFronteras) : THREE.MathUtils.clamp(presenciaFronteras + (mostrarFronteras ? dt : -dt) / 0.55, 0, 1);
     const suaveFronteras = presenciaFronteras * presenciaFronteras * (3 - 2 * presenciaFronteras);
-    const verFronteras = suaveFronteras * (arbolVisto ? 1 - THREE.MathUtils.smoothstep(cercania, 0, 0.3) : 1);
+    const verFronteras = viviendasMapa?.seleccion?0:suaveFronteras * (arbolVisto ? 1 - THREE.MathUtils.smoothstep(cercania, 0, 0.3) : 1);
     if (verFronteras > 0.001) {
       const bajada = (1 - suaveFronteras) * camara.top * 0.14;
       mallaProvinciales.position.y = P.z0 + 0.02 - bajada;
@@ -2993,7 +3005,9 @@
   }
   window.MUSUQ_MAPA_UI={
     zonas:zonas.map(({id,nombre,criterio})=>({id,nombre,criterio})),
-    estado:()=>({explorando,zonaId:zonaFijada?.id||null,nivel:floraMapa?.seleccion||habitat?.seleccion?3:arbolFoco?2:zonaFijada?1:0,arbol:arbolFoco?.id||null,filtro:filtroElementos,fauna:habitat?.seleccion||null,flora:floraMapa?.seleccion||null,faunaLista:!!habitat?.disponible}),
+    estado:()=>({explorando,zonaId:zonaFijada?.id||null,nivel:viviendasMapa?.interior||floraMapa?.seleccion||habitat?.seleccion?3:viviendasMapa?.seleccion||arbolFoco?2:zonaFijada?1:0,arbol:arbolFoco?.id||null,filtro:filtroElementos,fauna:habitat?.seleccion||null,flora:floraMapa?.seleccion||null,faunaLista:!!habitat?.disponible,vivienda:viviendasMapa?.seleccion||null,interior:!!viviendasMapa?.interior}),
+    verVivienda(id){return viviendasMapa?.abrir(id);},
+    verPueblo(id){const zona=zonas.find(z=>z.id===id);if(!zona)return;viviendasMapa?.cerrar(true);floraMapa?.cerrar();habitat?.cerrar();cerrarArbol();cambiarModo(true);fijarZona(zona);},
     verEspecie(tipo,id){
       if(!arbolFoco||zonaFijada?.id!==14)return;
       this.filtrar('todo');
@@ -3011,14 +3025,17 @@
       filtroElementos=tipo;solicitarFauna=tipo==='fauna';
       if(tipo!=='fauna'&&tipo!=='todo'&&tipo!=='arboles')cerrarArbol();
       bosques?.filtrar(tipo);habitat?.filtrar(tipo);floraMapa?.filtrar(tipo);
+      viviendasMapa?.filtrar(tipo);
       window.dispatchEvent(new CustomEvent('musuq:estado',{detail:this.estado()}));
     },
     salir:()=>cambiarModo(false)
   };
   floraMapa=window.MUSUQ_FLORA?.crear({escena,lienzo,posicion:posicionSocial,alAbrir:(planta)=>{
+    viviendasMapa?.cerrar(true);
     habitat?.cerrar();
     if(!arbolFoco)plantaPendiente={firma:null,estable:0};
   },sueloCerca:(x,z)=>{const i=celdaEn(x,-z);return i===undefined?null:sueloCelda(i);}})||null;
+  viviendasMapa=window.MUSUQ_VIVIENDAS?.crear({escena,lienzo,alAbrir:()=>{floraMapa?.cerrar();habitat?.cerrar();plantaPendiente=null;solicitarFauna=false;},suelo:(x,z)=>{const i=celdaEn(x,-z);return i===undefined?null:sueloCelda(i);}})||null;
   window.dispatchEvent(new CustomEvent('musuq:mapa-listo'));
   const puebloInicial = zonas.find((z) => z.id === Number(new URLSearchParams(location.search).get('pueblo')));
   if (puebloInicial) {

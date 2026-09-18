@@ -10,6 +10,10 @@
   const host = dialog.querySelector('.visor-simbolo__escena');
   const back = dialog.querySelector('button'), download = dialog.querySelector('a');
   const status = dialog.querySelector('[role=status]');
+  back.append(document.createTextNode('Volver'));download.append(document.createTextNode('Descargar'));
+  const modo=document.createElement('button');modo.type='button';modo.className='visor-simbolo__modo';modo.textContent='3D';modo.setAttribute('aria-label','Activar relieve 3D');modo.setAttribute('aria-pressed','true');
+  dialog.querySelector('.visor-simbolo__acciones').prepend(modo);
+  let relieve=true;modo.addEventListener('click',()=>{relieve=!relieve;modo.setAttribute('aria-pressed',String(relieve));modo.textContent=relieve?'3D':'2D';});
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let renderer, scene, camera, sheet, texture, frame, resize, opener, previousOverflow;
   let generation = 0, zoom = 1, targetZoom = 1, pointer = {x:0,y:0};
@@ -40,7 +44,7 @@
   });
   host.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
 
-  async function open({src, title, filename}, trigger) {
+  async function open({src, title, filename,puesto}, trigger) {
     if (dialog.open) return;
     opener = trigger || document.activeElement; previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
@@ -50,6 +54,7 @@
     dialog.showModal(); back.focus({preventScroll:true});
     const current = ++generation;
     zoom = targetZoom = 1; pointer = {x:0,y:0};
+    relieve=true;modo.textContent='3D';modo.setAttribute('aria-pressed','true');modo.hidden=false;dialog.dataset.puesto=puesto||'';
     const img = new Image(); img.src = src;
     try {
       await img.decode();
@@ -68,10 +73,12 @@
       texture.magFilter = T.NearestFilter; texture.minFilter = T.LinearFilter;
       texture.generateMipmaps = false; texture.needsUpdate = true;
       const paper = new T.Mesh(new T.PlaneGeometry(w+0.16,h+0.16),new T.MeshBasicMaterial({color:0xf1ebdf}));
-      const image = new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:texture}));
+      paper.position.z=-.085;
+      const material=window.PatronVivo?.material(T,texture,puesto===1)||new T.MeshBasicMaterial({map:texture});
+      const image = new T.Mesh(new T.PlaneGeometry(w,h,36,36),material);
       image.position.z = 0.008; sheet.add(paper,image);
       const shadow = new T.Mesh(new T.PlaneGeometry(w+0.16,h+0.16),new T.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.16}));
-      shadow.position.set(0.06,-0.09,-0.08); sheet.add(shadow);
+      shadow.position.set(0.06,-0.09,-0.15); sheet.add(shadow);
       let distance = 6;
       const fit = () => {
         const width = host.clientWidth, height = host.clientHeight;
@@ -85,19 +92,22 @@
       const render = now => {
         if (!dialog.open || current !== generation) return;
         const t = (now-start)/1000, dt = Math.min((now-last)/1000,0.05); last = now;
+        const quieto=reduced.matches||document.documentElement.dataset.detener==='true';
+        if(material.uniforms){material.uniforms.tiempo.value=quieto?0:t;material.uniforms.profundidad.value+=((relieve&&!quieto?1:0)-material.uniforms.profundidad.value)*.1;}
         const easing = 1-Math.exp(-dt*7);
         zoom += (targetZoom-zoom)*easing;
         const entry = reduced.matches ? 1 : 1-Math.pow(1-Math.min(t/0.7,1),3);
         camera.position.z = distance / zoom + (1-entry)*1.8;
-        sheet.rotation.x += ((reduced.matches?0:Math.sin(t*0.6)*0.025-pointer.y*0.06)-sheet.rotation.x)*easing;
-        sheet.rotation.y += ((reduced.matches?0:Math.sin(t*0.43)*0.035+pointer.x*0.09)-sheet.rotation.y)*easing;
-        sheet.rotation.z = reduced.matches ? 0 : Math.sin(t*0.35)*0.018;
-        sheet.position.y = reduced.matches ? 0 : Math.sin(t*0.7)*0.035;
+        sheet.rotation.x += ((quieto||!relieve?0:Math.sin(t*0.6)*0.025-pointer.y*0.16)-sheet.rotation.x)*easing;
+        sheet.rotation.y += ((quieto||!relieve?0:Math.sin(t*0.43)*0.035+pointer.x*0.22)-sheet.rotation.y)*easing;
+        sheet.rotation.z = quieto||!relieve ? 0 : Math.sin(t*0.35)*0.018;
+        sheet.position.y = quieto||!relieve ? 0 : Math.sin(t*0.7)*0.035;
         renderer.render(scene,camera); frame=requestAnimationFrame(render);
       }; frame=requestAnimationFrame(render);
     } catch (error) {
       if (current !== generation || !dialog.open) return;
       cleanup();
+      modo.hidden=true;
       if (img.complete && img.naturalWidth) {
         img.alt = title || 'Símbolo'; img.className = 'visor-simbolo__fallback'; host.append(img);
         status.hidden = true;

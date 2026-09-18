@@ -1,4 +1,11 @@
 /* Interfaz del mapa · referencia pixel del usuario, sin cambiar la escena Three.js. */
+/* Los comentarios de ejemplo conservan sus likes en este dispositivo. */
+.comentario-demo__abrir{display:block;width:100%;padding:0;border:0;background:none;color:inherit;text-align:left;font:inherit;font-size:11px;line-height:1.45;cursor:pointer}
+.comentario-demo__abrir:hover{text-decoration:underline;text-decoration-color:#7543bd;text-underline-offset:3px}
+.comentario-like{display:flex;align-items:center;gap:5px;background:none;border:0;color:inherit;font:inherit;min-height:28px;min-width:42px;padding:3px;justify-content:center;cursor:pointer}
+.comentario-like[aria-pressed=true],.comentario-like--activo{color:#743bc2}
+.comentario-like[aria-pressed=true] svg{filter:drop-shadow(0 2px 3px #743bc230)}
+.comentario-demo :is(button):focus-visible{outline:2px solid #743bc2;outline-offset:2px}
 :root{--mapa-naranja:#F66227;--mapa-violeta:#9E6FF8;--mapa-carbon:#202020;--mapa-negro:#1a1a1a;--mapa-lima:#E0FF42;--mapa-header:var(--site-header-height,78px)}
 .mapa-hover-bloqueado{position:fixed;z-index:24;pointer-events:none;display:flex;align-items:center;gap:12px;width:250px;box-sizing:border-box;padding:13px 15px;background:#292929;color:#ddd;box-shadow:4px 6px 12px #0003;font-family:var(--fuente,'Space Grotesk',sans-serif)}
 .mapa-hover-bloqueado[hidden]{display:none}.mapa-hover-bloqueado svg{width:28px;height:28px;flex-shrink:0;fill:currentColor}.mapa-hover-bloqueado strong{display:block;font-size:14px;font-weight:500}.mapa-hover-bloqueado small{display:block;margin-top:4px;font-size:11px;color:#bbb}
@@ -146,3 +153,27 @@ html[data-color=contraste] .en-mapa :is(.selector__contenido,.panel,.mapa-coment
 .mapa-globo__cifras svg{display:block;width:23px;height:23px;fill:currentColor}
 .mapa-comentario-marker.globo-abajo .mapa-comentario-marker__globo{bottom:auto;top:calc(100% + 10px)}
 @media(max-width:760px){.mapa-globo__detalle{gap:10px}.mapa-globo__texto{font-size:13px}.mapa-globo__cifras{gap:8px;font-size:12px}.mapa-globo__cifras svg{width:20px;height:20px}}
+/* Volver comparte la primera fila con la búsqueda, sólo en la vista general. */
+.en-mapa:not(.mapa-con-pueblo) #salir-mapa{top:calc(var(--mapa-header) + 38px);bottom:auto;left:var(--site-margin);height:56px;min-width:96px;background:#F66227;color:#171717;z-index:35}
+.en-mapa:not(.mapa-con-pueblo) .selector{left:calc(var(--site-margin) + 116px)}
+.mapa-comentarios,.mapa-elementos{transform-origin:top right;transition:opacity 300ms ease,translate 440ms cubic-bezier(.22,1.22,.36,1),visibility 300ms;translate:0 10px}
+.mapa-comentarios.mapa-ui-activo,.mapa-elementos.mapa-ui-activo{translate:0 0}
+.mapa-comentarios__lista,.mapa-elementos__opciones,.mapa-especies{transform-origin:top center}
+.mapa-comentario-marker{border-color:var(--mapa-violeta);background:#514267}
+@media(max-width:760px){
+ .en-mapa:not(.mapa-con-pueblo) #salir-mapa{top:calc(var(--mapa-header) + 19px);height:46px;left:20px;min-width:74px;padding:0 9px;font-size:11px}
+ .en-mapa:not(.mapa-con-pueblo) .selector{left:110px;width:calc(100vw - 130px)}
+ .en-mapa:not(.mapa-con-pueblo) .buscador-trigger{gap:7px;padding-inline:10px;font-size:11px}
+ .comentario-like{min-height:32px;min-width:44px}
+ .en-mapa .mapa-comentarios{translate:none}
+}
+@media(prefers-reduced-motion:reduce){.mapa-comentarios,.mapa-elementos{transition:none;translate:none}}
+html[data-detener=true] :is(.mapa-comentarios,.mapa-elementos){transition:none;translate:none}
+.mapa-comentario-marker__pin{display:block;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;cursor:pointer}
+.mapa-comentario-marker__pin:focus-visible{outline:3px solid #e1ff35;outline-offset:4px}
+.mapa-comentario-marker--abierto .mapa-comentario-marker__globo{pointer-events:auto}
+.mapa-comentario-marker__globo::after{content:'';position:absolute;top:100%;left:0;width:100%;height:12px}
+.globo-abajo .mapa-comentario-marker__globo::after{top:auto;bottom:100%}
+.mapa-globo__cifras .comentario-like{min-width:42px;min-height:32px;font:inherit}
+.mapa-marcadores .mapa-globo__cifras{color:#706975}.mapa-marcadores .mapa-globo__autor{color:#706975}
+@media(prefers-reduced-motion:reduce){.mapa-comentarios.mapa-ui-activo,.mapa-elementos.mapa-ui-activo{translate:none}}

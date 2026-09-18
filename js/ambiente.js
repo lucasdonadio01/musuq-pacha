@@ -104,6 +104,7 @@
       const tramos = tramosRio(minX, maxX, minZ, maxZ);
       const arboles = bosques?.plan ? bosques.plan(zona) : [];
       const libre = (x, z, radio) => {
+        if(window.MUSUQ_VIVIENDAS?.ocupa(x,z,radio,zona.id))return undefined;
         const i = celdaEn(x, -z);
         return i !== undefined && (C.zonas[i] & bit) && distanciaTramos(tramos, x, z) > radio + 0.05 && !arboles.some((b) => Math.hypot(b.x - x, b.z - z) < radio + P.q * 0.08) ? i : undefined;
       };

@@ -17,7 +17,7 @@
     const ficha = document.createElement('article');
     ficha.className = 'ranking-tarjeta ranking-tarjeta--' + d.puesto;
     ficha.setAttribute('role', 'button'); ficha.tabIndex = 0;
-    const abrir = () => VisorSimbolo.open({src:'assets/ranking/imagen-' + d.imagen + '.png', title:d.puesto + '° puesto · @miaumiaumichi', filename:'musuq-pacha-puesto-' + d.puesto + '.png'}, ficha);
+    const abrir = () => VisorSimbolo.open({src:'assets/ranking/imagen-' + d.imagen + '.png', title:d.puesto + '° puesto · @miaumiaumichi', filename:'musuq-pacha-puesto-' + d.puesto + '.png',puesto:d.puesto}, ficha);
     ficha.addEventListener('click', abrir);
     ficha.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
     ficha.setAttribute('aria-label', d.puesto + '° puesto, ' + d.likes + ' likes, @miaumiaumichi. Datos de la maqueta.');
@@ -36,6 +36,7 @@
       ficha.append(medalla);
     }
     tablero.append(ficha);
+    window.PatronVivo?.instalar(ficha.querySelector('.ranking-simbolo'),ficha);
   });
   const guardados = document.getElementById('comunidad-local');
   const lista = document.getElementById('tablero-local');

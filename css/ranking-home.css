@@ -1,4 +1,19 @@
 /* HOME 2044:623 / ranking 2189:588. Tipografía medida en Figma, no escalada por viewport. */
+.comunidad .ranking-tarjeta--1{background:#e1ff35}
+.comunidad .ranking-tarjeta--1::before{background:#e1ff35;box-shadow:20px 20px #e1ff35}
+.comunidad .ranking-tarjeta--1::after{background:#e1ff35}
+.comunidad .ranking-tarjeta--1 .ranking-medalla{background:#F66227}
+.comunidad .ranking-tarjeta--1 .ranking-medalla img{filter:brightness(0) saturate(100%) invert(92%) sepia(57%) saturate(1105%) hue-rotate(14deg) brightness(109%) contrast(101%)}
+.comunidad :is(.ranking-tarjeta--4,.ranking-tarjeta--5){background:#4d4d4d;color:#fff}
+.comunidad :is(.ranking-tarjeta--4,.ranking-tarjeta--5) .ranking-likes img{filter:brightness(0) invert(1)}
+.comunidad .comunidad__cta .boton{font-family:'Space Grotesk',Arial,sans-serif}
+.comunidad .ranking-flecha{mask-image:url('../assets/ranking/stylus-note.svg');transform:none}
+.patron-vivo{position:relative;overflow:visible}
+.patron-vivo__original{display:block;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+.patron-vivo canvas{position:absolute;inset:0;display:block;width:100%;height:100%;opacity:0;transition:opacity 180ms ease;image-rendering:pixelated}
+.patron-vivo--activo canvas{opacity:1}
+.comunidad>.comunidad-patrones{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.075;z-index:0;mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
+@media(prefers-reduced-motion:reduce){.patron-vivo canvas{transition:none}}
 @font-face{font-family:Archivo;font-style:normal;font-weight:400;font-display:swap;src:url('../assets/ranking/archivo-regular.ttf') format('truetype')}
 @font-face{font-family:Archivo;font-style:normal;font-weight:500;font-display:swap;src:url('../assets/ranking/archivo-medium.ttf') format('truetype')}
 .comunidad{padding:130px max(24px,calc((100% - 1298px)/2)) 130px}

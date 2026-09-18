@@ -119,7 +119,7 @@
      const mp=pastos[n%3],alto=.022+azar(seed+4)*.034;mat.position.set(x,suelo(i)+.002,z);mat.rotation.set(0,azar(seed+1)*6.28,0);mat.scale.set(alto,alto,alto);mat.updateMatrix();mp.setMatrixAt(mp.count,mat.matrix);
      color.set(bio.color).multiplyScalar(1.1+azar(seed+5)*.3);mp.setColorAt(mp.count++,color);n++;
     }
-    if(bio.id==='arido'&&g.lat>-27.5&&g.lat<-23&&g.lon>-66.5&&g.lon<-64.7&&cactus.children.length<7){
+    if(zona.id!==2&&bio.id==='arido'&&g.lat>-27.5&&g.lat<-23&&g.lon>-66.5&&g.lon<-64.7&&cactus.children.length<7){
      const x=C.x[i]+P.q*.22,z=-C.y[i]+P.q*.18;
      if(distanciaRio(x,z)>.12){const c=mesh(geoCactus,cactus);c.position.set(x,suelo(i),z);c.scale.setScalar(.23+azar(i)*.16);c.rotation.y=azar(i+3)*6.28;}
     }
@@ -157,6 +157,7 @@
    foco=item;camPos.copy(item.obj.position);item.obj.getWorldPosition(puntoFoco);puntoFoco.y+=id==='venado'?.105:.065;
    const f=fichas[id];for(const campo of ['nombre','cientifico','ambiente','texto'])document.getElementById('fauna-'+campo).textContent=f[campo];
    const a=document.getElementById('fauna-fuente');a.href=f.fuente;
+   window.MUSUQ_FOTOS_ESPECIES?.mostrar(panel,id,'#fauna-texto');
    panel.hidden=false;panel.inert=false;document.body.classList.add('en-fauna');
    document.getElementById('fauna-volver').focus({preventScroll:true});window.MUSUQ_A11Y?.narrar(f.nombre+'. '+f.texto);
   }

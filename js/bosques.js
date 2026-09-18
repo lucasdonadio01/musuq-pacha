@@ -130,6 +130,15 @@
 
     function plan(zona){
       if(planes.has(zona.id))return planes.get(zona.id);
+      // Keep two small native-tree accents on the southern terraces. The
+      // northern plateau belongs to the stone village and its cardones.
+      if(zona.id===2){
+        const aislados=[['quenoa',-7.25,2.34,.35],['blanco',-7.25,2.77,.39]].map(([id,x,z,escala],k)=>{
+          const i=C.x.findIndex((cx,j)=>(C.zonas[j]&4)&&Math.abs(cx-x)<P.q/2&&Math.abs(C.y[j]+z)<P.q/2);
+          return {i,id,x,z,escala,giro:.1,espejo:1,semilla:220+k*17,grupo:id+':0',demora:k*.12};
+        }).filter(b=>b.i>=0&&compatible(b.id,uvGeo[b.i]));
+        planes.set(zona.id,aislados);return aislados;
+      }
       const bit=1<<zona.id, ids=porZona[zona.id]||[], celdas=[];
       for(let i=0;i<C.x.length;i++)if(C.zonas[i]&bit)celdas.push(i);
       const ocupadas=new Set(), resultado=[];
@@ -165,7 +174,8 @@
           }
         }
       }
-      planes.set(zona.id,resultado.slice(0,maxArboles));return planes.get(zona.id);
+      const libres=resultado.filter(b=>!window.MUSUQ_VIVIENDAS?.ocupa(b.x,b.z,.13,zona.id));
+      planes.set(zona.id,libres.slice(0,maxArboles));return planes.get(zona.id);
     }
 
     function seleccionar(zona,demora=0){
@@ -175,7 +185,7 @@
       for(const b of arboles){cargar(b.id);delete b.nacimiento;}
     }
 
-    function actualizar(dt,reducido,camara){
+    function actualizar(dt,reducido,camara,focoVivienda=null){
       if(!reducido)reloj+=dt;
       else inicio=reloj-10;
       tiempoHojas.value=reloj;
@@ -188,6 +198,16 @@
       for(const b of arboles){
         const recurso=recortes.get(b.id);
         if(!recurso?.listo)continue;
+        let despejar=false;
+        if(focoVivienda&&camara){
+          const dx=focoVivienda.x-camara.position.x,dz=focoVivienda.z-camara.position.z,largo=dx*dx+dz*dz||1;
+          const k=((b.x-camara.position.x)*dx+(b.z-camara.position.z)*dz)/largo;
+          // Only lower foliage between the viewer and the house. The surrounding
+          // forest stays in the same world, including the view through windows.
+          despejar=k>0&&k<1&&Math.hypot(b.x-camara.position.x-dx*k,b.z-camara.position.z-dz*k)<b.escala*.55+focoVivienda.radio*.5;
+        }
+        b.vistaVivienda=reducido?Number(!despejar):T.MathUtils.lerp(b.vistaVivienda??1,Number(!despejar),1-Math.exp(-dt*10));
+        if(b.vistaVivienda<.002)continue;
         if(b.nacimiento===undefined)b.nacimiento=Math.max(inicio+b.demora,reloj);
         if(reducido)b.nacimiento=Math.min(b.nacimiento,reloj-1);
         const edad=reducido?9:reloj-b.nacimiento;
@@ -199,6 +219,7 @@
         obj.position.set(b.x,suelo(b.i)-b.escala*0.28*(1-Math.min(1,f))+0.004,b.z);
         obj.rotation.set(0,frente+b.giro,reducido?0:Math.sin(edad*12)*Math.exp(-edad*4)*0.07,'YXZ');
         obj.scale.set(b.espejo*b.escala*recurso.aspecto*(1+(1-f)*0.16)*salida,b.escala*f,1);
+        obj.scale.multiplyScalar(b.vistaVivienda);
         obj.updateMatrix();recurso.mesh.setMatrixAt(recurso.mesh.count++,obj.matrix);
         if(!reducido&&edad<0.85&&retirada<0){
           const u=clamp(edad/0.85);

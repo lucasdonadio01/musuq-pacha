@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- THESIS: el territorio se abre para empezar a jugar.
+OWN-WORLD: JUEGO final de Figma, barras naranja/violeta, píxeles naranjas y negro.
+STORY: invitación → avance prototipado → descarga prototipada.
+FIRST VIEWPORT: rombo escalonado, MUSUQ PACHA y una invitación a bajar.
+FORM: grilla de 8 columnas, margen 120/gutter 32, Space Grotesk y Archivo originales. -->
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#202020">
+  <meta name="description" content="Tu recorrido empieza en Musuq Pacha. Re-descubrí el territorio argentino precolombino y conocé las distintas culturas que lo habitaron.">
+  <title>Musuq Pacha · Juego</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/fuente.css">
+  <link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
+  <link rel="stylesheet" href="css/sonido.css?v=audio-3">
+  <link rel="stylesheet" href="css/header.css?v=header-figma-2">
+  <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
+  <link rel="stylesheet" href="css/grilla.css?v=juego-1">
+  <link rel="stylesheet" href="css/juego.css?v=juego-2">
+</head>
+<body class="pagina-juego">
+  <a class="juego-saltar" href="#descarga">Saltar a la descarga</a>
+  <header class="nav site-header" id="header" data-seccion="juego"><a class="nav__marca" href="index.html">MUSUQ PACHA</a></header>
+  <div class="juego-fondo" aria-hidden="true"><canvas id="juego-pixel-blast"></canvas></div>
+  <main class="juego-recorrido" id="juego-recorrido">
+    <div class="juego-escenario">
+      <section class="juego-inicio juego-etapa" aria-labelledby="juego-titulo" id="inicio-juego">
+        <div class="juego-barras" aria-hidden="true"></div>
+        <div class="juego-inicio__texto">
+          <p class="juego-inicio__rotulo">Tu recorrido empieza en</p>
+          <h1 id="juego-titulo">MUSUQ PACHA</h1>
+          <p class="juego-inicio__descripcion">Re-descubrí el territorio argentino precolombino y conocé las distintas culturas que lo habitaron<br>¿Estás listo?</p>
+        </div>
+        <a href="#avance" class="juego-bajar" aria-label="Ver el avance del juego"><span class="juego-icono juego-icono--bajar" aria-hidden="true"></span></a>
+      </section>
+      <section class="juego-video juego-etapa" aria-label="Avance del juego — prototipo" id="avance">
+        <div class="juego-video__muestra">
+          <img src="assets/juego/video-pixeles.svg" width="398" height="235" alt="" aria-hidden="true">
+          <button class="juego-video__play" type="button" aria-label="Reproducir vista previa" aria-pressed="false" aria-describedby="video-prototipo">
+            <span class="juego-icono juego-icono--play" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="sr-only" id="video-prototipo">Vista previa de prototipo. El botón alterna entre reproducir y pausar; no reproduce un video.</p>
+        <a class="juego-video__siguiente" href="#descarga" aria-label="Ir a la descarga"><span class="juego-icono juego-icono--bajar" aria-hidden="true"></span></a>
+      </section>
+      <section class="juego-descarga juego-etapa" aria-labelledby="descarga-titulo" id="descarga">
+        <div class="juego-descarga__contenido">
+          <h2 id="descarga-titulo">Descargá ahora<strong>MUSUQ PACHA</strong></h2>
+          <div class="juego-descarga__acciones">
+            <button type="button" class="juego-descarga__boton" data-plataforma="Windows" aria-describedby="descarga-prototipo"><span class="juego-icono juego-icono--windows" aria-hidden="true"></span><span>DESCARGAR PARA WINDOWS</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+            <button type="button" class="juego-descarga__boton juego-descarga__boton--mac" data-plataforma="Mac" aria-describedby="descarga-prototipo"><span class="juego-icono juego-icono--mac" aria-hidden="true"></span><span>DESCARGAR PARA MAC</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+          </div>
+          <dl class="juego-datos">
+            <div><dt><span class="juego-icono juego-icono--package" aria-hidden="true"></span>VERSIÓN</dt><dd>1.0 · 7 de septiembre de 2026</dd></div>
+            <div><dt><span class="juego-icono juego-icono--drive" aria-hidden="true"></span>TAMAÑO</dt><dd>2,4 GB</dd></div>
+            <div><dt><span class="juego-icono juego-icono--translate" aria-hidden="true"></span>IDIOMA</dt><dd>Español rioplatense · subtítulos</dd></div>
+          </dl>
+          <img class="juego-plataformas" src="assets/juego/plataformas.png" width="1252" height="127" alt="Referencia de plataformas: PlayStation 5, PC, Xbox Series X/S, Google Play Games, App Store, Google Play y Epic Games Store. Clasificación de referencia: Teen. Imagen del prototipo, sin enlaces de descarga.">
+          <p class="sr-only" id="descarga-prototipo">Solo prototipo: no hay archivos de descarga disponibles.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="js/header-plantilla.js?v=juego-1"></script>
+  <script src="js/header.js?v=juego-1"></script>
+  <script src="js/accesibilidad.js?v=main-1"></script>
+  <script src="js/sonido.js?v=main-1"></script>
+  <script src="simbolos/js/fondo.js?v=18"></script>
+  <script src="js/juego.js?v=juego-2"></script>
+  <script src="js/pixel-botones.js?v=correcciones-1"></script>
+</body>
+</html>
