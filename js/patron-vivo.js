@@ -2,27 +2,46 @@
 (() => {
   const reduced=matchMedia('(prefers-reduced-motion:reduce)');
   const quieto=()=>reduced.matches||document.documentElement.dataset.detener==='true';
+  // One shared generator instance per artwork, including its enlarged viewer.
+  const figuras=new Map();
+  function dibujar(canvas,img,now){
+    const ctx=canvas.getContext('2d'),lado=384,n=9,s=lado/n;
+    if(canvas.width!==lado){canvas.width=canvas.height=lado;}
+    ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,lado,lado);
+    ctx.drawImage(img,0,0,lado,lado);
+    if(quieto())return;
+    if(!figuras.has(img.src)){
+      const fondo=Array.from(ctx.getImageData(s/2,s/2,1,1).data).slice(0,3),grilla=new Map();
+      for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+        const c=Array.from(ctx.getImageData((x+.5)*s,(y+.5)*s,1,1).data).slice(0,3);
+        if(c.some((v,i)=>Math.abs(v-fondo[i])>18))grilla.set(x+','+y,Motor.aHex(c));
+      }
+      const motor=Motor.crear(n);motor.cargar(grilla,now-2000);
+      figuras.set(img.src,{motor,grilla,fondo:Motor.aHex(fondo),etapa:'armado',siguiente:now+1900+figuras.size*270});
+    }
+    const f=figuras.get(img.src);
+    if(now>=f.siguiente){
+      if(f.etapa==='armado'){f.motor.limpiar(now);f.etapa='desarme';f.siguiente=now+900;}
+      else {f.motor.cargar(f.grilla,now);f.etapa='armado';f.siguiente=now+3500;}
+    }
+    ctx.fillStyle=f.fondo;ctx.fillRect(0,0,lado,lado);
+    const animando=f.motor.dibujar(ctx,0,0,s,now,{sombra:true});
+    if(!animando&&f.etapa==='armado'){ctx.clearRect(0,0,lado,lado);ctx.drawImage(img,0,0,lado,lado);}
+  }
   function instalar(img,tarjeta){
     const marco=document.createElement('span');marco.className=img.className+' patron-vivo';img.className='patron-vivo__original';img.before(marco);marco.append(img);
     const canvas=document.createElement('canvas');canvas.setAttribute('aria-hidden','true');marco.append(canvas);
-    const ctx=canvas.getContext('2d');let frame=0,activo=false;
+    let frame=0,activo=false,visible=false;
     function detener(){activo=false;cancelAnimationFrame(frame);marco.classList.remove('patron-vivo--activo');}
-    function dibujar(now){
+    function animar(now){
       if(!activo||quieto()||document.hidden||!img.naturalWidth){detener();return;}
-      const lado=384;canvas.width=canvas.height=lado;ctx.imageSmoothingEnabled=false;
-      ctx.drawImage(img,0,0,lado,lado);
-      const n=9,s=lado/n,t=now/1000;
-      for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-        const distancia=Math.hypot(x-4,y-4),z=Math.sin(t*2.1-distancia*.8),a=1+z*.025;
-        ctx.save();ctx.translate((x+.5)*s,(y+.5)*s-z*1.7);ctx.scale(a,a);
-        ctx.drawImage(img,x*img.naturalWidth/n,y*img.naturalHeight/n,img.naturalWidth/n,img.naturalHeight/n,-s/2,-s/2,s,s);ctx.restore();
-      }
-      frame=requestAnimationFrame(dibujar);
+      dibujar(canvas,img,now);
+      frame=requestAnimationFrame(animar);
     }
-    const iniciar=()=>{if(activo||quieto())return;activo=true;marco.classList.add('patron-vivo--activo');frame=requestAnimationFrame(dibujar);};
-    tarjeta.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')iniciar();});tarjeta.addEventListener('pointerleave',detener);tarjeta.addEventListener('pointercancel',detener);
-    tarjeta.addEventListener('focus',iniciar);tarjeta.addEventListener('blur',detener);tarjeta.addEventListener('click',detener);
-    document.addEventListener('visibilitychange',detener);reduced.addEventListener('change',detener);addEventListener('musuq:accesibilidad',detener);
+    const actualizar=()=>{if(!visible||quieto()||document.hidden||!img.naturalWidth){detener();return;}if(activo)return;activo=true;marco.classList.add('patron-vivo--activo');frame=requestAnimationFrame(animar);};
+    new IntersectionObserver(([e])=>{visible=e.isIntersecting;actualizar();}).observe(tarjeta);
+    img.addEventListener('load',actualizar);
+    document.addEventListener('visibilitychange',actualizar);reduced.addEventListener('change',actualizar);addEventListener('musuq:accesibilidad',actualizar);
   }
   function material(T,textura,dorado){
     return new T.ShaderMaterial({side:T.DoubleSide,uniforms:{map:{value:textura},tiempo:{value:0},profundidad:{value:1},oro:{value:dorado?1:0}},
@@ -36,5 +55,5 @@
         gl_FragColor=vec4(color,tex.a);}`
     });
   }
-  window.PatronVivo={instalar,material};
+  window.PatronVivo={instalar,material,dibujar};
 })();

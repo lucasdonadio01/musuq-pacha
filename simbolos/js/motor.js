@@ -833,6 +833,7 @@ const Motor = (() => {
         morphA(generarGrilla(semilla, paleta, familias), ahora);
       },
       limpiar(ahora) { morphA(new Map(), ahora); },
+      cargar(grilla, ahora) { morphA(new Map(grilla), ahora); },
       dibujar, pintar, borrar, pixelEn,
       get grilla() { return grilla; },
       get semilla() { return semilla; },

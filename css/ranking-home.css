@@ -44,7 +44,11 @@
 .ranking-autor img{width:15px;height:15px;image-rendering:pixelated}
 .ranking-medalla{position:absolute;top:26px;left:calc(55% - 44px);width:60px;height:60px;padding:5px;background:#e1ff35}
 .ranking-medalla img{width:100%;height:100%}
-.ranking-tarjeta--1 .ranking-puesto{padding-left:18px}
+.comunidad .ranking-tarjeta--1{grid-template-rows:auto 1fr;row-gap:18px}
+.comunidad .ranking-tarjeta--1 .ranking-puesto{grid-column:1/-1;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding-left:0;align-self:start}
+.comunidad .ranking-tarjeta--1 .ranking-medalla{position:static;display:inline-flex;width:44px;height:44px;flex:0 0 44px;padding:5px}
+.comunidad .ranking-tarjeta--1 .ranking-simbolo{grid-row:2;align-self:center}
+.comunidad .ranking-tarjeta--1 .ranking-datos{grid-row:2}
 .ranking-tarjeta--1 .ranking-likes{margin-bottom:12px}
 .ranking-tarjeta--1::before{content:'';position:absolute;left:-20px;top:44px;width:20px;height:20px;background:var(--home-orange);box-shadow:20px 20px var(--home-orange)}
 .ranking-tarjeta--1::after{content:'';position:absolute;left:0;right:0;bottom:-45px;height:45px;background:var(--home-orange);clip-path:polygon(0 0,5% 0,5% 20px,0 20px,0 0,66% 0,66% 100%,77% 100%,77% 20px,82% 20px,82% 0,100% 0,100% 0)}

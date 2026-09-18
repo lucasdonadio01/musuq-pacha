@@ -69,7 +69,9 @@
       sheet = new T.Group(); scene.add(sheet);
       const ratio = img.naturalWidth / img.naturalHeight;
       const w = ratio >= 1 ? 2.6 : 2.6 * ratio, h = ratio >= 1 ? 2.6 / ratio : 2.6;
-      texture = new T.Texture(img); texture.encoding = T.sRGBEncoding;
+      const animado=puesto&&window.PatronVivo?document.createElement('canvas'):null;
+      if(animado)window.PatronVivo.dibujar(animado,img,performance.now());
+      texture = new T.Texture(animado||img); texture.encoding = T.sRGBEncoding;
       texture.magFilter = T.NearestFilter; texture.minFilter = T.LinearFilter;
       texture.generateMipmaps = false; texture.needsUpdate = true;
       const paper = new T.Mesh(new T.PlaneGeometry(w+0.16,h+0.16),new T.MeshBasicMaterial({color:0xf1ebdf}));
@@ -93,6 +95,7 @@
         if (!dialog.open || current !== generation) return;
         const t = (now-start)/1000, dt = Math.min((now-last)/1000,0.05); last = now;
         const quieto=reduced.matches||document.documentElement.dataset.detener==='true';
+        if(animado){window.PatronVivo.dibujar(animado,img,now);texture.needsUpdate=true;}
         if(material.uniforms){material.uniforms.tiempo.value=quieto?0:t;material.uniforms.profundidad.value+=((relieve&&!quieto?1:0)-material.uniforms.profundidad.value)*.1;}
         const easing = 1-Math.exp(-dt*7);
         zoom += (targetZoom-zoom)*easing;

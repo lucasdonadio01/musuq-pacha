@@ -33,7 +33,7 @@
     if (d.puesto === 1) {
       const medalla = document.createElement('span'); medalla.className = 'ranking-medalla';
       medalla.setAttribute('aria-hidden', 'true'); medalla.append(imagen('icono-4.svg'));
-      ficha.append(medalla);
+      puesto.prepend(medalla);
     }
     tablero.append(ficha);
     window.PatronVivo?.instalar(ficha.querySelector('.ranking-simbolo'),ficha);
