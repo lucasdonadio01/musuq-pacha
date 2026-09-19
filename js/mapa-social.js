@@ -118,7 +118,7 @@
     tituloLista.textContent = consulta ? 'Resultados' : sesion ? 'Tus desbloqueados' : 'Recomendados';
     cuenta.textContent = String(cantidad);
     document.getElementById('sin-resultados').hidden = cantidad > 0;
-    notasLista.textContent = sesion ? 'Sesión demo · Podés explorar todos los pueblos.' : 'Elegí una recomendación o buscá cualquier pueblo.';
+    notasLista.textContent = sesion ? 'Tenés nuevos territorios para descubrir.' : 'Elegí una recomendación o buscá cualquier pueblo.';
   }
   function construirBuscador() {
     selector = document.getElementById('selector'); buscador = document.getElementById('buscar-pueblo'); lista = document.getElementById('lista-pueblos');
@@ -205,8 +205,8 @@
       const likeMapa=crear('button','comentario-like');likeMapa.type='button';cifras.lastElementChild.replaceWith(likeMapa);
       const refrescarLike=()=>{
         const activo=likesLocales[dato.usuario]===true,n=dato.likes+Number(activo);
-        like.innerHTML='<span>'+n+'</span>'+icono('heart');like.setAttribute('aria-pressed',String(activo));like.setAttribute('aria-label',(activo?'Quitar mi like':'Dar like')+' al comentario de '+dato.usuario);
-        cifras.lastElementChild.innerHTML=n+icono('heart');cifras.lastElementChild.classList.toggle('comentario-like--activo',activo);
+        like.innerHTML='<span>'+n+'</span>'+icono(activo?'heart-fill':'heart');like.setAttribute('aria-pressed',String(activo));like.setAttribute('aria-label',(activo?'Quitar mi like':'Dar like')+' al comentario de '+dato.usuario);
+        cifras.lastElementChild.innerHTML=n+icono(activo?'heart-fill':'heart');cifras.lastElementChild.classList.toggle('comentario-like--activo',activo);
         likeMapa.setAttribute('aria-pressed',String(activo));likeMapa.setAttribute('aria-label',like.getAttribute('aria-label'));
         cifras.setAttribute('aria-label',`${dato.respuestas} respuestas y ${n} likes de ejemplo`);
       };
@@ -292,7 +292,7 @@
       input.addEventListener('change', () => {
         if (!input.checked) return;
         filtro = valor; ui?.filtrar(valor);
-        estadoFiltros.textContent = valor === 'construcciones' ? (ui?.estado().zonaId===2?'Aldea de piedra · Entrá para recorrerla.':ui?.estado().zonaId===14?'Maloka y carpa de pieles · modelos 3D.':'Elegí Omaguaca o Querandí para ver las viviendas.') : valor === 'flora' ? 'Elegí Querandí para explorar las plantas y sus usos.' : valor === 'fauna' ? 'Fauna de Querandí · Elegí un animal para conocerlo.' : '';
+        estadoFiltros.textContent = valor === 'construcciones' ? (ui?.estado().zonaId===2?'Aldea de piedra · Entrá para recorrerla.':ui?.estado().zonaId===14?'Maloka y toldo · modelos 3D.':'Elegí Omaguaca o Querandí para ver las viviendas.') : valor === 'flora' ? 'Elegí Querandí para explorar las plantas y sus usos.' : valor === 'fauna' ? 'Fauna de Querandí · Elegí un animal para conocerlo.' : '';
         estadoFiltros.hidden = !estadoFiltros.textContent;
         if (matchMedia('(max-width:760px)').matches) {
           filtros.classList.add('mapa-elementos--cerrado');
@@ -376,7 +376,7 @@
     const badge = document.getElementById('ficha-progreso');
     if (badge) {
       badge.hidden = !(sesion && zona);
-      if (zona) badge.innerHTML = icono(desbloqueado(zona.nombre) ? 'unlock' : 'lock') + '<span>' + (desbloqueado(zona.nombre) ? 'Desbloqueado en tu sesión demo' : 'Bloqueado en tu sesión demo · Podés explorarlo') + '</span>';
+      if (zona) badge.innerHTML = icono(desbloqueado(zona.nombre) ? 'unlock' : 'lock') + '<span>' + (desbloqueado(zona.nombre) ? 'Desbloqueado en tu cuenta' : 'Todavía no desbloqueado') + '</span>';
     }
     if (!estado.explorando) abrirBuscador(false, false);
   }

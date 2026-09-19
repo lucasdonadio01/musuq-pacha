@@ -61,3 +61,53 @@ html[data-texto-grande=true] .site-header .nav__marca{white-space:normal}
 @media(max-width:700px){html[data-texto-grande=true] .site-header.nav{grid-template-columns:1fr}.site-header .nav__acciones{justify-self:end}html[data-texto-grande=true] .site-header .nav__acciones{justify-self:start}}
 html[data-color=contraste] .site-header.nav{background:#000;color:#fff;border-bottom:2px solid white}
 html[data-color=contraste] .site-header .nav__links,html[data-color=contraste] .site-header .nav__links a[aria-current],html[data-color=contraste] .site-header .boton-icono{color:white}
+/* Cuenta y accesibilidad: el mismo panel carbón, grilla y acentos pixel del mapa. */
+.site-header .perfil-demo{border:0;padding:24px;width:320px;max-width:calc(100vw - 32px);box-sizing:border-box;box-shadow:8px 12px 24px #0005}
+.site-header .perfil-demo::before{content:'';position:absolute;right:0;top:-12px;width:24px;height:12px;background:#f66227}
+.site-header .perfil-demo nav{display:grid;gap:8px}
+.site-header .perfil-demo nav button{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:12px 14px;border:0;border-radius:0;background:#363636;color:#fff;font:500 14px 'Space Grotesk',sans-serif;cursor:pointer;text-align:left}
+.site-header .perfil-demo nav button:hover{background:#6a40bc;color:#fff}
+.site-header .perfil-demo nav .perfil-demo__salir{background:#f66227;color:#1a1a1a}
+.site-header .perfil-demo .perfil-notificacion{padding:14px;background:#33283f;color:#d6bcff;font-size:13px}
+.site-header .perfil-notificacion strong{font-size:inherit;font-weight:600}
+.cuenta-dialog{box-sizing:border-box;width:520px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 48px);overflow:auto;border:0;border-radius:0;padding:32px;background:#222;color:#fff;box-shadow:8px 16px 32px #0006;font-family:'Space Grotesk',sans-serif}
+.cuenta-dialog::backdrop{background:#101010a6;backdrop-filter:blur(5px)}
+.cuenta-cabecera{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:28px;border-bottom:1px solid #645074;padding-bottom:16px}
+.cuenta-cabecera h2{font-size:30px;line-height:1.1;font-weight:500;margin:0;color:#e4fe44}
+.cuenta-cabecera button{width:44px;height:44px;border:0;background:#f66227;color:#1a1a1a;font-size:28px;cursor:pointer}
+.cuenta-avatar{width:88px;height:88px;image-rendering:pixelated;display:block}.cuenta-contenido h3{font-size:20px;font-weight:500;margin:20px 0 8px}.cuenta-handle{color:#c7a4ff;margin:0 0 28px}
+.cuenta-territorios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 28px}
+.cuenta-territorios a{padding:14px 8px;text-align:center;background:#39303f;color:#e4fe44;text-decoration:none;font-size:13px}
+.cuenta-form{display:grid;gap:24px}.cuenta-form label{display:grid;gap:10px;font-size:14px}.cuenta-form input:not([type=checkbox]){width:100%;box-sizing:border-box;background:#171717;color:#fff;border:1px solid #8c729e;border-radius:0;padding:12px;font:inherit}
+.cuenta-form .cuenta-check{display:flex;align-items:center;justify-content:space-between;gap:24px;line-height:1.5}.cuenta-check input{accent-color:#f66227;width:22px;height:22px;flex-shrink:0}
+.cuenta-primario,.cuenta-accesibilidad{min-height:44px;padding:12px 20px;border:0;border-radius:0;font:500 14px 'Space Grotesk',sans-serif;cursor:pointer;background:#f66227;color:#1a1a1a}
+.cuenta-accesibilidad{background:#fff;color:#1a1a1a}.cuenta-dialog :is(button,a):hover{background:#6a40bc;color:#fff}.cuenta-dialog :focus-visible{outline:3px solid #b58aff;outline-offset:3px}.cuenta-estado{color:#e4fe44;font-size:13px;margin:0;min-height:20px}
+#menu-accesibilidad,.en-mapa #menu-accesibilidad{box-sizing:border-box;width:520px;right:var(--site-margin,24px);max-width:calc(100vw - 32px);padding:28px;background:#222;color:#fff;border-radius:0;border:0;border-top:8px solid #f66227;box-shadow:8px 16px 30px #0006;scrollbar-color:#a77cfa #333;scrollbar-width:thin}
+#menu-accesibilidad::backdrop{background:#10101099;backdrop-filter:blur(4px)}
+#menu-accesibilidad .accesibilidad__cabecera{border-color:#63516d;margin-bottom:24px;padding-bottom:18px}
+#menu-accesibilidad h2{font:500 28px/1.15 'Space Grotesk',sans-serif;color:#e4fe44}
+#menu-accesibilidad .boton-icono{border-radius:0;background:#f66227;color:#1a1a1a;min-width:40px}
+#menu-accesibilidad .ajuste{border-color:#514857;margin-bottom:20px;padding-bottom:20px}
+#menu-accesibilidad legend{font:500 12px/1.4 'Space Grotesk',sans-serif;letter-spacing:.06em;color:#cbb0f7}
+#menu-accesibilidad .modos-color{gap:12px}
+#menu-accesibilidad .modo-color>span{border-radius:0;background:#303030;color:#eee;border-color:#6b5b75;min-height:84px}
+#menu-accesibilidad .modo-color input:checked+span{background:#6a40bc;color:#fff;border-color:#c2a0ff}
+#menu-accesibilidad .modo-color:hover>span{background:#493858}
+#menu-accesibilidad .modo-color input:focus-visible+span{outline:3px solid #e4fe44}
+#menu-accesibilidad :is(.ayuda-color,.ayuda-narrador,.texto-ejemplo,.texto-ejemplo output){color:#d5c5e4}
+#menu-accesibilidad .fila-ajuste>span svg{color:#ba91f6}
+#menu-accesibilidad .switch{border-radius:0;background:#49414f;border-color:#806593}
+#menu-accesibilidad .switch:after{border-radius:0;background:#c8b1e2}
+#menu-accesibilidad .switch:checked{background:#f66227;border-color:#f66227}
+#menu-accesibilidad .switch:checked:after{background:#222}
+#menu-accesibilidad .tamano-texto input{accent-color:#f66227}
+#menu-accesibilidad :is(.tamano-texto button,.narrador-controles button,.accesibilidad__acciones button){border-radius:0;background:#fff;color:#222;border:0;font-family:'Space Grotesk',sans-serif}
+#menu-accesibilidad .narrador-controles button[aria-pressed=true]{background:#6a40bc;color:#fff}
+#menu-accesibilidad .accesibilidad__acciones{gap:16px;background:#222}
+#menu-accesibilidad .accesibilidad__acciones .aplicar-ajustes{background:#f66227;color:#1a1a1a}
+#menu-accesibilidad button:not(:disabled):hover{background:#6a40bc;color:#fff}
+#menu-accesibilidad :is(button,input,a):focus-visible{outline:3px solid #e4fe44;outline-offset:3px}
+@media(max-width:700px){#menu-accesibilidad,.en-mapa #menu-accesibilidad{right:12px;padding:20px;max-width:calc(100vw - 24px)}.cuenta-dialog{padding:24px}.cuenta-territorios{grid-template-columns:1fr}.cuenta-cabecera h2{font-size:26px}}
+html[data-color=contraste] #menu-accesibilidad{background:#000;color:#fff;border:2px solid white}
+html[data-color=contraste] #menu-accesibilidad :is(p,label,legend,h2,span,output){color:#fff}
+html[data-color=contraste] #menu-accesibilidad button{background:#fff;color:#000}

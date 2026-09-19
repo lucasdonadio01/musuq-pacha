@@ -20,12 +20,12 @@
       referencia('maloka-ventana.png','Barro y ventana','Detalle de la ventana abierta en el muro de barro y la cubierta vegetal.'),
       render('maloka-exterior-3d.png','Maloka · ilustración 3D'),render('maloka-interior-3d.png','Maloka · interior 3D')
     ]},
-    'carpa-pieles':{nombre:'Carpa de pieles',materiales:'Pieles · palos · rocas',descripcion:'Los palos sostienen una cubierta de pieles, sujeta junto al suelo con rocas. La abertura frontal deja entrar la luz y permite acceder al refugio. En el modelo podés observar las uniones de madera, la cara interior de la cubierta y el piso de tierra.',nota:'Interpretación del diseño de referencia; no es una reconstrucción arqueológica exacta.',fotos:[
-      {src:ruta+'carpa-ilustracion.png',nombre:'Carpa · ilustración de referencia',alt:'Ilustración de una carpa cónica de pieles sostenida por palos y rocas.',detalle:'Ilustración de referencia aportada para el diseño',credito:'Referencia aportada; autor no identificado',tipo:'ilustracion'},
-      render('carpa-exterior-3d.png','Carpa · ilustración 3D'),render('carpa-interior-3d.png','Carpa · interior 3D')
+    'carpa-pieles':{nombre:'Toldo',materiales:'Pieles · palos · rocas',descripcion:'Los palos sostienen una cubierta de pieles, sujeta junto al suelo con rocas. La abertura frontal deja entrar la luz y permite acceder al refugio. En el modelo podés observar las uniones de madera, la cara interior de la cubierta y el piso de tierra.',nota:'Interpretación del diseño de referencia; no es una reconstrucción arqueológica exacta.',fotos:[
+      {src:ruta+'carpa-ilustracion.png',nombre:'Toldo · ilustración de referencia',alt:'Ilustración de un toldo cónico de pieles sostenido por palos y rocas.',detalle:'Ilustración de referencia aportada para el diseño',credito:'Referencia aportada; autor no identificado',tipo:'ilustracion'},
+      render('carpa-exterior-3d.png','Toldo · ilustración 3D'),render('carpa-interior-3d.png','Toldo · interior 3D')
     ]}
   };
-  for(const [id,nombre] of [['grande','Carpa grande'],['mediana','Carpa mediana'],['chica','Carpa chica']]){
+  for(const [id,nombre] of [['grande','Toldo grande'],['mediana','Toldo mediano'],['chica','Toldo chico']]){
     datos['carpa-campamento-'+id]={...datos['carpa-pieles'],nombre,rotulo:'CAMPAMENTO · QUERANDÍ'};
   }
   // Google Material Icons: arrow_back, meeting_room and open_in_full (Apache 2.0).
@@ -34,7 +34,7 @@
   const puerta=icono('M19 19V4h-6V2H3v17H1v2h12V6h4v15h6v-2h-4zM11 19H5V4h6v15zm-1-8H8v2h2v-2z');
   function crear({lienzo,alCambiar}) {
     const T=window.THREE;
-    const camara=new T.PerspectiveCamera(38,1,.005,1500),modelos=new Map();
+    const camara=new T.PerspectiveCamera(38,1,.05,1500),modelos=new Map();
     const auxiliar=new T.PerspectiveCamera(),direccion=new T.Vector3();
     let camaraTerritorio=null;
     let seleccionado=null,interior=false,progreso=1,viaje=null,orbita=.48,inclinacion=.32,arrastre=null,reducido=false,ultimoAspecto=0;
@@ -65,7 +65,7 @@
       // at the beginning, then approach the real house in world coordinates.
       const hacia=baseCamara.getWorldDirection(new T.Vector3());
       const miraInicio=baseCamara.position.clone().addScaledVector(hacia,300);
-      viaje={tipo:'mapa',miraInicio,miraFin:objetivo.clone(),direccionInicio:hacia.negate(),direccionFin:posicion.clone().sub(objetivo).normalize(),distanciaInicio:1200,distanciaFin:posicion.distanceTo(objetivo),alturaInicio:baseCamara.top,alturaFin:posicion.distanceTo(objetivo)*Math.tan(T.MathUtils.degToRad(19)),duracion:1.2};
+      viaje={tipo:'mapa',miraInicio,miraFin:objetivo.clone(),direccionInicio:hacia.negate(),direccionFin:posicion.clone().sub(objetivo).normalize(),distanciaInicio:1200,distanciaFin:posicion.distanceTo(objetivo),alturaInicio:baseCamara.top/baseCamara.zoom,alturaFin:posicion.distanceTo(objetivo)*Math.tan(T.MathUtils.degToRad(19)),duracion:1.2};
       progreso=reducido?1:0;ultimoAspecto=lienzo.clientWidth/lienzo.clientHeight;
       const d=datos[id];ficha.querySelector('h2').textContent=d.nombre;ficha.querySelector('.vivienda-materiales').textContent=d.materiales;
       ficha.querySelector('.vivienda-volver').setAttribute('aria-label','Volver a '+(d.pueblo||'Querandí'));
@@ -144,6 +144,7 @@
         camara.aspect=ancho/alto;camara.position.copy(objetivo).addScaledVector(direccion,distancia);camara.lookAt(objetivo);
         camara.fov=T.MathUtils.radToDeg(2*Math.atan(altura/distancia));camara.clearViewOffset();
         camara.setViewOffset(ancho,alto,ancho*viaje.offsetX*(1-t),alto*viaje.offsetY*(1-t),ancho,alto);
+        camara.near=Math.max(.05,distancia*.02);camara.far=distancia+900;
         camara.updateProjectionMatrix();camara.updateMatrixWorld();
         if(progreso===1)cerrar(true);
         return;
@@ -170,6 +171,11 @@
       ficha.querySelector('.vivienda-entrar').disabled=!!viaje;
       camara.clearViewOffset();
       if(!interior)camara.setViewOffset(ancho,alto,movil?0:-ancho*.16*desplazamiento,movil?alto*.19*desplazamiento:0,ancho,alto);
+      // Match the tree camera's depth precision during long perspective morphs.
+      // Interior clipping stays close, but only once the camera is near the house.
+      const distanciaProfundidad=camara.position.distanceTo(objetivo);
+      camara.near=interior ? .005 : Math.max(.05,distanciaProfundidad*.02);
+      camara.far=distanciaProfundidad+900;
       camara.updateProjectionMatrix();
       camara.updateMatrixWorld();
     }

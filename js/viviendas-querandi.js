@@ -4,11 +4,11 @@
   'use strict';
   const lugares=[
     {id:'maloka',zona:14,nombre:'Maloka',x:-3.4375,z:16.5625,escala:.25,giro:-Math.PI/2,ancho:5.2,largo:7.0},
-    {id:'carpa-pieles',zona:14,nombre:'Carpa de pieles',x:-4.0625,z:14.0625,escala:.28,giro:Math.PI/5,ancho:5.0,largo:5.0},
+    {id:'carpa-pieles',zona:14,nombre:'Toldo',x:-4.0625,z:14.0625,escala:.28,giro:Math.PI/5,ancho:5.0,largo:5.0},
     {id:'aldea-omaguaca',zona:2,nombre:'Aldea de piedra',x:-7.1875,z:.9375,escala:.1,giro:0,ancho:16.5,largo:15.5},
-    {id:'carpa-campamento-grande',modelo:'carpa-pieles',zona:14,nombre:'Carpa grande',x:-8.15,z:15.54,escala:.20,ancho:5,largo:5},
-    {id:'carpa-campamento-mediana',modelo:'carpa-pieles',zona:14,nombre:'Carpa mediana',x:-8.30,z:16.85,escala:.165,ancho:5,largo:5},
-    {id:'carpa-campamento-chica',modelo:'carpa-pieles',zona:14,nombre:'Carpa chica',x:-7.20,z:16.30,escala:.135,ancho:5,largo:5}
+    {id:'carpa-campamento-grande',modelo:'carpa-pieles',zona:14,nombre:'Toldo grande',x:-8.15,z:15.54,escala:.20,ancho:5,largo:5},
+    {id:'carpa-campamento-mediana',modelo:'carpa-pieles',zona:14,nombre:'Toldo mediano',x:-8.30,z:16.85,escala:.165,ancho:5,largo:5},
+    {id:'carpa-campamento-chica',modelo:'carpa-pieles',zona:14,nombre:'Toldo chico',x:-7.20,z:16.30,escala:.135,ancho:5,largo:5}
   ];
   const fogon={x:-7.95,z:16.23,escala:.18};
   lugares.filter(d=>d.modelo==='carpa-pieles').forEach(d=>d.giro=Math.atan2(fogon.x-d.x,fogon.z-d.z));

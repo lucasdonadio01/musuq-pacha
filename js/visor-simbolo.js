@@ -11,9 +11,7 @@
   const back = dialog.querySelector('button'), download = dialog.querySelector('a');
   const status = dialog.querySelector('[role=status]');
   back.append(document.createTextNode('Volver'));download.append(document.createTextNode('Descargar'));
-  const modo=document.createElement('button');modo.type='button';modo.className='visor-simbolo__modo';modo.textContent='3D';modo.setAttribute('aria-label','Activar relieve 3D');modo.setAttribute('aria-pressed','true');
-  dialog.querySelector('.visor-simbolo__acciones').prepend(modo);
-  let relieve=true;modo.addEventListener('click',()=>{relieve=!relieve;modo.setAttribute('aria-pressed',String(relieve));modo.textContent=relieve?'3D':'2D';});
+  const relieve=true;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let renderer, scene, camera, sheet, texture, frame, resize, opener, previousOverflow;
   let generation = 0, zoom = 1, targetZoom = 1, pointer = {x:0,y:0};
@@ -54,7 +52,7 @@
     dialog.showModal(); back.focus({preventScroll:true});
     const current = ++generation;
     zoom = targetZoom = 1; pointer = {x:0,y:0};
-    relieve=true;modo.textContent='3D';modo.setAttribute('aria-pressed','true');modo.hidden=false;dialog.dataset.puesto=puesto||'';
+    dialog.dataset.puesto=puesto||'';
     const img = new Image(); img.src = src;
     try {
       await img.decode();
@@ -110,7 +108,6 @@
     } catch (error) {
       if (current !== generation || !dialog.open) return;
       cleanup();
-      modo.hidden=true;
       if (img.complete && img.naturalWidth) {
         img.alt = title || 'Símbolo'; img.className = 'visor-simbolo__fallback'; host.append(img);
         status.hidden = true;

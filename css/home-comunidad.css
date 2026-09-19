@@ -8,7 +8,7 @@ body{background:var(--home-black)}
 .territorio{min-height:720px;background:#365d70}
 .territorio::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#1a1a1a 0%,#1a1a1af5 25%,#1a1a1acc 42%,#1a1a1a28 72%,transparent);transition:opacity .5s;z-index:0}
 .territorio__texto{z-index:2;top:51%;width:60%;max-width:990px;transform:translateY(-35%)}
-.territorio__texto .titulo{color:#fff;font-size:clamp(44px,5.3vw,96px);line-height:1.04;letter-spacing:-.04em;max-width:none}
+.territorio__texto .titulo{color:#E4FE44;font-size:clamp(44px,5.3vw,96px);line-height:1.04;letter-spacing:-.04em;max-width:none}
 .territorio__texto .rotulo{color:var(--home-orange);font-weight:500;margin-bottom:28px}
 .territorio__texto .bajada{color:#aaa;max-width:59ch;font-size:14px;line-height:1.55;margin:34px 0 30px;width:76%}
 .territorio__texto .boton,.comunidad .boton{border-radius:0;border-color:var(--home-orange);font-size:13px;gap:10px;min-width:192px;height:48px;padding:0 24px;font-weight:500}

@@ -16,7 +16,7 @@
   document.body.insertAdjacentHTML('beforeend', plantillas.iconos + plantillas.accesibilidad);
   const destinos = {
     territorio:enHome ? '#territorio' : local('index.html#territorio'),
-    archivo:local('archivo.html'),
+    archivo:enHome ? '#archivo' : local('index.html#archivo'),
     juego:local('juego.html')
   };
   header.querySelector('.nav__marca').href = enHome ? '#territorio' : local('index.html');
@@ -29,7 +29,7 @@
   // Comunidad está dentro del home; no se pierde el estado activo al saltar a ella.
   function seccionHome() {
     if (!enHome) return;
-    const actual = 'territorio';
+    const actual = ['#archivo','#eventos'].includes(location.hash) ? 'archivo' : 'territorio';
     header.querySelectorAll('[data-seccion-link]').forEach(a => {
       if (a.dataset.seccionLink === actual) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
@@ -56,8 +56,38 @@
   const login = header.querySelector('#ingresar');
   const perfil = document.createElement('div');
   perfil.className = 'perfil-demo'; perfil.id = 'main-perfil-demo'; perfil.hidden = true;
-  perfil.innerHTML = '<strong>Tu recorrido</strong><span class="perfil-demo__estado">Sesión demo</span><p>Tenés desbloqueados Qom, Querandí y Omaguaca. Los demás pueblos siguen siendo explorables.</p><button class="perfil-demo__salir" type="button">Cerrar sesión demo</button>';
+  perfil.innerHTML = '<strong class="perfil-nombre"></strong><span class="perfil-demo__estado">@tu.recorrido</span><p class="perfil-notificacion">Tenés desbloqueados <strong>Qom, Querandí y Omaguaca</strong>.</p><nav aria-label="Tu cuenta"><button type="button" data-cuenta="perfil">Mi perfil '+icono('login')+'</button><button type="button" data-cuenta="configuracion">Configuración '+icono('acceso')+'</button><button class="perfil-demo__salir" type="button">Cerrar sesión '+icono('login')+'</button></nav>';
   header.append(perfil);
+  const cuentaKey='musuq-perfil-local-v1';
+  let cuenta={nombre:'Tu recorrido',notificaciones:true};
+  try{const saved=JSON.parse(localStorage.getItem(cuentaKey));if(typeof saved?.nombre==='string')cuenta.nombre=saved.nombre.slice(0,40)||cuenta.nombre;if(typeof saved?.notificaciones==='boolean')cuenta.notificaciones=saved.notificaciones;}catch{}
+  perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;
+  const cuentaDialog=document.createElement('dialog');cuentaDialog.className='cuenta-dialog';cuentaDialog.setAttribute('aria-labelledby','cuenta-titulo');document.body.append(cuentaDialog);
+  const quiet=()=>matchMedia('(prefers-reduced-motion:reduce)').matches||document.documentElement.dataset.detener==='true';
+  function abrirCuenta(vista){
+    if(!activa)return;
+    cerrarPerfil();
+    cuentaDialog.innerHTML='<div class="cuenta-cabecera"><h2 id="cuenta-titulo"></h2><button type="button" data-cuenta-cerrar aria-label="Cerrar ventana de cuenta">×</button></div><div class="cuenta-contenido"></div>';
+    cuentaDialog.querySelector('h2').textContent=vista==='perfil'?'Mi perfil':'Configuración';
+    const contenido=cuentaDialog.querySelector('.cuenta-contenido');
+    if(vista==='perfil'){
+      const foto=avatar(),nombre=document.createElement('h3');foto.classList.add('cuenta-avatar');nombre.textContent=cuenta.nombre;contenido.append(foto,nombre);
+      contenido.insertAdjacentHTML('beforeend','<p class="cuenta-handle">@tu.recorrido</p><h3>Tus territorios desbloqueados</h3><div class="cuenta-territorios"><a href="'+local('index.html?pueblo=11')+'">Qom</a><a href="'+local('index.html?pueblo=14')+'">Querandí</a><a href="'+local('index.html?pueblo=2')+'">Omaguaca</a></div><button class="cuenta-primario" type="button" data-editar-perfil>Editar perfil</button>');
+      contenido.querySelector('[data-editar-perfil]').onclick=()=>abrirCuenta('configuracion');
+    }else{
+      contenido.innerHTML='<form class="cuenta-form"><label>Nombre de perfil<input name="nombre" maxlength="40" required autocomplete="nickname"></label><label class="cuenta-check"><span>Mostrar avisos de territorios desbloqueados</span><input name="notificaciones" type="checkbox"></label><button type="button" class="cuenta-accesibilidad">Ajustes de accesibilidad</button><button class="cuenta-primario" type="submit">Guardar cambios</button><p role="status" class="cuenta-estado"></p></form>';
+      const form=contenido.querySelector('form');form.elements.nombre.value=cuenta.nombre;form.elements.notificaciones.checked=cuenta.notificaciones;
+      form.onsubmit=e=>{e.preventDefault();cuenta.nombre=form.elements.nombre.value.trim()||'Tu recorrido';cuenta.notificaciones=form.elements.notificaciones.checked;perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;try{localStorage.setItem(cuentaKey,JSON.stringify(cuenta));contenido.querySelector('[role=status]').textContent='Cambios guardados.';}catch{contenido.querySelector('[role=status]').textContent='Cambios aplicados en esta visita.';}};
+      contenido.querySelector('.cuenta-accesibilidad').onclick=()=>{cuentaDialog.close();document.getElementById('abrir-accesibilidad').click();};
+    }
+    cuentaDialog.querySelector('[data-cuenta-cerrar]').onclick=()=>cuentaDialog.close();
+    if(!cuentaDialog.open)cuentaDialog.showModal();
+    if(!quiet())cuentaDialog.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:240,easing:'cubic-bezier(.16,1,.3,1)'});
+    cuentaDialog.querySelector('[data-cuenta-cerrar]').focus();
+  }
+  cuentaDialog.addEventListener('close',()=>login.focus({preventScroll:true}));
+  cuentaDialog.addEventListener('click',e=>{if(e.target!==cuentaDialog)return;const r=cuentaDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cuentaDialog.close();});
+  perfil.querySelectorAll('[data-cuenta]').forEach(b=>b.addEventListener('click',()=>abrirCuenta(b.dataset.cuenta)));
   function avatar(semilla = 1907, indice = 0) {
     const canvas = document.createElement('canvas');
     canvas.className = 'perfil-patron'; canvas.width = canvas.height = 81; canvas.setAttribute('aria-hidden','true');
@@ -87,17 +117,18 @@
     login.replaceChildren();
     if (activa) {
       login.append(avatar());
-      login.setAttribute('aria-label','Abrir perfil · Sesión demo');
+      login.setAttribute('aria-label','Abrir menú de cuenta');
       login.setAttribute('aria-controls',perfil.id);
       login.setAttribute('aria-expanded',String(!perfil.hidden));
-      login.title = 'Sesión demo';
+      login.title = cuenta.nombre;
     } else {
       login.innerHTML = '<span class="nav__ingresar-texto">INICIAR</span>' + icono('login');
-      login.setAttribute('aria-label','Iniciar sesión de demostración');
+      login.setAttribute('aria-label','Iniciar sesión');
       login.removeAttribute('aria-controls'); login.removeAttribute('aria-expanded');
-      login.title = 'Simular una sesión, sin cuenta real';
+      login.title = 'Iniciar sesión';
     }
     document.body.classList.toggle('sesion-demo',activa);
+    perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;
   }
   function cambiarSesion(valor, persistir = true) {
     activa = valor; cerrarPerfil(); dibujarSesion();
@@ -110,7 +141,7 @@
     else perfil.hidden = !perfil.hidden;
     login.setAttribute('aria-expanded',String(!perfil.hidden));
   });
-  perfil.querySelector('button').addEventListener('click', () => { cambiarSesion(false); login.focus(); });
+  perfil.querySelector('.perfil-demo__salir').addEventListener('click', () => { if(cuentaDialog.open)cuentaDialog.close();cambiarSesion(false); login.focus(); });
   addEventListener('storage',e => { if(e.key === key || e.key === null)cambiarSesion(e.key === null ? false : e.newValue === 'activa',false); });
   window.MUSUQ_SESION = {get activa(){return activa;}, avatar};
   dibujarSesion();
