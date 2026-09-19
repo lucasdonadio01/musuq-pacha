@@ -196,7 +196,10 @@
   }
   login.addEventListener('click', () => {
     cerrarNavegacion();
-    if (!activa) { cambiarSesion(true); perfil.hidden = false; }
+    if (!activa) {
+      if (window.MUSUQ_ACCESO) { window.MUSUQ_ACCESO.abrir({origen:login, nombre:cuenta.nombre, alEntrar:() => cambiarSesion(true)}); return; }
+      cambiarSesion(true); perfil.hidden = false;
+    }
     else perfil.hidden = !perfil.hidden;
     login.setAttribute('aria-expanded',String(!perfil.hidden));
   });

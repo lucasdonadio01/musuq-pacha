@@ -42,7 +42,7 @@
 <link rel="stylesheet" href="../css/accesibilidad.css?v=main-1">
 <link rel="stylesheet" href="../css/sonido.css?v=audio-3">
 <link rel="stylesheet" href="../css/pixel-botones.css?v=correcciones-1">
-<link rel="stylesheet" href="../css/header.css?v=limpieza-1">
+<link rel="stylesheet" href="../css/header.css?v=limpieza-1"><link rel="stylesheet" href="../css/acceso.css?v=pixeles-4">
 <link rel="stylesheet" href="../css/grilla.css?v=juego-1">
 </head>
 <body>
@@ -83,9 +83,8 @@
   <div class="compartir__cabecera"><p>COMUNIDAD / TU CREACIÓN</p><button class="icono" id="cancelarExport" aria-label="Cerrar compartir"><svg class="ic" aria-hidden="true"><use href="#ic-cerrar"/></svg></button></div>
   <h2 id="tituloExport">Tu símbolo también cuenta.</h2>
   <div class="compartir__cuerpo"><canvas id="compartir-preview" aria-label="Vista previa de tu símbolo"></canvas><div><label for="simbolo-nombre">Dale un nombre</label><input id="simbolo-nombre" maxlength="48" value="Mi símbolo" autocomplete="off"><p id="compartir-pueblo"></p><p>Creación contemporánea inspirada en patrones. No es una pieza histórica.</p></div></div>
-  <p class="compartir__nota">El tablero se guarda en este navegador. Todavía no hay publicación pública ni concurso habilitado. Podés compartir tu símbolo mediante un enlace.</p>
-  <div class="compartir__acciones"><button class="boton" id="publicar-simbolo">Sumar al tablero <svg class="ic" aria-hidden="true"><use href="#ic-mas"/></svg></button><button class="boton" id="enlace-simbolo">Copiar enlace</button></div>
-  <label class="enlace-manual" hidden>Copiá este enlace<input id="enlace-manual" readonly></label>
+  <p class="compartir__nota">Al sumarlo, tu símbolo entra en los próximos del tablero y se rankea la semana que viene.</p>
+  <div class="compartir__acciones"><button class="boton" id="publicar-simbolo">Sumar al tablero <svg class="ic" aria-hidden="true"><use href="#ic-mas"/></svg></button></div>
   <p id="compartir-estado" role="status" aria-live="polite"></p><a class="compartir__tablero" href="../index.html#comunidad">Ver el tablero <svg class="ic" aria-hidden="true"><use href="#ic-volver"/></svg></a>
 </dialog>
 
@@ -165,21 +164,21 @@
 <dialog class="referencia-dialog" id="referencia-dialog" aria-labelledby="referencia-titulo">
   <button type="button" class="referencia-cerrar" aria-label="Cerrar referencia"><svg class="ic" aria-hidden="true"><use href="#ic-cerrar"/></svg></button>
   <img id="referencia-imagen" src="assets/referencias/omaguaca-faja.png" alt="Faja textil kolla">
-  <div class="referencia-texto"><p class="referencia-rotulo">DEL ARCHIVO A TU COMPOSICIÓN</p><h2 id="referencia-titulo"></h2><p id="referencia-lugar"></p><strong id="referencia-cultura"></strong><p id="referencia-descripcion"></p><p id="referencia-fuente"></p><p class="referencia-aclaracion" id="referencia-aclaracion"></p><a id="referencia-figma" target="_blank" rel="noopener">Ver ficha en Figma</a></div>
+  <div class="referencia-texto"><p class="referencia-rotulo">DEL ARCHIVO A TU COMPOSICIÓN</p><h2 id="referencia-titulo"></h2><p id="referencia-lugar"></p><strong id="referencia-cultura"></strong><p id="referencia-descripcion"></p><p id="referencia-fuente"></p><p class="referencia-aclaracion" id="referencia-aclaracion"></p></div>
 </dialog>
 
 <script src="js/pueblos.js?v=18"></script>
 <script src="js/mapa.js?v=correcciones-1"></script>
 <script src="js/motor.js?v=piezas-1"></script>
-<script src="../js/header-plantilla.js?v=perfil-1"></script><script src="../js/header.js?v=limpieza-2"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
+<script src="../js/header-plantilla.js?v=perfil-1"></script><script src="../js/acceso.js?v=pixeles-4"></script><script src="../js/header.js?v=acceso-1"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
 
 <script src="js/fondo.js?v=main-1"></script>
 <script src="js/simbolo.js?v=piezas-1"></script>
 <script src="js/mosaico.js?v=main-1"></script>
 <script src="../js/comunidad.js?v=piezas-1"></script>
-<script src="js/patrones.js?v=piezas-1"></script>
+<script src="js/patrones.js?v=piezas-2"></script>
 <script src="js/composicion.js?v=piezas-1"></script>
-<script src="js/app.js?v=limpieza-1"></script>
+<script src="js/app.js?v=confirmacion-1"></script>
 <script src="../js/pixel-botones.js?v=encuentro-1"></script>
 </body>
 </html>

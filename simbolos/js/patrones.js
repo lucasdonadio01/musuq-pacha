@@ -15,8 +15,8 @@ window.Patrones = (() => {
   omaguaca:[
    def('om-rombo','Rombo','faja',['..1..','.121.','12.21','.121.','..1..'],['#9C2447','#E3C89D']),
    def('om-cruce','Cruce de guarda','faja',['1...1','.1.1.','..2..','.1.1.','1...1'],['#9C2447','#E3C89D']),
-   def('om-maiz','Módulo de maíz','maiz',['111','121','111','...','111','121','111'],['#E3C89D','#A92D50']),
-   def('om-pares','Pares','maiz',['11.11','12.21','11.11'],['#E3C89D','#9C2447']),
+   def('om-espiga','Espiga de maíz','maiz',['.2.','1.1','.2.','1.1','.2.','1.1','.2.'],['#A92D50','#E3C89D']),
+   def('om-zigzag','Zigzag','faja',['1...1','.1.1.','..2..'],['#9C2447','#E3C89D']),
    def('om-banda','Banda','faja',['1111111','2222222','1111111'],['#9C2447','#453244']),
    def('om-guarda','Guarda de rombos','faja',['..1...1..','.121.121.','..1...1..'],['#A52C47','#E3C89D'])
   ],
@@ -39,6 +39,6 @@ window.Patrones = (() => {
  };
  const base=PUEBLOS.filter(p=>['omaguaca','querandi'].includes(p.id));
  const qom={id:'qom',nombre:'Qom',region:'Gran Chaco',bioma:'Chaco · Formosa',fondo:'#F0E9DD',nota:'Paleta editable de la composición',colores:[{h:'#CE796F',n:'rosa'},{h:'#D3AB65',n:'ocre'},{h:'#485653',n:'verde oscuro'},{h:'#AF724B',n:'tierra'},{h:'#292827',n:'carbón'},{h:'#E3D6BD',n:'fibra'}]};
- const avisos={omaguaca:'Referencias regionales de Jujuy: textiles kolla agrupados en Omaguaca en Figma.',querandi:'Referencias regionales de La Pampa: textiles ranqueles agrupados en Querandí en Figma; no son piezas querandíes verificadas.',qom:'Faja qom-toba y bolsa de Formosa sin comunidad específica identificada.'};
+ const avisos={omaguaca:'Referencias regionales de Jujuy: textiles kolla agrupados en Omaguaca en Figma.',querandi:'Referencias regionales de La Pampa: textiles ranqueles agrupados en Querandí en Figma; no son piezas querandíes verificadas.',qom:'Faja qom-toba y bolsa de Formosa.'};
  return {refs,piezas,pueblos:[...base,qom],avisos};
 })();

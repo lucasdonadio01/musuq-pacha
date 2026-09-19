@@ -21,7 +21,6 @@ html,body{background:var(--com-negro)}
 .bloque .boton,.compartir__acciones .boton,.acciones .accion--fuerte,.acciones .accion--compartir{--pixel-base:var(--com-naranja);--pixel-tinta:var(--com-negro)}
 .acciones .accion{--pixel-base:var(--com-header);--pixel-tinta:var(--com-naranja)}
 .acciones .accion--fuerte,.acciones .accion--compartir{--pixel-base:var(--com-naranja);--pixel-tinta:var(--com-negro)}
-#enlace-simbolo{--pixel-base:var(--com-violeta);--pixel-tinta:var(--com-negro)}
 .compartir{border:0;padding:30px;background:var(--com-header);color:#f5f2eb;max-width:620px;width:calc(100% - 32px);max-height:calc(100svh - 32px);overflow:auto;margin:auto;font-family:'Space Grotesk',sans-serif;box-shadow:12px 20px 70px #0006}
 .compartir::backdrop{background:#000b}.compartir__cabecera{display:flex;justify-content:space-between;align-items:center;color:var(--com-violeta);font-size:11px;letter-spacing:.06em;margin-bottom:14px}.compartir__cabecera .icono{color:var(--com-naranja);border:0;min-width:40px;min-height:40px}
 .compartir h2{font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-.03em;margin:0 0 24px}.compartir__cuerpo{display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:center}.compartir canvas{width:100%;height:auto;image-rendering:pixelated}.compartir label{font-size:13px;display:block}.compartir input{display:block;width:100%;margin-top:8px;padding:12px;border:1px solid #696969;background:#1a1a1a;color:white;font:inherit;font-size:14px;border-radius:0}

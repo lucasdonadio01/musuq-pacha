@@ -68,7 +68,6 @@
   refOpener=button;refClosing=false;const im=$('#referencia-imagen');im.src='assets/referencias/'+ref.imagen;im.alt=ref.titulo+' · '+ref.cultura;
   $('#referencia-titulo').textContent=ref.titulo;$('#referencia-lugar').textContent=ref.lugar;$('#referencia-cultura').textContent=ref.cultura;$('#referencia-descripcion').textContent=ref.descripcion;$('#referencia-fuente').textContent='Fuente: '+ref.fuente;
   $('#referencia-aclaracion').textContent=Patrones.avisos[pueblo.id]+' Las piezas del juego son simplificaciones geométricas contemporáneas de estas formas.';
-  $('#referencia-figma').href='https://www.figma.com/design/GD2CfjtdvtZAZVxsYDf7ba/tif-multi?node-id='+ref.node.replace(':','-');
   refDialog.showModal();$('.referencia-cerrar').focus();
   if(!quiet())refDialog.animate([{opacity:0,transform:'translateY(20px) scale(.96)',filter:'blur(5px)'},{opacity:1,transform:'none',filter:'blur(0)'}],{duration:360,easing:'cubic-bezier(.16,1,.3,1)'});
  }
@@ -165,12 +164,7 @@
     Comunidad.dibujar($('#compartir-preview'),compartido);
     $('#compartir-pueblo').textContent = 'Inspiración · '+compartido.pueblo;
     $('#compartir-estado').textContent = '';
-    $('.enlace-manual').hidden = true;
     $('#publicar-simbolo').disabled = false;
-    if (/^(localhost|127\.|\[::1\])/.test(location.hostname)) {
-      $('#enlace-simbolo').textContent = 'Copiar enlace local';
-      $('.compartir__nota').textContent = 'Este tablero se guarda en tu navegador. Estás en una vista local: el enlace solo abre en esta computadora. Para compartirlo con otras personas, usá el sitio publicado. No hay concurso público habilitado.';
-    }
     overlay.showModal();
   }
   $('#png').addEventListener('click', () => abrirExport(true));
@@ -182,16 +176,12 @@
     $('#publicar-simbolo').disabled = false;
   });
   $('#publicar-simbolo').addEventListener('click',()=>{
-    try { Comunidad.guardar(compartido);$('#compartir-estado').textContent='Listo. Tu símbolo está en el tablero de este navegador.';$('#publicar-simbolo').disabled=true; }
-    catch(e){$('#compartir-estado').textContent=e.message;}
-  });
-  $('#enlace-simbolo').addEventListener('click',async()=>{
     try {
-      if(location.protocol==='file:')throw Error('Para compartir un enlace abrí el sitio desde el servidor o la web publicada. El editor funciona sin conexión.');
-      const url=Comunidad.enlace(compartido,'./index.html');
-      try { await navigator.clipboard.writeText(url);$('#compartir-estado').textContent=/^(localhost|127\.|\[::1\])/.test(location.hostname)?'Enlace local copiado. Solo funciona en esta computadora; compartilo desde el sitio publicado para que otras personas puedan abrirlo.':'Enlace copiado. Quien lo abra podrá ver este símbolo, sin depender de tu tablero local.'; }
-      catch { $('.enlace-manual').hidden=false;$('#enlace-manual').value=url;$('#enlace-manual').focus();$('#enlace-manual').select();$('#compartir-estado').textContent='El navegador bloqueó la copia automática. Copiá el enlace del campo.'; }
-    } catch(e){$('#compartir-estado').textContent=e.message;}
+      Comunidad.guardar(compartido);$('#publicar-simbolo').disabled=true;
+      const confirmacion={origen:overlay,foco:$('#png'),titulo:'¡Símbolo sumado!',detalle:(compartido.nombre||'Tu símbolo')+' ya está en el tablero',accion:{texto:'Ver tablero',href:'../index.html#comunidad'},antes:()=>overlay.close()};
+      if(window.MUSUQ_ACCESO)MUSUQ_ACCESO.confirmar(confirmacion);else $('#compartir-estado').textContent='Listo. Tu símbolo está en el tablero.';
+    }
+    catch(e){$('#compartir-estado').textContent=e.message;}
   });
   function leerEnlace() {
     if(!location.hash.startsWith('#simbolo='))return;
