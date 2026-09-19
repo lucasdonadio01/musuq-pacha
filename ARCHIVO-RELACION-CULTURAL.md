@@ -15,6 +15,6 @@ Fuente: Comunidad Telomian Condic / Grupo Mirrí / FFyH, UNC, *Nuestra historia*
 - `NAT-arco-comunitario.png`: imagen incrustada X106.jpg, 402×378, extraída y guardada como PNG sin reconstrucción.
 - `NAT-utensilios-comunitarios.png`: imagen incrustada X108.jp2, 228×480, extraída y guardada como PNG sin reconstrucción. Se conserva la orientación de la imagen incrustada.
 
-No se generaron nuevas imágenes con IA, ni se añadió un tótem, ídolo o reliquia sin documentación. No generalizar estas piezas actuales a toda la historia querandí. Las fotografías son pequeñas; no inventar detalle mediante ampliación generativa.
+No se agregaron imágenes nuevas, ni un tótem, ídolo o reliquia sin documentación. No generalizar estas piezas actuales a toda la historia querandí. Las fotografías son pequeñas; no inventar detalle al ampliarlas.
 
 La procedencia de la imagen y la fuente que respalda su relación cultural se muestran como enlaces separados cuando son distintas. `fuenteRelacionNombre` permite dar al segundo enlace un nombre preciso, como «Leer el estudio de fauna de La Noria».

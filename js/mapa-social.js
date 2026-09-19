@@ -1,8 +1,3 @@
-/* THESIS: el mapa sigue siendo la superficie de exploración; la interfaz acompaña sus bordes.
- * OWN-WORLD: Space Grotesk, carbón, naranja y violeta; píxeles cuadrados de las referencias.
- * STORY: buscar un pueblo, distinguir el progreso demo y descubrir contenido sin bloquearlo.
- * FIRST VIEWPORT: header persistente, búsqueda a izquierda, comentarios arriba y elementos abajo a derecha.
- * FORM: extensión del mapa existente, composición fijada por las referencias del usuario. */
 (() => {
   'use strict';
   const normalizar = texto => String(texto || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -227,7 +222,6 @@
         marcadores.forEach(m=>m.cerrar());
         marker.classList.add('mapa-comentario-marker--abierto');pin.setAttribute('aria-expanded','true');
       };
-      // El clic no fija el globo. En pantallas táctiles se lee desde el panel.
       marker.addEventListener('pointerenter',e=>{if(e.pointerType!=='touch')mostrar();});
       marker.addEventListener('pointerleave',cerrar);
       marker.addEventListener('pointercancel',cerrar);
@@ -277,7 +271,6 @@
     const opciones = crear('fieldset', 'mapa-elementos__opciones'); opciones.id = 'elementos-opciones';
     const legend = crear('legend', 'solo-lectores', 'Tipo de elemento'); opciones.append(legend);
     const tipos = [['todo','Ver todo'],['arboles','Árboles'],['construcciones','Construcciones'],['flora','Flora'],['fauna','Fauna']];
-    // Google Material Icons: apps, home y pets; árbol y eco reutilizan los del mapa.
     const trazos = {
       todo:'M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z',
       construcciones:'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',

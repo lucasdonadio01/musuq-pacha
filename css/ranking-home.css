@@ -59,7 +59,7 @@
 #comunidad .comunidad__rotulo{font-size:18px}
 #comunidad h2{font-size:clamp(36px,3.1vw,60px)}
 #comunidad .comunidad__cta{padding:18px;gap:16px;min-height:94px;flex-wrap:nowrap}
-#comunidad .comunidad__cta strong{font-size:13px}#comunidad .comunidad__cta p{font-size:11px}
+#comunidad .comunidad__cta strong{font-size:13px}#comunidad .comunidad__cta p{font-size:12px}
 #comunidad .comunidad__cta .boton{min-width:108px;font-size:12px}
 #comunidad .tablero{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:128px 128px;gap:16px var(--site-gutter)}
 #comunidad .ranking-tarjeta{padding:18px 16px;grid-template-columns:64px minmax(0,1fr);column-gap:12px;row-gap:12px}
@@ -73,7 +73,7 @@
 #comunidad .ranking-likes{font-size:20px;min-height:36px;padding:0 3px 0 0;border:0;border-radius:0;background:transparent;color:inherit;position:relative;z-index:3;cursor:pointer}
 #comunidad .ranking-likes[aria-pressed=true]{background:#ffffff40;box-shadow:0 2px currentColor}
 #comunidad .ranking-likes img{width:21px;height:21px}
-#comunidad .ranking-autor{font-size:10px;line-height:1.3;white-space:normal;overflow-wrap:anywhere;gap:5px}
+#comunidad .ranking-autor{font-size:12px;line-height:1.3;white-space:normal;overflow-wrap:anywhere;gap:5px}
 #comunidad .ranking-autor :is(img,canvas){width:15px;height:15px;flex-shrink:0;image-rendering:pixelated}
 #comunidad .ranking-datos{min-width:0}
 .ranking-abrir{position:absolute;inset:0;z-index:2;background:transparent;border:0;border-radius:0;cursor:pointer}

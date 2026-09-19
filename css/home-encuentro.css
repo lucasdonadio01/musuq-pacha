@@ -25,7 +25,7 @@
 .encuentro-invitacion h2{max-width:13.5em;margin:0;font:400 clamp(38px,2.92vw,56px)/1.08 'Space Grotesk',Arial,sans-serif;letter-spacing:-.01em;color:var(--encuentro-lima);text-wrap:balance}
 .encuentro-bajada{margin:22px 0 0;font:400 clamp(16px,.99vw,19px)/1.5 Archivo,Arial,sans-serif;color:#efefef;text-wrap:pretty}
 .encuentro-datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 14px;margin:41px 0 0;padding-top:21px;border-top:1px solid #d8d8d8}
-.encuentro-datos dt{display:flex;align-items:center;gap:8px;font:500 10px/1.3 Archivo,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--encuentro-lima)}
+.encuentro-datos dt{display:flex;align-items:center;gap:8px;font:500 12px/1.3 Archivo,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--encuentro-lima)}
 .encuentro-datos dd{margin:11px 0 0;font:400 17px/1.3 Archivo,Arial,sans-serif;color:#999}
 .encuentro-icono{display:inline-block;flex:0 0 auto;width:20px;height:20px;background:currentColor;-webkit-mask:var(--encuentro-i) center/contain no-repeat;mask:var(--encuentro-i) center/contain no-repeat}
 .encuentro-icono--cuando{--encuentro-i:url('../assets/eventos/iconos/event.svg')}

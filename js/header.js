@@ -66,6 +66,7 @@
   function abrirCuenta(vista){
     if(!activa)return;
     cerrarPerfil();
+    cuentaDialog.classList.remove('cuenta-dialog--logro');
     cuentaDialog.innerHTML='<div class="cuenta-cabecera"><h2 id="cuenta-titulo"></h2><button type="button" data-cuenta-cerrar aria-label="Cerrar ventana de cuenta">×</button></div><div class="cuenta-contenido"></div>';
     cuentaDialog.querySelector('h2').textContent={perfil:'Mi perfil',canjear:'Canjear código'}[vista]||'Configuración';
     const contenido=cuentaDialog.querySelector('.cuenta-contenido');
@@ -100,10 +101,41 @@
     form.onsubmit=e=>{
       e.preventDefault();if(fase!=='listo')return;
       if(campo.value.trim().toUpperCase()!==codigo){estado.textContent='Ese código no es válido. Revisalo y probá de nuevo.';return;}
-      contenido.innerHTML='<div class="cuenta-canje__listo" role="status"><span class="cuenta-canje__sello" aria-hidden="true"><svg><use href="#main-qr"/></svg></span><p class="cuenta-canje__codigo">'+codigo+'</p><h3>¡Código canjeado!</h3><p>La recompensa ya está en tu partida. La vas a ver en tu inventario la próxima vez que abras Musuq Pacha.</p><button class="cuenta-primario" type="button" data-cuenta-listo>Listo</button></div>';
-      if(!quiet())contenido.firstElementChild.animate([{opacity:0,transform:'scale(.96)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.16,1,.3,1)'});
+      contenido.innerHTML='<div class="cuenta-logro" role="status"><canvas width="260" height="260" aria-hidden="true"></canvas><p class="cuenta-canje__codigo">'+codigo+'</p><h3>¡Código canjeado!</h3><p>La recompensa ya está en tu partida. La vas a ver en tu inventario la próxima vez que abras Musuq Pacha.</p><button class="cuenta-primario" type="button" data-cuenta-listo>Listo</button></div>';
+      cuentaDialog.classList.add('cuenta-dialog--logro');
+      if(!quiet())cuentaDialog.animate([{opacity:0},{opacity:1}],{duration:380,easing:'ease-out'});
+      animarLogro(contenido.querySelector('canvas'));
       const listo=contenido.querySelector('[data-cuenta-listo]');listo.onclick=()=>cerrarCuenta();listo.focus();
     };
+  }
+  const verdes=['#1F8A4C','#34C46A','#8BE3A8','#0F5A2B','#C6F5D3'];
+  const RUTA_QR='M520-120v-80h80v80h-80Zm-80-80v-200h80v200h-80Zm320-120v-160h80v160h-80Zm-80-160v-80h80v80h-80Zm-480 80v-80h80v80h-80Zm-80-80v-80h80v80h-80Zm360-280v-80h80v80h-80ZM180-660h120v-120H180v120Zm-60 60v-240h240v240H120Zm60 420h120v-120H180v120Zm-60 60v-240h240v240H120Zm540-540h120v-120H660v120Zm-60 60v-240h240v240H600Zm80 480v-120h-80v-80h160v120h80v80H680ZM520-400v-80h160v80H520Zm-160 0v-80h-80v-80h240v80h-80v80h-80Zm40-200v-160h80v80h80v80H400Zm-190-90v-60h60v60h-60Zm0 480v-60h60v60h-60Zm480-480v-60h60v60h-60Z';
+  const RUTA_CHECK='M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z';
+  function grillaDe(ruta,lado,color,grosor=0){
+    const px=8,c=document.createElement('canvas');c.width=c.height=lado*px;const x=c.getContext('2d');
+    const escala=(lado-4)*px/720,forma=new Path2D(ruta);x.setTransform(escala,0,0,escala,2*px-120*escala,2*px+(960-120)*escala);x.fill(forma);
+    if(grosor){x.lineWidth=grosor;x.stroke(forma);}
+    const datos=x.getImageData(0,0,c.width,c.height).data,grilla=new Map();
+    for(let gy=0;gy<lado;gy++)for(let gx=0;gx<lado;gx++){let suma=0;for(let yy=0;yy<px;yy++)for(let xx=0;xx<px;xx++)suma+=datos[((gy*px+yy)*c.width+gx*px+xx)*4+3];if(suma/(px*px*255)>.42)grilla.set(gx+','+gy,color);}
+    return grilla;
+  }
+  const conMotor=()=>typeof Motor!=='undefined'?Promise.resolve(true):new Promise(listo=>{const s=document.createElement('script');s.src=local('simbolos/js/motor.js?v=ranking-morph-1');s.onload=()=>listo(typeof Motor!=='undefined');s.onerror=()=>listo(false);document.head.append(s);});
+  async function animarLogro(lienzo){
+    const lado=16,ctx=lienzo.getContext('2d'),check=grillaDe(RUTA_CHECK,lado,'#34C46A',60);
+    const pintarFijo=grilla=>{const t=lienzo.clientWidth||260,dpr=Math.min(devicePixelRatio||1,2);lienzo.width=lienzo.height=Math.round(t*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);const celda=t/lado;grilla.forEach((color,k)=>{const[x,y]=k.split(',').map(Number);ctx.fillStyle=color;ctx.fillRect(x*celda,y*celda,Math.ceil(celda),Math.ceil(celda));});};
+    if(quiet()||!await conMotor()){pintarFijo(check);return;}
+    const motor=Motor.crear(lado),inicio=performance.now();let etapa=0,ultimo=inicio,semilla=(Math.random()*0xffffffff)>>>0;
+    motor.cargar(grillaDe(RUTA_QR,lado,'#E4FE44'),inicio);
+    const cuadro=ahora=>{
+      if(!cuentaDialog.open||!lienzo.isConnected)return;
+      if(etapa===0&&ahora-inicio>1700){etapa=1;motor.cargar(check,ahora);ultimo=ahora;}
+      else if(etapa===1&&ahora-ultimo>1900){etapa=2;motor.generar(ahora,semilla,verdes);ultimo=ahora;}
+      else if(etapa===2&&ahora-ultimo>2600){semilla=(semilla*2654435761+1)>>>0;motor.generar(ahora,semilla,verdes);ultimo=ahora;}
+      const t=lienzo.clientWidth||260,dpr=Math.min(devicePixelRatio||1,2);if(lienzo.width!==Math.round(t*dpr))lienzo.width=lienzo.height=Math.round(t*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,t,t);motor.dibujar(ctx,0,0,t/lado,ahora);
+      requestAnimationFrame(cuadro);
+    };
+    requestAnimationFrame(cuadro);
   }
   function cerrarCuenta(sinFoco=false){
     if(!cuentaDialog.open)return;
@@ -112,7 +144,7 @@
     cuentaDialog.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(10px)'}],{duration:180,easing:'ease-in'}).finished.then(()=>cuentaDialog.close());
   }
   cuentaDialog.addEventListener('cancel',e=>{e.preventDefault();cerrarCuenta();});
-  cuentaDialog.addEventListener('close',()=>{if(!cuentaDialog.dataset.sinFoco)login.focus({preventScroll:true});cuentaDialog.dataset.sinFoco='';});
+  cuentaDialog.addEventListener('close',()=>{cuentaDialog.classList.remove('cuenta-dialog--logro');if(!cuentaDialog.dataset.sinFoco)login.focus({preventScroll:true});cuentaDialog.dataset.sinFoco='';});
   cuentaDialog.addEventListener('click',e=>{if(e.target!==cuentaDialog)return;const r=cuentaDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cerrarCuenta();});
   perfil.querySelectorAll('[data-cuenta]').forEach(b=>b.addEventListener('click',()=>abrirCuenta(b.dataset.cuenta)));
   function avatar(semilla = 1907, indice = 0) {

@@ -14,7 +14,7 @@ Extensión de las referencias del usuario: mapa como superficie principal, heade
 - `bosques.filtrar()` afecta tanto visibilidad como hit testing. `habitat.filtrar()` controla ambas escenas de fauna y evita clics invisibles.
 - Fauna: en Querandí el filtro acerca al hábitat ya existente. No hay animales cargados para todos los pueblos.
 - Construcciones: filtro disponible con estado vacío explícito; no se inventaron edificios sin documentación.
-- Tres sprites de flora de Querandí y fichas con fuentes: `js/flora-querandi.js`, `css/flora-querandi.css`, `assets/flora/*.png`. Ver `FLORA-QUERANDI.md` para procedencia, limitaciones y prompts completos. La disposición sobre el mapa es ilustrativa, no distribución botánica medida.
+- Tres sprites de flora de Querandí y fichas con fuentes: `js/flora-querandi.js`, `css/flora-querandi.css`, `assets/flora/*.png`. Ver `FLORA-QUERANDI.md` para procedencia y limitaciones. La disposición sobre el mapa es ilustrativa, no distribución botánica medida.
 - Rueda/teclado en paneles no disparan back del mapa. Se preserva la transición de cámara al archivo y su `pueblo`.
 
 ## Verificación

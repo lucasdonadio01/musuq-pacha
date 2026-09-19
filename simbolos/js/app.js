@@ -1,8 +1,3 @@
-/* THESIS: componer desde piezas documentadas, no dibujar motivos al azar.
-   OWN-WORLD: taller carbón, naranja/violeta, Space Grotesk; referencias reales.
-   STORY: elegir territorio → combinar → colorear → compartir.
-   FIRST VIEWPORT: referencias a izquierda, composición central, piezas a derecha.
-   FORM: ampliación del taller existente; Motor conserva el morph compartido. */
 (() => {
  'use strict';
  const $=s=>document.querySelector(s),C=Composicion,portada=$('#portada'),taller=$('#taller'),lienzo=$('#lienzo'),ctx=lienzo.getContext('2d'),estado=$('#estado');
@@ -141,9 +136,6 @@
     c.fillStyle = fondo;
     c.fillRect(0, 0, W, H);
     try {
-      // Del canvas WebGL se recorta una ventana con la misma proporción que la
-      // imagen pedida, centrada en el lienzo: si no, el fondo saldría estirado
-      // al bajar en 9:16 desde una pantalla apaisada.
       const objetivo = W / H;
       let sw = r.width * d, sh = r.height * d;
       if (sw / sh > objetivo) sw = sh * objetivo; else sh = sw / objetivo;
@@ -151,8 +143,6 @@
       const sy = r.top * d + (r.height * d - sh) / 2;
       c.drawImage(Fondo.lienzo, sx, sy, sw, sh, 0, 0, W, H);
     } catch (err) { /* sin WebGL queda el fondo plano */ }
-    // el símbolo se compone directo en la medida pedida, así la composición se
-    // adapta al formato en vez de estirar la de pantalla
     Simbolo.componer(c, W, H, ahora, { interfaz: false, tinta, pie: conPie ? SITIO : null });
     return cv;
   }

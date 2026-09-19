@@ -8,7 +8,7 @@ Licencia impresa en la página 4 del PDF: Creative Commons Atribución-NoComerci
 
 Crédito de diseño interior: María Bella y Luis Sánchez Zárate. Arte y diseño de portada: Grupo Mirrí. La portada no fue utilizada. La página de viviendas reproduce un fragmento de la carta náutica de Sebastián Gaboto, 1544, con su crédito original visible.
 
-Todos los archivos son reproducciones de una publicación contemporánea de memoria y trabajo comunitario. No son objetos arqueológicos, fotografías de ceremonias antiguas ni ilustraciones reconstruidas. No se utilizaron imágenes generadas por IA.
+Todos los archivos son reproducciones de una publicación contemporánea de memoria y trabajo comunitario. No son objetos arqueológicos, fotografías de ceremonias antiguas ni ilustraciones reconstruidas.
 
 | Archivo | Categoría | Página impresa | Página PDF | Tratamiento |
 | --- | --- | --- | --- | --- |

@@ -1,6 +1,3 @@
-/* Imágenes verificadas para la mesa documental. Cargar después de
- * archivo-coleccion.js y en lugar de archivo-documentos-comunitarios.js.
- * No incluye páginas de texto ni imágenes generadas por IA. */
 (function () {
   'use strict';
   const base = 'assets/archivo/objetos/';

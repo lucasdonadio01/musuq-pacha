@@ -1,6 +1,6 @@
 # Flora de Querandí · ilustraciones y fuentes
 
-Tres imágenes interpretativas generadas con la herramienta integrada de imágenes, 16-09-2026. Referencia de estilo: `assets/arboles/tala.png`. No son fotografías, evidencia arqueológica ni reconstrucciones botánicas concluyentes. Ubicación y escala de los sprites son ilustrativas.
+Tres ilustraciones interpretativas, 16-09-2026. Referencia de estilo: `assets/arboles/tala.png`. No son fotografías, evidencia arqueológica ni reconstrucciones botánicas concluyentes. Ubicación y escala de los sprites son ilustrativas.
 
 ## Criterio documental
 
@@ -10,22 +10,8 @@ Tres imágenes interpretativas generadas con la herramienta integrada de imágen
 
 No se incorporan usos medicinales ni recomendaciones de consumo. La publicación comunitaria es contemporánea; no se presenta como registro precolombino. No inferir prácticas culturales de la mera presencia regional de una planta.
 
-## Archivos y prompts finales
+## Archivos
 
-### assets/flora/tala-frutos.png
-
-Modo: generación integrada, con referencia de estilo local, fondo transparente.
-
-Use case: stylized-concept. Asset: transparent PNG plant sprite for an isometric interactive map. Use the supplied tree only as a STYLE REFERENCE, create a NEW isolated plant. Match its matte hand-painted faceted low-poly look, olive/yellow greens, warm brown stems, soft upper-left sunlight, three-quarter elevated viewpoint. Full plant centered with generous transparent margins, single coherent silhouette. Genuinely transparent background with alpha; no ground tile, scenery, border, words, labels or watermarks. Not photorealistic, not a diagram, no drop-shadow rectangle. Subject: a small Celtis tala tree with irregular branching, small serrated oval leaves in clustered faceted masses, and some tiny orange ripe fruits visibly dotted among the leaves. Whole trunk and canopy, a little smaller and more open canopy than the reference so the fruits read.
-
-### assets/flora/macachin.png
-
-Modo: generación integrada, con referencia de estilo local, fondo transparente.
-
-Use case: stylized-concept. Asset: transparent PNG plant sprite for an isometric interactive map. Use the supplied tree only as a STYLE REFERENCE, create a NEW isolated plant. Match its matte hand-painted faceted low-poly look, olive/yellow greens, warm brown stems, soft upper-left sunlight, three-quarter elevated viewpoint. Full plant centered with generous transparent margins, single coherent silhouette. Genuinely transparent background with alpha; no ground tile, scenery, border, words, labels or watermarks. Not photorealistic, not a diagram, no drop-shadow rectangle. Subject: a small botanical interpretive clump of Oxalis-type macachín, with many leaves each consisting of THREE heart-shaped leaflets, slender stems and a few pink-violet five-petaled flowers. A couple of pale tapered fleshy underground storage roots visible beside its base, as an illustrative convention. This will be explicitly labeled interpretive, not a certain species reconstruction. Maintain the same chunky painted facet style as the tree reference, simplified not realistic.
-
-### assets/flora/carda.png
-
-Modo: generación integrada, con referencia de estilo local, fondo transparente.
-
-Use case: stylized-concept. Asset: transparent PNG plant sprite for an isometric interactive map. Use the supplied tree only as a STYLE REFERENCE, create a NEW isolated plant. Match its matte hand-painted faceted low-poly look, olive/yellow greens, warm brown stems, soft upper-left sunlight, three-quarter elevated viewpoint. Full plant centered with generous transparent margins, single coherent silhouette. Genuinely transparent background with alpha; no ground tile, scenery, border, words, labels or watermarks. Not photorealistic, not a diagram, no drop-shadow rectangle. Subject: one native South American Eryngium-type carda clump: stiff narrow long olive-green leaves radiating in a basal rosette with subtly spiny margins, a few slender branching flowering stalks bearing small pale greenish-white oval flower heads. Compact recognizable spiny rosette silhouette. No purple European thistle flower, no cactus, no agave.
+- `assets/flora/tala-frutos.png`: tala con frutos maduros.
+- `assets/flora/macachin.png`: macachín, aproximación de tipo Oxalis.
+- `assets/flora/carda.png`: carda de tipo Eryngium.

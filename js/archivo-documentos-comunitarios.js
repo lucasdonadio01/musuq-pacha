@@ -1,5 +1,3 @@
-/* Cargar después de archivo-coleccion.js. Facsímiles de una publicación
- * comunitaria contemporánea, sin reconstrucciones ni imágenes generadas. */
 (function () {
   'use strict';
   const base = 'assets/archivo/documentos/';
