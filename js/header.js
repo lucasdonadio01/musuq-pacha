@@ -1,5 +1,3 @@
-/* Encabezado principal de Musuq Pacha. La plantilla y los íconos viven en header-plantilla.js.
-   Montar antes de sonido, accesibilidad y las experiencias de cada página. Sin fetch/build. */
 (() => {
   'use strict';
   const header = document.getElementById('header');
@@ -17,6 +15,7 @@
   const destinos = {
     territorio:enHome ? '#territorio' : local('index.html#territorio'),
     archivo:enHome ? '#archivo' : local('index.html#archivo'),
+    eventos:local('eventos.html'),
     juego:local('juego.html')
   };
   header.querySelector('.nav__marca').href = enHome ? '#territorio' : local('index.html');
@@ -26,15 +25,14 @@
     enlace.toggleAttribute('aria-current', nombre === seccion);
     if (nombre === seccion) enlace.setAttribute('aria-current','page');
   }
-  // Comunidad está dentro del home; no se pierde el estado activo al saltar a ella.
   function seccionHome() {
     if (!enHome) return;
-    const actual = ['#archivo','#eventos'].includes(location.hash) ? 'archivo' : 'territorio';
+    const actual = ['#archivo','#eventos'].includes(location.hash) ? 'archivo' : document.body.classList.contains('en-mapa') ? 'territorio' : '';
     header.querySelectorAll('[data-seccion-link]').forEach(a => {
       if (a.dataset.seccionLink === actual) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
   }
-  addEventListener('hashchange', seccionHome); seccionHome();
+  addEventListener('hashchange', seccionHome); addEventListener('musuq:modo', seccionHome); seccionHome();
   const nav = header.querySelector('.nav__links'), menu = header.querySelector('.nav__menu');
   const movil = matchMedia('(max-width:1100px)');
   function cerrarNavegacion(foco = false) {
@@ -52,15 +50,16 @@
 
   const key = 'musuq-sesion-demo-v1';
   let activa = false;
-  try { activa = localStorage.getItem(key) === 'activa'; } catch { /* Sesión en memoria. */ }
+  try { activa = localStorage.getItem(key) === 'activa'; } catch {}
   const login = header.querySelector('#ingresar');
   const perfil = document.createElement('div');
   perfil.className = 'perfil-demo'; perfil.id = 'main-perfil-demo'; perfil.hidden = true;
-  perfil.innerHTML = '<strong class="perfil-nombre"></strong><span class="perfil-demo__estado">@tu.recorrido</span><p class="perfil-notificacion">Tenés desbloqueados <strong>Qom, Querandí y Omaguaca</strong>.</p><nav aria-label="Tu cuenta"><button type="button" data-cuenta="perfil">Mi perfil '+icono('login')+'</button><button type="button" data-cuenta="configuracion">Configuración '+icono('acceso')+'</button><button class="perfil-demo__salir" type="button">Cerrar sesión '+icono('login')+'</button></nav>';
+  const usuario = '@tomi.rivas', nombrePorDefecto = 'Tomás Rivas';
+  perfil.innerHTML = '<strong class="perfil-nombre"></strong><span class="perfil-demo__estado">'+usuario+'</span><p class="perfil-notificacion">Tenés desbloqueados <strong>Qom, Querandí y Omaguaca</strong>.</p><nav aria-label="Tu cuenta"><button type="button" data-cuenta="perfil">Mi perfil '+icono('login')+'</button><button type="button" data-cuenta="canjear">Canjear código '+icono('qr')+'</button><button type="button" data-cuenta="configuracion">Configuración '+icono('acceso')+'</button><button class="perfil-demo__salir" type="button">Cerrar sesión '+icono('login')+'</button></nav>';
   header.append(perfil);
   const cuentaKey='musuq-perfil-local-v1';
-  let cuenta={nombre:'Tu recorrido',notificaciones:true};
-  try{const saved=JSON.parse(localStorage.getItem(cuentaKey));if(typeof saved?.nombre==='string')cuenta.nombre=saved.nombre.slice(0,40)||cuenta.nombre;if(typeof saved?.notificaciones==='boolean')cuenta.notificaciones=saved.notificaciones;}catch{}
+  let cuenta={nombre:nombrePorDefecto,notificaciones:true};
+  try{const saved=JSON.parse(localStorage.getItem(cuentaKey));if(typeof saved?.nombre==='string'&&saved.nombre!=='Tu recorrido')cuenta.nombre=saved.nombre.slice(0,40)||cuenta.nombre;if(typeof saved?.notificaciones==='boolean')cuenta.notificaciones=saved.notificaciones;}catch{}
   perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;
   const cuentaDialog=document.createElement('dialog');cuentaDialog.className='cuenta-dialog';cuentaDialog.setAttribute('aria-labelledby','cuenta-titulo');document.body.append(cuentaDialog);
   const quiet=()=>matchMedia('(prefers-reduced-motion:reduce)').matches||document.documentElement.dataset.detener==='true';
@@ -68,25 +67,53 @@
     if(!activa)return;
     cerrarPerfil();
     cuentaDialog.innerHTML='<div class="cuenta-cabecera"><h2 id="cuenta-titulo"></h2><button type="button" data-cuenta-cerrar aria-label="Cerrar ventana de cuenta">×</button></div><div class="cuenta-contenido"></div>';
-    cuentaDialog.querySelector('h2').textContent=vista==='perfil'?'Mi perfil':'Configuración';
+    cuentaDialog.querySelector('h2').textContent={perfil:'Mi perfil',canjear:'Canjear código'}[vista]||'Configuración';
     const contenido=cuentaDialog.querySelector('.cuenta-contenido');
     if(vista==='perfil'){
       const foto=avatar(),nombre=document.createElement('h3');foto.classList.add('cuenta-avatar');nombre.textContent=cuenta.nombre;contenido.append(foto,nombre);
-      contenido.insertAdjacentHTML('beforeend','<p class="cuenta-handle">@tu.recorrido</p><h3>Tus territorios desbloqueados</h3><div class="cuenta-territorios"><a href="'+local('index.html?pueblo=11')+'">Qom</a><a href="'+local('index.html?pueblo=14')+'">Querandí</a><a href="'+local('index.html?pueblo=2')+'">Omaguaca</a></div><button class="cuenta-primario" type="button" data-editar-perfil>Editar perfil</button>');
+      contenido.insertAdjacentHTML('beforeend','<p class="cuenta-handle">'+usuario+'</p><h3>Tus territorios desbloqueados</h3><div class="cuenta-territorios"><a href="'+local('index.html?pueblo=11')+'">Qom</a><a href="'+local('index.html?pueblo=14')+'">Querandí</a><a href="'+local('index.html?pueblo=2')+'">Omaguaca</a></div><button class="cuenta-primario" type="button" data-editar-perfil>Editar perfil</button>');
       contenido.querySelector('[data-editar-perfil]').onclick=()=>abrirCuenta('configuracion');
+    }else if(vista==='canjear'){
+      armarCanje(contenido);
     }else{
       contenido.innerHTML='<form class="cuenta-form"><label>Nombre de perfil<input name="nombre" maxlength="40" required autocomplete="nickname"></label><label class="cuenta-check"><span>Mostrar avisos de territorios desbloqueados</span><input name="notificaciones" type="checkbox"></label><button type="button" class="cuenta-accesibilidad">Ajustes de accesibilidad</button><button class="cuenta-primario" type="submit">Guardar cambios</button><p role="status" class="cuenta-estado"></p></form>';
       const form=contenido.querySelector('form');form.elements.nombre.value=cuenta.nombre;form.elements.notificaciones.checked=cuenta.notificaciones;
-      form.onsubmit=e=>{e.preventDefault();cuenta.nombre=form.elements.nombre.value.trim()||'Tu recorrido';cuenta.notificaciones=form.elements.notificaciones.checked;perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;try{localStorage.setItem(cuentaKey,JSON.stringify(cuenta));contenido.querySelector('[role=status]').textContent='Cambios guardados.';}catch{contenido.querySelector('[role=status]').textContent='Cambios aplicados en esta visita.';}};
-      contenido.querySelector('.cuenta-accesibilidad').onclick=()=>{cuentaDialog.close();document.getElementById('abrir-accesibilidad').click();};
+      form.onsubmit=e=>{e.preventDefault();cuenta.nombre=form.elements.nombre.value.trim()||nombrePorDefecto;cuenta.notificaciones=form.elements.notificaciones.checked;perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;try{localStorage.setItem(cuentaKey,JSON.stringify(cuenta));contenido.querySelector('[role=status]').textContent='Cambios guardados.';}catch{contenido.querySelector('[role=status]').textContent='Cambios aplicados en esta visita.';}};
+      contenido.querySelector('.cuenta-accesibilidad').onclick=()=>{cerrarCuenta(true);document.getElementById('abrir-accesibilidad').click();};
     }
-    cuentaDialog.querySelector('[data-cuenta-cerrar]').onclick=()=>cuentaDialog.close();
+    cuentaDialog.querySelector('[data-cuenta-cerrar]').onclick=()=>cerrarCuenta();
     if(!cuentaDialog.open)cuentaDialog.showModal();
     if(!quiet())cuentaDialog.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:240,easing:'cubic-bezier(.16,1,.3,1)'});
     cuentaDialog.querySelector('[data-cuenta-cerrar]').focus();
   }
-  cuentaDialog.addEventListener('close',()=>login.focus({preventScroll:true}));
-  cuentaDialog.addEventListener('click',e=>{if(e.target!==cuentaDialog)return;const r=cuentaDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cuentaDialog.close();});
+  function armarCanje(contenido){
+    const codigo='PAMPAS';
+    contenido.innerHTML='<form class="cuenta-form cuenta-canje"><p class="cuenta-canje__ayuda">Ingresá el código que recibiste en un evento o en el juego. Tocá el campo y lo completamos por vos.</p><label>Código<input name="codigo" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label><button class="cuenta-primario" type="submit" disabled>Canjear</button><p role="status" class="cuenta-estado"></p></form>';
+    const form=contenido.querySelector('form'),campo=form.elements.codigo,boton=form.querySelector('[type=submit]'),estado=form.querySelector('[role=status]');
+    let fase='vacio';
+    const completar=async()=>{
+      if(fase!=='vacio')return;fase='llenando';form.classList.add('cuenta-canje--escribiendo');
+      for(let i=1;i<=codigo.length;i++){campo.value=codigo.slice(0,i);if(!quiet())await new Promise(r=>setTimeout(r,110));}
+      form.classList.remove('cuenta-canje--escribiendo');fase='listo';boton.disabled=false;estado.textContent='Código listo. Tocá Canjear.';
+    };
+    campo.addEventListener('pointerdown',completar);campo.addEventListener('focus',completar);
+    form.onsubmit=e=>{
+      e.preventDefault();if(fase!=='listo')return;
+      if(campo.value.trim().toUpperCase()!==codigo){estado.textContent='Ese código no es válido. Revisalo y probá de nuevo.';return;}
+      contenido.innerHTML='<div class="cuenta-canje__listo" role="status"><span class="cuenta-canje__sello" aria-hidden="true"><svg><use href="#main-qr"/></svg></span><p class="cuenta-canje__codigo">'+codigo+'</p><h3>¡Código canjeado!</h3><p>La recompensa ya está en tu partida. La vas a ver en tu inventario la próxima vez que abras Musuq Pacha.</p><button class="cuenta-primario" type="button" data-cuenta-listo>Listo</button></div>';
+      if(!quiet())contenido.firstElementChild.animate([{opacity:0,transform:'scale(.96)'},{opacity:1,transform:'none'}],{duration:320,easing:'cubic-bezier(.16,1,.3,1)'});
+      const listo=contenido.querySelector('[data-cuenta-listo]');listo.onclick=()=>cerrarCuenta();listo.focus();
+    };
+  }
+  function cerrarCuenta(sinFoco=false){
+    if(!cuentaDialog.open)return;
+    cuentaDialog.dataset.sinFoco=sinFoco?'true':'';
+    if(quiet()){cuentaDialog.close();return;}
+    cuentaDialog.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(10px)'}],{duration:180,easing:'ease-in'}).finished.then(()=>cuentaDialog.close());
+  }
+  cuentaDialog.addEventListener('cancel',e=>{e.preventDefault();cerrarCuenta();});
+  cuentaDialog.addEventListener('close',()=>{if(!cuentaDialog.dataset.sinFoco)login.focus({preventScroll:true});cuentaDialog.dataset.sinFoco='';});
+  cuentaDialog.addEventListener('click',e=>{if(e.target!==cuentaDialog)return;const r=cuentaDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cerrarCuenta();});
   perfil.querySelectorAll('[data-cuenta]').forEach(b=>b.addEventListener('click',()=>abrirCuenta(b.dataset.cuenta)));
   function avatar(semilla = 1907, indice = 0) {
     const canvas = document.createElement('canvas');
@@ -132,7 +159,7 @@
   }
   function cambiarSesion(valor, persistir = true) {
     activa = valor; cerrarPerfil(); dibujarSesion();
-    if (persistir) try { if(activa)localStorage.setItem(key,'activa');else localStorage.removeItem(key); } catch { /* Persistencia opcional. */ }
+    if (persistir) try { if(activa)localStorage.setItem(key,'activa');else localStorage.removeItem(key); } catch {}
     dispatchEvent(new CustomEvent('musuq:sesion',{detail:{activa}}));
   }
   login.addEventListener('click', () => {

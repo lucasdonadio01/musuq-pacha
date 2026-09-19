@@ -19,3 +19,10 @@
 .visor-simbolo__acciones :is(button,a){display:flex;align-items:center;justify-content:center;gap:9px;width:auto;min-width:112px;height:48px;padding:0 18px;background:#fff;color:#202020;font:500 14px 'Space Grotesk',sans-serif;text-decoration:none}
 .visor-simbolo__acciones :is(button,a):hover,.visor-simbolo__acciones :is(button,a):focus-visible{background:#7542bd;color:#fff}
 @media(max-width:600px){.visor-simbolo__escena{inset:16px 0 106px}.visor-simbolo__acciones{gap:8px;bottom:24px}.visor-simbolo__acciones :is(button,a){padding:0 12px;min-width:100px}}
+.visor-simbolo__detalle{position:absolute;left:24px;right:24px;bottom:100px;text-align:center;pointer-events:none;font-family:'Space Grotesk',sans-serif}
+.visor-simbolo__detalle[hidden]{display:none}
+.visor-simbolo__detalle h2{font-size:clamp(22px,2.2vw,32px);font-weight:500;line-height:1.15;color:#e4fe44;margin:0 0 8px;overflow-wrap:anywhere}
+.visor-simbolo__autor{font-size:15px;color:#fff;margin:0 0 5px}
+.visor-simbolo__region{font-size:13px;line-height:1.4;color:#ccc;margin:0}
+.visor-simbolo--con-detalle .visor-simbolo__escena{bottom:236px}
+@media(max-width:600px){.visor-simbolo__detalle{bottom:96px;left:16px;right:16px}.visor-simbolo--con-detalle .visor-simbolo__escena{bottom:234px}}

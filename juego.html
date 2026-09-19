@@ -1,9 +1,4 @@
 <!doctype html>
-<!-- THESIS: el territorio se abre para empezar a jugar.
-OWN-WORLD: JUEGO final de Figma, barras naranja/violeta, píxeles naranjas y negro.
-STORY: invitación → avance prototipado → descarga prototipada.
-FIRST VIEWPORT: rombo escalonado, MUSUQ PACHA y una invitación a bajar.
-FORM: grilla de 8 columnas, margen 120/gutter 32, Space Grotesk y Archivo originales. -->
 <html lang="es">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,10 +8,10 @@ FORM: grilla de 8 columnas, margen 120/gutter 32, Space Grotesk y Archivo origin
   <link rel="stylesheet" href="css/fuente.css">
   <link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
   <link rel="stylesheet" href="css/sonido.css?v=audio-3">
-  <link rel="stylesheet" href="css/header.css?v=ajustes-3">
+  <link rel="stylesheet" href="css/header.css?v=perfil-1">
   <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
   <link rel="stylesheet" href="css/grilla.css?v=juego-1">
-  <link rel="stylesheet" href="css/juego.css?v=juego-2">
+  <link rel="stylesheet" href="css/juego.css?v=descarga-2">
 </head>
 <body class="pagina-juego">
   <a class="juego-saltar" href="#descarga">Saltar a la descarga</a>
@@ -39,7 +34,9 @@ FORM: grilla de 8 columnas, margen 120/gutter 32, Space Grotesk y Archivo origin
           <button class="juego-video__play" type="button" aria-label="Reproducir vista previa" aria-pressed="false" aria-describedby="video-prototipo">
             <span class="juego-icono juego-icono--play" aria-hidden="true"></span>
           </button>
+          <div class="juego-codigo-zona" id="juego-codigo" aria-live="polite"></div>
         </div>
+        <template id="juego-codigo-plantilla"><div class="juego-codigo"><span class="juego-icono juego-icono--qr" aria-hidden="true"></span><p><strong>CÓDIGO: <span>PAMPAS</span></strong><small>Canjealo en tu menú de perfil</small></p><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i></div></template>
         <p class="sr-only" id="video-prototipo">Vista previa de prototipo. El botón alterna entre reproducir y pausar; no reproduce un video.</p>
         <a class="juego-video__siguiente" href="#descarga" aria-label="Ir a la descarga"><span class="juego-icono juego-icono--bajar" aria-hidden="true"></span></a>
       </section>
@@ -61,12 +58,12 @@ FORM: grilla de 8 columnas, margen 120/gutter 32, Space Grotesk y Archivo origin
       </section>
     </div>
   </main>
-  <script src="js/header-plantilla.js?v=juego-1"></script>
-  <script src="js/header.js?v=ajustes-3"></script>
+  <script src="js/header-plantilla.js?v=perfil-1"></script>
+  <script src="js/header.js?v=perfil-1"></script>
   <script src="js/accesibilidad.js?v=main-1"></script>
   <script src="js/sonido.js?v=main-1"></script>
   <script src="simbolos/js/fondo.js?v=18"></script>
-  <script src="js/juego.js?v=juego-2"></script>
-  <script src="js/pixel-botones.js?v=correcciones-1"></script>
+  <script src="js/juego.js?v=codigo-1"></script>
+  <script src="js/pixel-botones.js?v=encuentro-1"></script>
 </body>
 </html>

@@ -1,0 +1,61 @@
+.home-encuentro{--encuentro-naranja:#f66227;--encuentro-lima:#e4fe44;--encuentro-pixel:clamp(44px,3.96vw,76px);position:relative;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));column-gap:var(--site-gutter);align-items:center;padding:120px var(--site-margin) 140px;background:#1a1a1a;color:#efefef;scroll-margin-top:var(--site-header-height,78px)}
+.home-encuentro .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.encuentro-galeria{position:relative;grid-column:1/5;aspect-ratio:824/620}
+.encuentro-fotos{position:absolute;inset:0;overflow:hidden;background:#2a2a2a;touch-action:pan-y}
+.encuentro-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.045);transition:opacity .7s ease,transform 1.3s cubic-bezier(.16,1,.3,1)}
+.encuentro-foto--activa{opacity:1;transform:none}
+.encuentro-pixel{position:absolute;z-index:2;width:var(--encuentro-pixel);height:var(--encuentro-pixel);background:var(--encuentro-naranja);pointer-events:none}
+.encuentro-pixel--a{left:calc(var(--encuentro-pixel) * -.526);top:calc(100% - var(--encuentro-pixel) * .54)}
+.encuentro-pixel--b{left:calc(var(--encuentro-pixel) * -.553);top:calc(var(--encuentro-pixel) * -.263)}
+.encuentro-pixel--c{left:calc(var(--encuentro-pixel) * -.053);top:calc(var(--encuentro-pixel) * -.763)}
+.encuentro-flecha{position:absolute;top:50%;z-index:3;display:grid;place-items:center;width:48px;height:48px;margin-top:-24px;padding:0;border:0;border-radius:0;background:var(--encuentro-naranja);color:#1a1a1a;cursor:pointer;transition:background .2s ease,transform .35s cubic-bezier(.16,1,.3,1)}
+.encuentro-flecha--prev{left:24px}.encuentro-flecha--next{right:24px}
+.encuentro-flecha span{width:32px;height:32px;background:currentColor;-webkit-mask:url('../assets/eventos/iconos/chevron-left.svg') center/contain no-repeat;mask:url('../assets/eventos/iconos/chevron-left.svg') center/contain no-repeat}
+.encuentro-flecha--next span{-webkit-mask-image:url('../assets/eventos/iconos/chevron-right.svg');mask-image:url('../assets/eventos/iconos/chevron-right.svg')}
+.encuentro-flecha:hover{background:#fff}
+.encuentro-flecha--prev:active{transform:translateX(-3px)}.encuentro-flecha--next:active{transform:translateX(3px)}
+.encuentro-flecha:focus-visible,.encuentro-puntos button:focus-visible{outline:3px solid var(--encuentro-lima);outline-offset:3px}
+.encuentro-puntos{position:absolute;left:50%;bottom:30px;z-index:3;display:flex;gap:0;transform:translateX(-50%)}
+.encuentro-puntos button{display:grid;place-items:center;width:20px;height:20px;padding:0;border:0;background:transparent;cursor:pointer}
+.encuentro-puntos button::before{content:'';width:8px;height:8px;border-radius:50%;background:#6a40bc;transition:background .3s ease,transform .3s cubic-bezier(.16,1,.3,1)}
+.encuentro-puntos button[aria-current]::before{background:#1a1a1a;transform:scale(1.15)}
+.encuentro-puntos button:hover::before{transform:scale(1.3)}
+.encuentro-invitacion{grid-column:5/9;min-width:0}
+.encuentro-rotulo{margin:0 0 22px;font:500 12px/1.3 Archivo,Arial,sans-serif;letter-spacing:.08em;color:var(--encuentro-naranja)}
+.encuentro-invitacion h2{max-width:13.5em;margin:0;font:400 clamp(38px,2.92vw,56px)/1.08 'Space Grotesk',Arial,sans-serif;letter-spacing:-.01em;color:var(--encuentro-lima);text-wrap:balance}
+.encuentro-bajada{margin:22px 0 0;font:400 clamp(16px,.99vw,19px)/1.5 Archivo,Arial,sans-serif;color:#efefef;text-wrap:pretty}
+.encuentro-datos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 14px;margin:41px 0 0;padding-top:21px;border-top:1px solid #d8d8d8}
+.encuentro-datos dt{display:flex;align-items:center;gap:8px;font:500 10px/1.3 Archivo,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--encuentro-lima)}
+.encuentro-datos dd{margin:11px 0 0;font:400 17px/1.3 Archivo,Arial,sans-serif;color:#999}
+.encuentro-icono{display:inline-block;flex:0 0 auto;width:20px;height:20px;background:currentColor;-webkit-mask:var(--encuentro-i) center/contain no-repeat;mask:var(--encuentro-i) center/contain no-repeat}
+.encuentro-icono--cuando{--encuentro-i:url('../assets/eventos/iconos/event.svg')}
+.encuentro-icono--donde{--encuentro-i:url('../assets/eventos/iconos/location-on.svg')}
+.encuentro-icono--entrada{--encuentro-i:url('../assets/eventos/iconos/confirmation-number.svg')}
+.encuentro-icono--inscribir{--encuentro-i:url('../assets/eventos/iconos/edit-square.svg');width:22px;height:22px}
+.encuentro-icono--actividades{--encuentro-i:url('../assets/eventos/iconos/person-play.svg');width:22px;height:22px}
+.encuentro-acciones{display:flex;flex-wrap:wrap;gap:16px;margin-top:51px}
+.home-encuentro .boton{--pixel-base:var(--encuentro-naranja);--pixel-tinta:#1a1a1a;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:230px;height:56px;padding:0 32px;border:1px solid var(--encuentro-naranja);border-radius:2px;background:var(--encuentro-naranja);color:#1a1a1a;font:500 16px/1 Archivo,Arial,sans-serif;text-decoration:none}
+.home-encuentro .boton--secundario{--pixel-base:transparent;--pixel-tinta:var(--encuentro-naranja);border-width:2px;background:transparent;color:var(--encuentro-naranja)}
+.home-encuentro .boton:not(.pixel-boton):hover{background:#fff;border-color:#fff;color:#1a1a1a}
+.en-mapa .home-encuentro{visibility:hidden}
+@media(max-width:1100px){
+  .home-encuentro{padding-block:96px 112px;row-gap:64px}
+  .encuentro-galeria,.encuentro-invitacion{grid-column:1/-1}
+  .encuentro-galeria{margin-left:calc(var(--encuentro-pixel) * .3)}
+}
+@media(max-width:700px){
+  .home-encuentro{grid-template-columns:repeat(4,minmax(0,1fr));padding-block:64px 80px;row-gap:48px}
+  .encuentro-galeria{aspect-ratio:4/3}
+  .encuentro-flecha{width:40px;height:40px;margin-top:-20px}.encuentro-flecha--prev{left:12px}.encuentro-flecha--next{right:12px}
+  .encuentro-flecha span{width:26px;height:26px}
+  .encuentro-puntos{bottom:14px}
+  .encuentro-datos{grid-template-columns:1fr;gap:18px}
+  .encuentro-datos dd{margin-top:6px;font-size:16px}
+  .encuentro-acciones{margin-top:36px}
+  .home-encuentro .boton{flex:1 1 100%;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){.home-encuentro *{transition:none!important}}
+html[data-detener=true] .home-encuentro *{transition:none!important}
+html[data-color=contraste] .home-encuentro{background:#000}
+html[data-color=contraste] .encuentro-invitacion :is(h2,p,dt,dd){color:#fff}
+html[data-color=contraste] .home-encuentro .boton--secundario{--pixel-base:#000;--pixel-tinta:#fff;border-color:#fff}

@@ -1,12 +1,8 @@
-/* Inspiración: reactbits.dev/animations/pixel-transition.
-   Adaptación sin dependencias para botones: 720 ms entrada / 450 ms salida.
-   El contenido original nunca se duplica, oculta o reemplaza. */
 (() => {
   'use strict';
-  const selector = '.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton,.juego-descarga__boton';
+  const selector = '.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton,.juego-descarga__boton,.evento-boton,.home-encuentro .boton';
   const estados = new Set();
   const permiteHover = matchMedia('(hover:hover)');
-  // También alcanza botones claros que no usan el mosaico (archivo y visores).
   const marcarClaros=raiz=>raiz.querySelectorAll('button,a.boton,a[download]').forEach(b=>{
     if(!b.getClientRects().length)return;
     const rgb=getComputedStyle(b).backgroundColor.match(/[\d.]+/g)?.map(Number);
@@ -38,7 +34,6 @@
       const paso = alto / 3;
       const columnas = Math.ceil(ancho / paso);
       const total = columnas * 3;
-      // Orden mezclado estable. No hay nuevos sorteos ni saltos al interrumpir el hover.
       const orden = Array.from({length:total}, (_,i) => i);
       let semilla = total * 37 + 11;
       for (let i = total - 1; i > 0; i--) {
@@ -57,7 +52,6 @@
     };
     montar(); dimensionar();
     new ResizeObserver(dimensionar).observe(boton);
-    // La sesión demo y «Copiar enlace local» pueden cambiar el contenido del botón.
     new MutationObserver(montar).observe(boton, {childList:true, attributes:true, attributeFilter:['class','disabled']});
     boton.addEventListener('pointerenter', e => { sobre = permiteHover.matches && e.pointerType !== 'touch'; actualizar(); });
     boton.addEventListener('pointerleave', () => { sobre = false; actualizar(); });

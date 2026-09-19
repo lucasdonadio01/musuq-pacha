@@ -61,7 +61,6 @@ html:not(.juego-con-scroll) .juego-inicio{min-height:max(560px,var(--juego-alto)
 .juego-datos dt .juego-icono{width:18px;height:18px}
 .juego-datos dd{font:400 17px/1.3 Archivo,Arial,sans-serif;color:var(--juego-lima);margin:0}
 .juego-plataformas{grid-column:1/-1;display:block;width:100%;height:auto;margin-top:-16px;object-fit:contain}
-/* El scroll es nativo. Solo una escena sticky; no se capturan rueda ni gestos. */
 .juego-con-scroll .juego-recorrido{height:410svh}
 .juego-con-scroll .juego-escenario{position:sticky;top:var(--site-header-height);height:var(--juego-alto);overflow:hidden;isolation:isolate}
 .juego-con-scroll .juego-etapa{position:absolute;inset:0;min-height:0;scroll-margin:0}
@@ -126,3 +125,37 @@ html:is([data-texto-grande=true],[data-espaciado=true]) .juego-descarga h2 stron
 html:is([data-texto-grande=true],[data-espaciado=true]) .juego-descarga__acciones{width:min(100%,520px)}
 html:is([data-texto-grande=true],[data-espaciado=true]) .juego-datos{grid-template-columns:1fr}
 html:is([data-texto-grande=true],[data-espaciado=true]) .juego-datos>div{display:block;padding:0;border:0}
+.juego-icono--qr{--juego-icono:url('../assets/eventos/iconos/qr-code-2.svg')}
+.juego-codigo-zona{position:absolute;left:50%;top:calc(100% + 28px);z-index:2;transform:translateX(-50%)}
+.juego-codigo{position:relative;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 14px;border:1px solid #3a3a3a;background:#202020;color:#f4f2ee;white-space:nowrap;box-shadow:4px 8px 18px #0006;animation:juego-codigo-revela .7s steps(7,end) both,juego-codigo-sube .7s cubic-bezier(.16,1,.3,1) both}
+.juego-codigo .juego-icono--qr{width:30px;height:30px;color:var(--juego-lima);animation:juego-codigo-icono .9s .35s cubic-bezier(.16,1,.3,1) both}
+.juego-codigo p{display:grid;gap:3px;margin:0;text-align:left}
+.juego-codigo strong{font:500 15px/1.2 'Space Grotesk',sans-serif;letter-spacing:.06em}
+.juego-codigo strong span{color:var(--juego-lima)}
+.juego-codigo small{font:400 12px/1.3 Archivo,Arial,sans-serif;color:#b8b2aa}
+.juego-codigo i{position:absolute;width:8px;height:8px;background:var(--juego-naranja);animation:juego-codigo-pixel .8s cubic-bezier(.16,1,.3,1) both}
+.juego-codigo i:nth-of-type(1){left:-8px;top:-8px;animation-delay:.25s}
+.juego-codigo i:nth-of-type(2){right:-8px;bottom:-8px;animation-delay:.35s}
+.juego-codigo i:nth-of-type(3){right:22px;top:-14px;width:6px;height:6px;background:var(--juego-violeta);animation-delay:.45s}
+@keyframes juego-codigo-revela{from{clip-path:inset(-40px 100% -40px -40px)}to{clip-path:inset(-40px)}}
+@keyframes juego-codigo-sube{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes juego-codigo-icono{0%{opacity:0;transform:scale(.4) rotate(-12deg)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:none}}
+@keyframes juego-codigo-pixel{from{opacity:0;transform:translate(10px,10px) scale(0)}to{opacity:1;transform:none}}
+@media(max-height:720px) and (min-width:701px){.juego-codigo-zona{top:calc(100% + 12px)}}
+@media(prefers-reduced-motion:reduce){.juego-codigo,.juego-codigo *{animation:none!important}}
+html[data-detener=true] :is(.juego-codigo,.juego-codigo *){animation:none!important}
+html[data-color=contraste] .juego-codigo{background:#000;border-color:#fff}
+html[data-color=contraste] .juego-codigo :is(strong,strong span,small){color:#fff}
+@media(min-width:1001px){
+  .juego-descarga__contenido{grid-column:2/8;grid-template-columns:repeat(6,minmax(0,1fr))}
+  .juego-descarga h2{grid-column:1/5}
+  .juego-descarga__acciones{grid-column:5/7;justify-self:end;align-self:center;width:clamp(248px,17.6vw,338px);gap:clamp(12px,.84vw,16px)}
+  .juego-descarga__boton{min-height:0;height:clamp(44px,2.92vw,56px);gap:8px;padding:0 clamp(16px,1.67vw,32px);border-radius:2px;font:500 clamp(13px,.833vw,16px)/1 'Space Grotesk',Arial,sans-serif!important}
+  .juego-descarga__boton .juego-icono{width:clamp(18px,1.15vw,22px);height:clamp(18px,1.15vw,22px)}
+  .juego-descarga__boton--mac{--pixel-base:#efefef;--pixel-tinta:#1a1a1a;border-color:#efefef;background:#efefef;color:#1a1a1a}
+}
+@media(min-width:1001px) and (max-width:1279px){
+  .juego-descarga__contenido{grid-column:1/-1;grid-template-columns:repeat(8,minmax(0,1fr))}
+  .juego-descarga h2{grid-column:1/6}
+  .juego-descarga__acciones{grid-column:6/9}
+}

@@ -1,4 +1,3 @@
-/* HOME · tp2. La capa editorial no modifica el mapa inmersivo. */
 :root{--home-header:#202020;--home-orange:#F66227;--home-violet:#9E6FF8;--home-black:#1a1a1a;--fuente:'Space Grotesk',Arial,sans-serif}
 body{background:var(--home-black)}
 .nav{background:var(--home-header);color:var(--home-orange);height:78px;border-bottom:1px solid var(--home-violet);gap:22px}
@@ -55,3 +54,8 @@ html[data-color=contraste] .comunidad :is(h2,p){color:#000}
 html[data-color=contraste] .comunidad__cta,html[data-color=contraste] .simbolo-tarjeta{background:#fff;color:#000;border:2px solid #000}
 html[data-color=contraste] .nav .nav__ingresar{background:#000;color:#fff}
 html[data-color=contraste] .territorio__texto .boton--secundario{background:#fff;color:#000;border-color:#000}
+.territorio__texto .boton{gap:8px;min-width:230px;height:56px;padding:0 32px;border:1px solid var(--home-orange);border-radius:2px;font:500 16px/1 Archivo,Arial,sans-serif;letter-spacing:0}
+.territorio__texto .boton--secundario{border-width:2px}
+.territorio__texto .icono-figma{flex-basis:22px;width:22px;height:22px}
+@media(max-width:1100px){.territorio__texto .boton{min-width:0;height:52px;padding:0 24px;font-size:15px}}
+@media(max-width:700px){.territorio__texto .boton{height:48px;padding:0 18px;font-size:14px}}

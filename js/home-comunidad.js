@@ -1,11 +1,7 @@
-/* Ranking de ejemplo; preferencias y votos propios se guardan en este navegador. */
 (() => {
   const tablero = document.getElementById('tablero');
-  const ranking = [
-    {puesto:1,likes:421,imagen:1,autor:'@pampa.viva'}, {puesto:2,likes:383,imagen:3,autor:'@rio.abierto'},
-    {puesto:3,likes:356,imagen:4,autor:'@trama.norte'}, {puesto:4,likes:216,imagen:5,autor:'@sur.creativo'},
-    {puesto:5,likes:124,imagen:6,autor:'@raiz.andina'}
-  ];
+  const cantidades = [421, 383, 356, 216, 124];
+  const ranking = RankingSimbolos.map((simbolo, i) => ({...simbolo, puesto:i + 1, likes:cantidades[i]}));
   const key='musuq-ranking-likes-v1';
   const readVotes=()=>{try{const value=JSON.parse(localStorage.getItem(key));return new Set(Array.isArray(value)?value.filter(n=>Number.isInteger(n)&&n>=1&&n<=5):[]);}catch{return new Set();}};
   let votos=readVotes();
@@ -21,8 +17,9 @@
     const ficha = document.createElement('article');
     ficha.className = 'ranking-tarjeta ranking-tarjeta--' + d.puesto;
     const abrir=document.createElement('button');abrir.type='button';abrir.className='ranking-abrir';
-    abrir.setAttribute('aria-label','Visualizar '+d.puesto+'° puesto de '+d.autor);
-    abrir.onclick=()=>VisorSimbolo.open({src:'assets/ranking/imagen-'+d.imagen+'.png',title:d.puesto+'° puesto · '+d.autor,filename:'musuq-pacha-puesto-'+d.puesto+'.png',puesto:d.puesto},abrir);
+    abrir.setAttribute('aria-label','Visualizar '+d.nombre+', '+d.puesto+'° puesto de '+d.autor);
+    const copia = document.createElement('canvas'); Comunidad.dibujar(copia, d);
+    abrir.onclick=()=>VisorSimbolo.open({src:copia.toDataURL('image/png'),title:d.nombre,autor:d.autor,region:d.region,pueblo:d.pueblo,filename:'musuq-pacha-puesto-'+d.puesto+'.png',puesto:d.puesto},abrir);
     const puesto = document.createElement('h3'); puesto.className = 'ranking-puesto';
     puesto.textContent = d.puesto + '° PUESTO';
     const likes = document.createElement('button');likes.type='button'; likes.className = 'ranking-likes';
@@ -35,31 +32,70 @@
     autor.append(avatar,d.autor);
     const datos = document.createElement('div'); datos.className = 'ranking-datos';
     datos.append(likes, autor);
-    ficha.append(abrir,imagen('imagen-' + d.imagen + '.png', 'ranking-simbolo'), puesto, datos);
+    const lienzo = document.createElement('canvas'); lienzo.className = 'ranking-simbolo'; lienzo.width = lienzo.height = 330; lienzo.setAttribute('aria-hidden', 'true');
+    ficha.append(abrir, lienzo, puesto, datos);
     if (d.puesto === 1) {
       const medalla = document.createElement('span'); medalla.className = 'ranking-medalla';
       medalla.setAttribute('aria-hidden', 'true'); medalla.append(imagen('icono-4.svg'));
       puesto.prepend(medalla);
     }
     tablero.append(ficha);
-    window.PatronVivo?.instalar(ficha.querySelector('.ranking-simbolo'),ficha);
   });
+  const detenido = () => matchMedia('(prefers-reduced-motion:reduce)').matches || !!window.MUSUQ_A11Y?.estado.detener || document.documentElement.dataset.detener === 'true';
+  const vivos = [...tablero.querySelectorAll('canvas.ranking-simbolo')].map((lienzo, i) => ({lienzo, d:ranking[i], grilla:new Map(ranking[i].celdas.map(([x, y, h]) => [x + ',' + y, h])), motor:typeof Motor !== 'undefined' ? Motor.crear(ranking[i].lado) : null, armado:false, cambio:0}));
+  let cuadro = 0, enPantalla = true;
+  function medida(v) {
+    const r = v.lienzo.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2), lado = Math.max(1, Math.round(r.width * dpr));
+    if (v.lienzo.width !== lado) v.lienzo.width = v.lienzo.height = lado;
+    const borde = lado * 22 / 330;
+    return {ctx:v.lienzo.getContext('2d'), lado, borde, celda:(lado - borde * 2) / v.d.lado};
+  }
+  function quieto(v) {
+    const {ctx, lado, borde, celda} = medida(v);
+    ctx.fillStyle = v.d.fondo; ctx.fillRect(0, 0, lado, lado);
+    v.d.celdas.forEach(([x, y, h]) => { ctx.fillStyle = h; ctx.fillRect(borde + x * celda, borde + y * celda, Math.ceil(celda), Math.ceil(celda)); });
+  }
+  function vivo(v, ahora) {
+    if (ahora >= v.cambio) {
+      if (v.armado) { v.motor.limpiar(ahora); v.cambio = ahora + 1000 + Math.random() * 1600; }
+      else { v.motor.cargar(v.grilla, ahora); v.cambio = ahora + 4200 + Math.random() * 3600; }
+      v.armado = !v.armado;
+    }
+    const {ctx, lado, borde, celda} = medida(v);
+    ctx.fillStyle = v.d.fondo; ctx.fillRect(0, 0, lado, lado);
+    v.motor.dibujar(ctx, borde, borde, celda, ahora);
+  }
+  function paso(ahora) {
+    cuadro = 0;
+    if (!enPantalla || document.hidden || detenido()) { vivos.forEach(quieto); return; }
+    vivos.forEach(v => vivo(v, ahora));
+    cuadro = requestAnimationFrame(paso);
+  }
+  const arrancar = () => { if (!cuadro) cuadro = requestAnimationFrame(paso); };
+  if (vivos.some(v => !v.motor)) vivos.forEach(quieto);
+  else {
+    const inicio = performance.now();
+    vivos.forEach((v, i) => { v.cambio = inicio + 150 + i * 700 + Math.random() * 900; });
+    new IntersectionObserver(([entrada]) => { enPantalla = entrada.isIntersecting; if (enPantalla) arrancar(); }).observe(tablero);
+    document.addEventListener('visibilitychange', arrancar);
+    addEventListener('musuq:accesibilidad', arrancar);
+    addEventListener('resize', () => { if (detenido()) vivos.forEach(quieto); });
+    arrancar();
+  }
   addEventListener('musuq:sesion',()=>{botones.forEach(fn=>fn());mensaje.textContent='';});
   addEventListener('storage',e=>{if(e.key===key||e.key===null){votos=readVotes();botones.forEach(fn=>fn());}});
-  const guardados = document.getElementById('comunidad-local');
   const lista = document.getElementById('tablero-local');
+  const regionDe = nombre => [...Patrones.pueblos, ...PUEBLOS].find(p => p.nombre === nombre)?.region || '';
   function renderLocales() {
-    const locales = Comunidad.leer(); guardados.hidden = !locales.length;
     lista.replaceChildren();
-    locales.forEach(d => {
+    [...Comunidad.leer(), ...ProximosSimbolos].forEach(d => {
       const a = document.createElement('button'); a.type = 'button'; a.className = 'simbolo-local';
       const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
       Comunidad.dibujar(cv, d);
-      a.addEventListener('click', () => VisorSimbolo.open({src:cv.toDataURL('image/png'), title:d.nombre, filename:'musuq-pacha-simbolo.png'}, a));
-      const titulo = document.createElement('strong'); titulo.textContent = d.nombre;
-      const pie = document.createElement('small'); pie.textContent = d.pueblo;
-      const texto = document.createElement('div'); texto.append(titulo, pie);
-      a.append(cv, texto); lista.append(a);
+      const autor = d.autor || '@tomi.rivas', region = d.region || regionDe(d.pueblo);
+      a.setAttribute('aria-label', 'Ver ' + d.nombre + ' de ' + autor);
+      a.addEventListener('click', () => VisorSimbolo.open({src:cv.toDataURL('image/png'), title:d.nombre, autor, region, pueblo:d.pueblo, filename:'musuq-pacha-simbolo.png'}, a));
+      a.append(cv); lista.append(a);
     });
   }
   renderLocales();

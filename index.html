@@ -12,11 +12,12 @@
 <link rel="stylesheet" href="css/carteles-3d.css?v=nombres-centrados-3">
 <link rel="stylesheet" href="css/habitat.css?v=habitat-1">
 <link rel="stylesheet" href="css/archivo-transicion.css?v=viaje-1">
-<link rel="stylesheet" href="css/home-comunidad.css?v=piezas-1">
-<link rel="stylesheet" href="css/home-eventos.css?v=piezas-1">
-<link rel="stylesheet" href="css/ranking-home.css?v=piezas-1">
-<link rel="stylesheet" href="css/visor-simbolo.css?v=ajustes-3">
-<link rel="stylesheet" href="css/home-descarga.css?v=correcciones-1">
+<link rel="stylesheet" href="css/home-comunidad.css?v=ranking-2">
+<link rel="stylesheet" href="css/home-eventos.css?v=encuentro-1">
+<link rel="stylesheet" href="css/home-encuentro.css?v=encuentro-1">
+<link rel="stylesheet" href="css/ranking-home.css?v=ranking-2">
+<link rel="stylesheet" href="css/visor-simbolo.css?v=proximos-1">
+<link rel="stylesheet" href="css/home-descarga.css?v=ranking-2">
 <link rel="stylesheet" href="css/mapa-social.css?v=correcciones-1">
 <link rel="stylesheet" href="css/flora-querandi.css?v=especies-3d-1">
 <link rel="stylesheet" href="css/zoom-detalle.css?v=zoom-detalle-1">
@@ -24,13 +25,10 @@
 <link rel="stylesheet" href="css/viviendas.css?v=omaguaca-1">
 <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
 <script src="js/archivo-transicion.js?v=viaje-1"></script>
-<link rel="stylesheet" href="css/header.css?v=ajustes-3">
+<link rel="stylesheet" href="css/header.css?v=perfil-1">
 <link rel="stylesheet" href="css/grilla.css?v=juego-1">
 </head>
 <body>
-<!-- THESIS: territorio vivo, comunidad pixel. OWN-WORLD: HOME de tp2, naranja/violeta sobre negro.
-STORY: explorar territorio → crear → compartir. FIRST VIEWPORT: mapa real, título editorial y dos accesos.
-FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue ejemplos de publicaciones locales. -->
 <a class="saltar-contenido" href="#territorio-titulo">Saltar al contenido</a>
 <svg class="iconos-sitio" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
 <symbol id="i-buscar" viewBox="0 -960 960 960"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></symbol>
@@ -53,7 +51,6 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 <symbol id="i-musica" viewBox="0 -960 960 960"><path d="M287-167q-47-47-47-113t47-113q47-47 113-47 23 0 42.5 5.5T480-418v-422h240v160H560v400q0 66-47 113t-113 47q-66 0-113-47Z"/></symbol>
 <symbol id="i-info" viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></symbol>
 <symbol id="i-arbol" viewBox="0 -960 960 960"><path d="M558-80H402v-160H120l160-240h-80l280-400 280 400h-80l160 240H558v160ZM270-320h160-76 252-76 160-420Zm0 0h420L530-560h76L480-740 354-560h76L270-320Z"/></symbol><symbol id="i-flecha-derecha" viewBox="0 -960 960 960"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></symbol>
-<!-- Google Material Icons (Apache 2.0), official material-design-icons paths. -->
 <symbol id="i-location" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></symbol>
 <symbol id="i-person" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
 <symbol id="i-unlock" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></symbol>
@@ -95,7 +92,7 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
   </section>
   <section class="home-eventos" id="archivo" aria-labelledby="archivo-home-titulo">
 
-    <div class="eventos-intro"><p>ARCHIVO</p><h2 id="archivo-home-titulo">Explorá el <br>Archivo <br>interactivo</h2></div>
+    <div class="eventos-intro"><p>ARCHIVO</p><h2 id="archivo-home-titulo">Explorá el <br>Archivo <br>interactivo <br>&amp; colaborativo</h2><p class="eventos-bajada">Imágenes, objetos y relatos de cada pueblo, con sus fuentes. Recorrelo por territorio y sumá tus aportes a la memoria compartida.</p></div>
     <div class="eventos-marco">
       <div class="eventos-catalogo" aria-label="Catálogo de pueblos">
         <a class="evento evento--querandi" href="archivo.html?pueblo=14">
@@ -122,10 +119,38 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
     <div class="eventos-controles"><button type="button" data-eventos-prev aria-label="Ver pueblos anteriores"><span aria-hidden="true"></span></button><button type="button" data-eventos-next aria-label="Ver más pueblos"><span aria-hidden="true"></span></button></div>
     </div>
   </section>
-  <section class="comunidad" id="comunidad" aria-labelledby="comunidad-titulo">
-    <div class="comunidad__cabecera"><div><p class="comunidad__rotulo" id="tablero-rotulo">Ranking semanal</p><h2 id="comunidad-titulo">Mejores símbolos</h2><p class="comunidad__bajada" id="tablero-nota">¡Compartí tus símbolos con la comunidad y participá del concurso semanal para recibir recompensas dentro del juego!</p></div><div class="comunidad__cta"><div><strong>PARTICIPÁ AQUÍ</strong><p>Armá tu símbolo, publicalo y esperá los resultados</p></div><a class="boton boton--primario" href="simbolos/">PARTICIPAR <span class="ranking-flecha" aria-hidden="true"></span></a></div></div>
+  <section class="home-encuentro" id="encuentro" aria-labelledby="encuentro-titulo">
+    <div class="encuentro-galeria" data-galeria>
+      <span class="encuentro-pixel encuentro-pixel--a" aria-hidden="true"></span><span class="encuentro-pixel encuentro-pixel--b" aria-hidden="true"></span><span class="encuentro-pixel encuentro-pixel--c" aria-hidden="true"></span>
+      <div class="encuentro-fotos" role="group" aria-roledescription="carrusel" aria-label="Fotos de La Rural">
+        <img class="encuentro-foto encuentro-foto--activa" src="assets/eventos/rural/desfile.jpg" width="1000" height="570" alt="Jinetes con ponchos frente al público en el predio de La Rural." loading="lazy" decoding="async">
+        <img class="encuentro-foto" src="assets/eventos/rural/ingreso.jpg" width="1600" height="912" alt="Entrada de uno de los pabellones de La Rural, con su gran arco de piedra." loading="lazy" decoding="async" aria-hidden="true">
+        <img class="encuentro-foto" src="assets/eventos/rural/predio.jpg" width="1000" height="630" alt="Vista aérea del predio de La Rural y sus pabellones." loading="lazy" decoding="async" aria-hidden="true">
+        <img class="encuentro-foto" src="assets/eventos/rural/puestos.jpg" width="739" height="415" alt="Puestos y público recorriendo el predio." loading="lazy" decoding="async" aria-hidden="true">
+      </div>
+      <button class="encuentro-flecha encuentro-flecha--prev" type="button" data-galeria-prev aria-label="Foto anterior"><span aria-hidden="true"></span></button>
+      <button class="encuentro-flecha encuentro-flecha--next" type="button" data-galeria-next aria-label="Foto siguiente"><span aria-hidden="true"></span></button>
+      <div class="encuentro-puntos"><button type="button" aria-label="Ver foto 1" aria-current="true"></button><button type="button" aria-label="Ver foto 2"></button><button type="button" aria-label="Ver foto 3"></button><button type="button" aria-label="Ver foto 4"></button></div>
+      <p class="sr-only" role="status" data-galeria-estado></p>
+    </div>
+    <div class="encuentro-invitacion">
+      <p class="encuentro-rotulo">EVENTOS</p>
+      <h2 id="encuentro-titulo">Sumate al evento de septiembre en La Rural</h2>
+      <p class="encuentro-bajada">Muestras en vivo, charlas, rondas de pitch, juegos y actividades interactivas. Un espacio pensado para que traigas tu idea, presentes tu proyecto y conectes de forma directa con los colaboradores que necesitás para potenciarlo.</p>
+      <dl class="encuentro-datos">
+        <div><dt><span class="encuentro-icono encuentro-icono--cuando" aria-hidden="true"></span>Cuándo</dt><dd><time datetime="2026-09-24T14:00">24 de septiembre · 14 h</time></dd></div>
+        <div><dt><span class="encuentro-icono encuentro-icono--donde" aria-hidden="true"></span>Dónde</dt><dd>CABA, La Rural.</dd></div>
+        <div><dt><span class="encuentro-icono encuentro-icono--entrada" aria-hidden="true"></span>Entrada</dt><dd>Libre con inscripción</dd></div>
+      </dl>
+      <div class="encuentro-acciones">
+        <a class="boton boton--primario" href="eventos.html#inscripcion"><span class="encuentro-icono encuentro-icono--inscribir" aria-hidden="true"></span>Quiero ir</a>
+        <a class="boton boton--secundario" href="eventos.html#actividades"><span class="encuentro-icono encuentro-icono--actividades" aria-hidden="true"></span>Ver Actividades</a>
+      </div>
+    </div>
+  </section>  <section class="comunidad" id="comunidad" aria-labelledby="comunidad-titulo">
+    <div class="comunidad__cabecera"><div><p class="comunidad__rotulo" id="tablero-rotulo">Ranking semanal</p><h2 id="comunidad-titulo">Mejores símbolos</h2><p class="comunidad__bajada" id="tablero-nota">¡Compartí tus símbolos con la comunidad y participá del concurso semanal para recibir recompensas dentro del juego!</p></div><div class="comunidad__cta"><div><strong>PARTICIPÁ AQUÍ</strong><p>Armá tu símbolo con piezas de textiles reales, publicalo y sumate al ranking de la próxima semana.</p></div><a class="boton boton--primario" href="simbolos/"><span class="ranking-flecha" aria-hidden="true"></span>Participar</a></div></div>
     <div class="tablero" id="tablero" aria-label="Ranking semanal de símbolos"><p>Cargando símbolos…</p></div>
-    <section class="comunidad-local" id="comunidad-local" aria-labelledby="local-titulo" hidden><h3 id="local-titulo">Próximos símbolos</h3><p>Guardados en este navegador. No participan del ranking de la maqueta.</p><div id="tablero-local" class="tablero-local"></div></section>
+    <section class="comunidad-local" id="comunidad-local" aria-labelledby="local-titulo"><h3 id="local-titulo">Próximos símbolos</h3><p>Estos símbolos entran al ranking de la próxima semana. Tocá uno para ver quién lo armó y con qué patrones.</p><div id="tablero-local" class="tablero-local"></div></section>
     <noscript><p>Activá JavaScript para ver el tablero. <a href="simbolos/">Abrir símbolos de la comunidad</a>.</p></noscript>
   </section>
 </main>
@@ -153,14 +178,16 @@ FORM: Space Grotesk, esquinas rectas, píxeles escasos; el tablero distingue eje
 
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=ranking-morph-1"></script>
-<script src="js/header-plantilla.js?v=juego-1"></script><script src="js/header.js?v=ajustes-3"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
+<script src="js/header-plantilla.js?v=perfil-1"></script><script src="js/header.js?v=perfil-1"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
 <script src="js/three.min.js"></script><script src="js/GLTFLoader.js?v=r128"></script><script src="js/viviendas-detalle.js?v=ajustes-3"></script><script src="js/viviendas-querandi.js?v=ajustes-3"></script><script src="js/datos-mapa.js"></script><script src="js/omaguaca-territorio.js?v=omaguaca-1"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=omaguaca-1"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/especie-cartel.js?v=flora-zoom3-1"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=omaguaca-1"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/fotos-especies.js?v=correcciones-1"></script><script src="js/habitat.js?v=omaguaca-1"></script><script src="js/flora-querandi.js?v=fotos-1"></script><script src="js/mapa.js?v=correcciones-1"></script>
 <script src="js/patron-vivo.js?v=ranking-morph-1"></script>
-<script src="js/comunidad.js?v=piezas-1"></script><script src="js/visor-simbolo.js?v=ajustes-3"></script><script src="js/home-comunidad.js?v=ajustes-3"></script>
+<script src="simbolos/js/patrones.js?v=piezas-1"></script><script src="simbolos/js/composicion.js?v=piezas-1"></script>
+<script src="js/comunidad.js?v=piezas-1"></script><script src="js/proximos-simbolos.js?v=ranking-2"></script><script src="js/visor-simbolo.js?v=proximos-1"></script><script src="js/home-comunidad.js?v=ranking-2"></script>
 <script src="js/cta-patrones.js?v=cta-hover-1"></script>
 <script src="simbolos/js/fondo.js?v=18"></script>
 <script src="js/home-ambiente.js?v=correcciones-1"></script>
 <script src="js/mapa-social.js?v=ajustes-3"></script>
-<script src="js/pixel-botones.js?v=correcciones-1"></script>
+<script src="js/pixel-botones.js?v=encuentro-1"></script>
 <script src="js/home-eventos.js?v=ajustes-3"></script>
+<script src="js/home-encuentro.js?v=encuentro-1"></script>
 </body></html>

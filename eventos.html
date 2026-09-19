@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#202020">
+  <meta name="description" content="Próximo evento de Musuq Pacha: jueves 24 de septiembre de 2026 en La Rural. Inscribite, mirá las actividades y sumá tu proyecto.">
+  <title>Musuq Pacha · Eventos</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/fuente.css">
+  <link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
+  <link rel="stylesheet" href="css/sonido.css?v=audio-3">
+  <link rel="stylesheet" href="css/header.css?v=perfil-1">
+  <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
+  <link rel="stylesheet" href="css/grilla.css?v=juego-1">
+  <link rel="stylesheet" href="css/eventos.css?v=eventos-3">
+</head>
+<body class="pagina-eventos">
+  <a class="eventos-saltar" href="#evento-titulo">Saltar al próximo evento</a>
+  <header class="nav site-header" id="header" data-seccion="eventos"><a class="nav__marca" href="index.html">MUSUQ PACHA</a></header>
+  <div class="eventos-fondo" aria-hidden="true"><canvas id="eventos-pixel-blast"></canvas></div>
+  <div class="eventos-blanco" aria-hidden="true"></div>
+
+  <main class="eventos">
+    <section class="eventos-vista eventos-portada" id="portada" aria-labelledby="evento-titulo">
+      <div class="evento-principal">
+        <p class="evento-rotulo">Próximo evento</p>
+        <article class="evento-tarjeta" aria-labelledby="evento-titulo">
+          <span class="evento-pixel evento-pixel--a" aria-hidden="true"></span><span class="evento-pixel evento-pixel--b" aria-hidden="true"></span><span class="evento-pixel evento-pixel--c" aria-hidden="true"></span><span class="evento-pixel evento-pixel--d" aria-hidden="true"></span><span class="evento-pixel evento-pixel--e" aria-hidden="true"></span><span class="evento-pixel evento-pixel--f" aria-hidden="true"></span>
+          <header class="evento-cabecera">
+            <h1 id="evento-titulo" tabindex="-1">Musuq Pacha en La Rural</h1>
+            <ul class="evento-datos">
+              <li><span class="ev-icono ev-icono--fecha" aria-hidden="true"></span><span class="sr-only">Fecha: </span><time datetime="2026-09-24">Jueves 24 de septiembre de 2026</time></li>
+              <li><span class="ev-icono ev-icono--mapa" aria-hidden="true"></span><span class="sr-only">Lugar: </span>La Rural · Av. Sarmiento 2704, CABA</li>
+            </ul>
+          </header>
+          <figure class="evento-imagen"><img src="assets/eventos/rural/ingreso.jpg" width="1600" height="912" alt="Entrada de uno de los pabellones de La Rural, con su gran arco de piedra."></figure>
+          <div class="evento-lateral">
+            <p>Una tarde en La Rural para recorrer el territorio en pantalla grande, jugar con el equipo y armar tu símbolo con piezas de textiles documentados. La entrada es libre con inscripción y, al llegar, te llevás un código para canjear en tu perfil.</p>
+            <button class="evento-boton" type="button" data-abrir="dialogo-inscripcion" aria-haspopup="dialog"><span class="ev-icono ev-icono--inscribir" aria-hidden="true"></span>Inscribirse</button>
+            <a class="evento-boton evento-boton--secundario" href="#actividades"><span class="ev-icono ev-icono--actividades" aria-hidden="true"></span>Actividades</a>
+          </div>
+        </article>
+        <aside class="evento-propuesta" aria-labelledby="propuesta-titulo">
+          <div>
+            <h2 id="propuesta-titulo">¿Tenés una propuesta? Contanos y lo hacemos</h2>
+            <p>Publicá tu proyecto, buscá con quién seguirlo y enterate de lo que se viene.</p>
+          </div>
+          <button class="evento-boton" type="button" data-abrir="dialogo-proyecto" aria-haspopup="dialog"><span class="ev-icono ev-icono--subir" aria-hidden="true"></span>Subir proyecto</button>
+        </aside>
+      </div>
+
+      <section class="eventos-previos" aria-labelledby="previos-titulo">
+        <h2 id="previos-titulo">Eventos previos</h2>
+        <ul class="previos-grilla">
+          <li class="previo"><img src="assets/eventos/rural/desfile.jpg" width="1000" height="570" alt="" decoding="async"><p class="previo__texto"><span>Julio 2026</span><strong>Encuentro de invierno</strong></p></li>
+          <li class="previo"><img src="assets/eventos/rural/puestos.jpg" width="739" height="415" alt="" decoding="async"><p class="previo__texto"><span>Mayo 2026</span><strong>Feria de patrones</strong></p></li>
+          <li class="previo"><img src="assets/eventos/rural/pabellon.jpg" width="739" height="415" alt="" decoding="async"><p class="previo__texto"><span>Marzo 2026</span><strong>Noche de archivo</strong></p></li>
+          <li class="previo"><img src="assets/eventos/rural/predio.jpg" width="1000" height="630" alt="" decoding="async"><p class="previo__texto"><span>Noviembre 2025</span><strong>Presentación del juego</strong></p></li>
+          <li class="previo previo--recorte"><img src="assets/eventos/rural/desfile.jpg" width="1000" height="570" alt="" decoding="async"><p class="previo__texto"><span>Agosto 2025</span><strong>Primer encuentro</strong></p></li>
+        </ul>
+      </section>
+    </section>
+
+    <article class="eventos-vista actividades" id="actividades" aria-labelledby="actividades-titulo" hidden>
+      <a class="actividades-volver" href="eventos.html" data-volver><span class="ev-icono ev-icono--volver" aria-hidden="true"></span>Volver a eventos</a>
+      <figure class="actividades-portada"><img src="assets/eventos/rural/ingreso.jpg" width="1600" height="912" alt="Entrada de uno de los pabellones de La Rural, con su gran arco de piedra."></figure>
+      <header class="actividades-banda">
+        <p>#Encuentro</p>
+        <h1 id="actividades-titulo" tabindex="-1">Musuq Pacha en La Rural</h1>
+      </header>
+      <div class="actividades-cuerpo">
+        <p class="actividades-cuando"><time datetime="2026-09-24">Jue. 24 de septiembre</time><span>14 a 22 h</span></p>
+        <div class="actividades-texto">
+          <p>Musuq Pacha llega a La Rural con una jornada abierta para recorrer el territorio, jugar y conocer de cerca a los pueblos que lo habitaron. Una tarde para pasar del mapa a la experiencia: pantallas, mesas de juego y espacios para charlar con quienes hacen el proyecto.</p>
+          <p>El programa se está terminando de armar. Por ahora sabemos que va a haber partidas abiertas del juego, un taller para componer símbolos con las piezas documentadas del archivo y una muestra con los patrones que la comunidad publicó en la web.</p>
+          <p>También vamos a presentar las próximas secciones del archivo y a sumar las propuestas que lleguen desde «Subir proyecto». Si tenés una idea para esta edición, todavía estás a tiempo.</p>
+          <p class="actividades-nota">El cronograma puede cambiar. Las novedades se publican en esta página.</p>
+        </div>
+        <aside class="actividades-lateral" aria-label="Compartir">
+          <p class="actividades-etiqueta">#musuqpacha</p>
+          <p class="actividades-compartir">Compartí la actividad</p>
+          <button type="button" class="actividades-enlace" data-compartir><span class="ev-icono ev-icono--enlace" aria-hidden="true"></span>Copiar enlace</button>
+          <p class="actividades-estado" role="status"></p>
+          <a class="actividades-todos" href="eventos.html" data-volver>Ver todos los eventos</a>
+        </aside>
+      </div>
+      <section class="actividades-cronograma" aria-labelledby="cronograma-titulo">
+        <h2 id="cronograma-titulo">Cronograma <span>A confirmar</span></h2>
+        <ol>
+          <li><time>14:00</time><div><h3>Apertura</h3><p>Ingreso por Av. Sarmiento 2704 y acreditación de las personas inscriptas.</p></div></li>
+          <li><time>15:00</time><div><h3>Recorrido por el territorio</h3><p>El mapa interactivo en pantalla grande, pueblo por pueblo.</p></div></li>
+          <li><time>16:30</time><div><h3>Taller de símbolos</h3><p>Componé tu símbolo con piezas de textiles documentados y sumalo al ranking.</p></div></li>
+          <li><time>18:00</time><div><h3>Charla abierta</h3><p>Archivo, comunidades y juego: cómo se armó Musuq Pacha.</p></div></li>
+          <li><time>19:30</time><div><h3>Partidas abiertas</h3><p>Probá el juego con el equipo y canjeá tus códigos.</p></div></li>
+          <li><time>21:30</time><div><h3>Cierre</h3><p>Los símbolos de la noche y el anuncio del próximo encuentro.</p></div></li>
+        </ol>
+      </section>
+      <footer class="actividades-pie">
+        <dl>
+          <div><dt><span class="ev-icono ev-icono--entrada" aria-hidden="true"></span>Entrada</dt><dd>Libre y gratuita, con inscripción</dd></div>
+          <div><dt><span class="ev-icono ev-icono--horario" aria-hidden="true"></span>Horarios</dt><dd>Jueves 24/09 · 14 a 22 h</dd></div>
+          <div><dt><span class="ev-icono ev-icono--lugar" aria-hidden="true"></span>Lugar</dt><dd>La Rural · Av. Sarmiento 2704</dd></div>
+        </dl>
+        <button class="evento-boton" type="button" data-abrir="dialogo-inscripcion" aria-haspopup="dialog"><span class="ev-icono ev-icono--inscribir" aria-hidden="true"></span>Inscribirse</button>
+      </footer>
+    </article>
+  </main>
+
+  <dialog class="evento-dialogo" id="dialogo-inscripcion" aria-labelledby="inscripcion-titulo">
+    <form class="evento-form" method="dialog" data-autocompletar="inscripcion">
+      <div class="evento-form__cabecera">
+        <div><p>Musuq Pacha en La Rural · 24/09</p><h2 id="inscripcion-titulo">Inscribite al evento</h2></div>
+        <button class="evento-cerrar" type="button" data-cerrar aria-label="Cerrar inscripción"><span class="ev-icono ev-icono--cerrar" aria-hidden="true"></span></button>
+      </div>
+      <p class="evento-form__ayuda">No hace falta tener cuenta. Tocá cualquier campo y lo completamos por vos.</p>
+      <label class="evento-campo">Nombre y apellido<input name="nombre" autocomplete="name" required></label>
+      <label class="evento-campo">Correo electrónico<input name="correo" type="email" autocomplete="email" required></label>
+      <fieldset class="evento-opciones">
+        <legend>¿Con quién venís?</legend>
+        <label><input type="radio" name="compania" value="Sola o solo" required><span>Sola o solo</span></label>
+        <label><input type="radio" name="compania" value="Con amistades"><span>Con amistades</span></label>
+        <label><input type="radio" name="compania" value="En familia"><span>En familia</span></label>
+        <label><input type="radio" name="compania" value="Con la escuela"><span>Con la escuela</span></label>
+      </fieldset>
+      <fieldset class="evento-opciones">
+        <legend>¿Qué te interesa?</legend>
+        <label><input type="checkbox" name="interes" value="Taller de símbolos"><span>Taller de símbolos</span></label>
+        <label><input type="checkbox" name="interes" value="Partidas abiertas"><span>Partidas abiertas</span></label>
+        <label><input type="checkbox" name="interes" value="Charla abierta"><span>Charla abierta</span></label>
+        <label><input type="checkbox" name="interes" value="Recorrido"><span>Recorrido</span></label>
+      </fieldset>
+      <div class="evento-form__pie">
+        <p class="evento-form__estado" role="status"></p>
+        <button class="evento-boton" type="submit" disabled><span class="ev-icono ev-icono--check" aria-hidden="true"></span>Finalizar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="evento-dialogo" id="dialogo-proyecto" aria-labelledby="proyecto-titulo">
+    <form class="evento-form" method="dialog" data-autocompletar="proyecto">
+      <div class="evento-form__cabecera">
+        <div><p>Propuestas para el encuentro</p><h2 id="proyecto-titulo">Subí tu proyecto</h2></div>
+        <button class="evento-cerrar" type="button" data-cerrar aria-label="Cerrar propuesta"><span class="ev-icono ev-icono--cerrar" aria-hidden="true"></span></button>
+      </div>
+      <p class="evento-form__ayuda">Tocá cualquier campo y lo completamos por vos.</p>
+      <label class="evento-campo">Nombre del proyecto<input name="proyecto" required></label>
+      <label class="evento-campo">Tu nombre<input name="nombre" autocomplete="name" required></label>
+      <label class="evento-campo">Correo electrónico<input name="correo" type="email" autocomplete="email" required></label>
+      <fieldset class="evento-opciones">
+        <legend>¿Qué querés sumar?</legend>
+        <label><input type="radio" name="tipo" value="Muestra" required><span>Muestra</span></label>
+        <label><input type="radio" name="tipo" value="Taller"><span>Taller</span></label>
+        <label><input type="radio" name="tipo" value="Charla"><span>Charla</span></label>
+        <label><input type="radio" name="tipo" value="Juego"><span>Juego</span></label>
+      </fieldset>
+      <label class="evento-campo">Contanos la idea<textarea name="descripcion" rows="3" required></textarea></label>
+      <div class="evento-form__pie">
+        <p class="evento-form__estado" role="status"></p>
+        <button class="evento-boton" type="submit" disabled><span class="ev-icono ev-icono--check" aria-hidden="true"></span>Finalizar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="evento-confirmacion" id="dialogo-confirmacion" aria-labelledby="confirmacion-titulo" aria-describedby="confirmacion-texto">
+    <canvas class="evento-confirmacion__patron" width="280" height="280" aria-hidden="true"></canvas>
+    <h2 id="confirmacion-titulo">¡Inscripción confirmada!</h2>
+    <p id="confirmacion-texto"></p>
+    <button class="evento-boton" type="button" data-cerrar><span class="ev-icono ev-icono--volver" aria-hidden="true"></span>Volver al evento</button>
+  </dialog>
+
+  <script src="js/header-plantilla.js?v=perfil-1"></script>
+  <script src="js/header.js?v=perfil-1"></script>
+  <script src="js/accesibilidad.js?v=main-1"></script>
+  <script src="js/sonido.js?v=main-1"></script>
+  <script src="simbolos/js/fondo.js?v=18"></script>
+  <script src="simbolos/js/motor.js?v=ranking-morph-1"></script>
+  <script src="js/eventos.js?v=eventos-4"></script>
+  <script src="js/pixel-botones.js?v=encuentro-1"></script>
+</body>
+</html>

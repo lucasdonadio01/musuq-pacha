@@ -1,10 +1,8 @@
-/* ARCHIVO: el sujeto flota sobre el mosaico; al acercarse, los píxeles caen
-   y revelan la ilustración original. Grilla editorial compartida, 3 + 5 columnas.
-   El bucle de profundidad se limita a las tarjetas visibles y respeta Detener. */
 .home-eventos{--evento-ancho:clamp(200px,14vw,268px);--evento-alto:calc(var(--evento-ancho) * 2.19403);--evento-media:calc(var(--evento-ancho) * 1.56716);--evento-texto:calc(var(--evento-ancho) * .62687);position:relative;background:#1a1a1a;padding:120px var(--site-margin);scroll-margin-top:var(--site-header-height,72px);color:#1a1a1a;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:var(--site-gutter)}
 .eventos-intro{grid-column:1/4;position:relative;z-index:1}
 .eventos-intro p{color:#f66227;font:500 11px/1.3 'Space Grotesk',sans-serif;letter-spacing:.8px;margin:0 0 25px}
-.eventos-intro h2{font:400 clamp(44px,4.65vw,88px)/1.04 'Space Grotesk',sans-serif;letter-spacing:-.04em;color:#e4fe44;margin:0}
+.eventos-intro h2{font-family:'Space Grotesk',Arial,sans-serif;font-weight:400;font-size:clamp(44px,4.65vw,88px);line-height:1.04;letter-spacing:-.04em;color:#e4fe44;margin:0}
+.eventos-intro .eventos-bajada{max-width:44ch;margin:34px 0 0;font:400 14px/1.55 'Space Grotesk',Arial,sans-serif;letter-spacing:0;color:#aaa;text-wrap:pretty}
 .eventos-marco{position:relative;min-width:0;grid-column:4/-1;z-index:1}
 .eventos-marco::after{content:"";position:absolute;z-index:6;inset:0 0 0 auto;width:70px;pointer-events:none;background:linear-gradient(90deg,transparent,#1a1a1a);backdrop-filter:blur(2px);mask-image:linear-gradient(90deg,transparent,#000)}
 .eventos-marco.al-final::after{opacity:0}
@@ -42,7 +40,7 @@
 .eventos-controles button:hover{color:#fff}.eventos-controles button:focus-visible{outline:2px solid #e4fe44;outline-offset:2px}.eventos-controles button:disabled{opacity:0;pointer-events:none}
 .en-mapa .home-eventos{visibility:hidden}
 @media(max-width:1100px){.home-eventos{padding-inline:48px;gap:24px}.eventos-intro h2{font-size:clamp(36px,4.65vw,52px)}.eventos-controles [data-eventos-next]{right:-44px}.eventos-controles [data-eventos-prev]{left:-40px}}
-@media(max-width:700px){.home-eventos{padding:64px var(--site-margin);display:block;--evento-ancho:240px}.eventos-intro{margin-bottom:32px}.eventos-intro p{margin-bottom:14px}.eventos-intro h2{font-size:44px}.eventos-intro h2 br{display:none}.eventos-marco{margin-inline:20px}.evento.activa{flex-basis:var(--evento-ancho)}.evento.activa .evento__imagen{width:var(--evento-ancho);height:var(--evento-media);inset:0 auto auto 0;clip-path:none}.evento.activa .evento__texto{right:0;bottom:0}.evento__texto h3{font-size:22px}.evento__texto p{font-size:11px}.evento__texto h3.evento__nombre-largo{font-size:18px}.eventos-marco::after{width:24px}.eventos-controles [data-eventos-prev]{left:-36px}.eventos-controles [data-eventos-next]{right:-36px}.eventos-controles button{width:32px;padding:3px}.eventos-controles button span{width:24px;height:24px}}
+@media(max-width:700px){.home-eventos{padding:64px var(--site-margin);display:block;--evento-ancho:240px}.eventos-intro{margin-bottom:32px}.eventos-intro p{margin-bottom:14px}.eventos-intro h2{font-size:44px}.eventos-intro h2 br{display:none}.eventos-intro .eventos-bajada{margin-top:20px}.eventos-marco{margin-inline:20px}.evento.activa{flex-basis:var(--evento-ancho)}.evento.activa .evento__imagen{width:var(--evento-ancho);height:var(--evento-media);inset:0 auto auto 0;clip-path:none}.evento.activa .evento__texto{right:0;bottom:0}.evento__texto h3{font-size:22px}.evento__texto p{font-size:11px}.evento__texto h3.evento__nombre-largo{font-size:18px}.eventos-marco::after{width:24px}.eventos-controles [data-eventos-prev]{left:-36px}.eventos-controles [data-eventos-next]{right:-36px}.eventos-controles button{width:32px;padding:3px}.eventos-controles button span{width:24px;height:24px}}
 @media(prefers-reduced-motion:reduce){.home-eventos *{transition:none!important;animation:none!important}.evento__original,.evento__sujeto{transform:none}.evento.activa .evento__pixel{transform:none}}
 @media(max-width:370px){.eventos-controles [data-eventos-prev]{left:-24px}.eventos-controles [data-eventos-next]{right:-24px}}
 html[data-detener=true] .home-eventos *{transition:none!important;animation:none!important}

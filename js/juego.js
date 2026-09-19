@@ -1,5 +1,3 @@
-/* JUEGO final · tres estados de una misma escena, ligados al scroll nativo.
-   Fondo: el mismo PixelBlast WebGL del generador. Video y descargas: prototipo. */
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -27,8 +25,6 @@
   const suave = n => n*n*(3-2*n);
   let conScroll = false, frame = 0, destruido = false;
   const quieto = () => reduced.matches || root.dataset.detener === 'true';
-  // Each row follows the scroll with a lightly under-damped spring. The tiny
-  // outward drift keeps the silhouette alive without exposing its outer edges.
   const resortes = listaBarras.map((el,i) => ({el,x:0,v:0,meta:0,fase:i*1.37}));
   let movimiento = 0, anterior = 0, reloj = 0, barrasEnVista = true;
   function detenerBarras() {
@@ -73,7 +69,6 @@
       if (!fondoActivo) document.querySelector('.juego-fondo').classList.add('juego-fondo--estatico');
     }
   } catch (error) {
-    // La navegación y todo el contenido permanecen disponibles sin WebGL.
     document.querySelector('.juego-fondo').classList.add('juego-fondo--estatico');
   }
   function activar(etapa, visible) {
@@ -109,8 +104,6 @@
   }
   function programar() { if (!frame && !destruido) frame = requestAnimationFrame(pintar); }
   function configurar() {
-    // Sin movimiento, ampliación de texto o altura insuficiente: lectura normal,
-    // con las tres secciones en flujo. Nunca atrapamos contenido bajo un sticky.
     conScroll = !quieto() && !alturasCortas.matches && root.dataset.textoGrande !== 'true' && root.dataset.espaciado !== 'true';
     root.classList.toggle('juego-con-scroll',conScroll);
     const altoHeader = parseFloat(getComputedStyle(root).getPropertyValue('--site-header-height')) || 78;
@@ -157,6 +150,8 @@
     const jugando = play.getAttribute('aria-pressed') !== 'true';
     play.setAttribute('aria-pressed',String(jugando));
     play.setAttribute('aria-label',jugando?'Pausar vista previa':'Reproducir vista previa');
+    const zona = document.getElementById('juego-codigo'), plantilla = document.getElementById('juego-codigo-plantilla');
+    if (jugando && zona && plantilla && !zona.childElementCount) zona.append(plantilla.content.cloneNode(true));
   });
   addEventListener('scroll',programar,{passive:true});
   addEventListener('resize',configurar,{passive:true});

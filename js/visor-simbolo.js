@@ -1,13 +1,15 @@
-/* Visor de solo lectura. No abre el generador ni el formulario de publicación. */
 (() => {
   'use strict';
   const dialog = document.createElement('dialog');
   dialog.className = 'visor-simbolo';
   dialog.setAttribute('aria-label', 'Ver símbolo');
-  // Google Material: arrow_back y download. Etiquetas accesibles sin texto visible.
   dialog.innerHTML = '<div class="visor-simbolo__escena"></div><div class="visor-simbolo__acciones"><button type="button" aria-label="Volver al tablero" title="Volver" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/></svg></button><a download aria-label="Descargar símbolo" title="Descargar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></a></div><p class="visor-simbolo__estado" role="status">Cargando símbolo…</p>';
   document.body.append(dialog);
   const host = dialog.querySelector('.visor-simbolo__escena');
+  const detalle=document.createElement('div');detalle.className='visor-simbolo__detalle';detalle.hidden=true;
+  const titulo=document.createElement('h2'),autorTexto=document.createElement('p'),regionTexto=document.createElement('p');
+  titulo.id='visor-simbolo-titulo';autorTexto.className='visor-simbolo__autor';regionTexto.className='visor-simbolo__region';
+  detalle.append(titulo,autorTexto,regionTexto);dialog.append(detalle);
   const back = dialog.querySelector('button'), download = dialog.querySelector('a');
   const status = dialog.querySelector('[role=status]');
   back.append(document.createTextNode('Volver'));download.append(document.createTextNode('Descargar'));
@@ -42,11 +44,14 @@
   });
   host.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
 
-  async function open({src, title, filename,puesto}, trigger) {
+  async function open({src, title, filename,puesto,autor,region,pueblo}, trigger) {
     if (dialog.open) return;
     opener = trigger || document.activeElement; previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     dialog.setAttribute('aria-label', title || 'Ver símbolo');
+    detalle.hidden=!autor;dialog.classList.toggle('visor-simbolo--con-detalle',!!autor);
+    titulo.textContent=title||'Símbolo';autorTexto.textContent=autor||'';
+    regionTexto.textContent=autor?'Patrones de '+(pueblo||'la comunidad')+' · '+(region||'Región no indicada'):'';
     status.textContent = 'Cargando símbolo…'; status.hidden = false;
     download.href = src; download.download = filename || 'musuq-pacha-simbolo.png';
     dialog.showModal(); back.focus({preventScroll:true});
