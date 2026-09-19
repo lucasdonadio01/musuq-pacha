@@ -1,6 +1,35 @@
 <!doctype html>
 <html lang="es"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<script>
+(function (m, a, z, e) {
+  var s, t, u, v;
+  try {
+    t = m.sessionStorage.getItem('maze-us');
+  } catch (err) {}
+
+  if (!t) {
+    t = new Date().getTime();
+    try {
+      m.sessionStorage.setItem('maze-us', t);
+    } catch (err) {}
+  }
+
+  u = document.currentScript || (function () {
+    var w = document.getElementsByTagName('script');
+    return w[w.length - 1];
+  })();
+  v = u && u.nonce;
+
+  s = a.createElement('script');
+  s.src = z + '?apiKey=' + e;
+  s.async = true;
+  if (v) s.setAttribute('nonce', v);
+  a.getElementsByTagName('head')[0].appendChild(s);
+  m.mazeUniversalSnippetApiKey = e;
+})(window, document, 'https://snippet.maze.co/maze-universal-loader.js', '239229b0-64f2-43f0-89aa-ddaae1982d24');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Archivo Querandí · Musuq Pacha</title><link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/fuente.css"><link rel="stylesheet" href="css/archivo-mesa.css?v=correcciones-1">
 <link rel="stylesheet" href="css/archivo-transicion.css?v=viaje-1">
