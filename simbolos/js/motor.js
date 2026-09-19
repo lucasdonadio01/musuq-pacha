@@ -834,6 +834,15 @@ const Motor = (() => {
       },
       limpiar(ahora) { morphA(new Map(), ahora); },
       cargar(grilla, ahora) { morphA(new Map(grilla), ahora); },
+      // Movimiento directo del compositor: O(n), sin volver a emparejar el morph.
+      fijar(nueva, ahora) {
+        grilla = new Map(nueva);
+        pixeles = [...grilla].map(([k,hex]) => {
+          const [x,y] = k.split(',').map(Number), color = aRgb(hex);
+          return {gx:x,gy:y,hex,ax:x,ay:y,bx:x,by:y,cDe:color,cA:color,
+            sDe:1,sA:1,t0:ahora-1,delay:0,dur:1,arco:0,giro:0};
+        });
+      },
       dibujar, pintar, borrar, pixelEn,
       get grilla() { return grilla; },
       get semilla() { return semilla; },

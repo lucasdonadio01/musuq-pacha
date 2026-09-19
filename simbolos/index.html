@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="css/fuente.css?v=18">
 <link rel="stylesheet" href="css/app.css?v=18">
 <link rel="stylesheet" href="css/comunidad.css?v=main-1">
+<link rel="stylesheet" href="css/piezas.css?v=piezas-1">
 
 <link rel="stylesheet" href="../css/accesibilidad.css?v=main-1">
 <link rel="stylesheet" href="../css/sonido.css?v=audio-3">
@@ -44,7 +45,7 @@
   <canvas id="mosaico" aria-hidden="true"></canvas>
   <div class="bloque" id="bloque">
     <h1 class="titulo">SÍMBOLOS DE<br>LA COMUNIDAD</h1>
-    <p class="bajada">Generá tu propio símbolo a partir de patrones reales de los mismos pueblos originarios.</p>
+    <p class="bajada">Generá tu propio símbolo combinando piezas inspiradas en las referencias del archivo.</p>
     <button class="boton boton--grande" id="entrar">EMPEZAR <svg class="ic" aria-hidden="true"><use href="#ic-mas"/></svg></button>
   </div>
 </section>
@@ -59,23 +60,15 @@
   <p id="compartir-estado" role="status" aria-live="polite"></p><a class="compartir__tablero" href="../index.html#comunidad">Ver el tablero <svg class="ic" aria-hidden="true"><use href="#ic-volver"/></svg></a>
 </dialog>
 
-<div id="cursor" aria-hidden="true" hidden><span><svg class="ic"><use href="#ic-pincel"/></svg></span></div>
+
 
 <main id="taller" hidden>
   <header class="barra">
     <button class="icono barra__volver" id="volver" aria-label="Elegir pueblo">
       <svg class="ic"><use href="#ic-volver"/></svg>
     </button>
-    <span class="marca">MUSUQ PACHA</span>
-    <small class="barra__sub">símbolos de la comunidad</small>
     <span class="barra__pueblo" id="puebloActual"></span>
-    <span class="barra__sep"></span>
-    <span class="icono icono--falso" title="Accesibilidad" aria-hidden="true">
-      <svg class="ic"><use href="#ic-accesibilidad"/></svg>
-    </span>
-    <button class="icono" id="sonido" data-audio="musica" aria-pressed="false" title="Silenciar música" aria-label="Silenciar música">
-      <svg class="ic"><use href="#ic-sonido"/></svg>
-    </button>
+    <span class="barra__ayuda">Combiná piezas · Creá tu símbolo</span>
   </header>
 
   <aside class="rail rail--izq" id="menu">
@@ -87,12 +80,15 @@
     <h2 class="rotulo">territorio</h2>
     <canvas class="mapa" id="mapa"></canvas>
     <p class="mapa__pie" id="mapaPie"></p>
+    <h2 class="rotulo">Referencias reales</h2>
+    <div id="referencias-piezas" class="referencias-piezas"></div>
+    <p id="referencias-nota" class="referencias-nota"></p>
   </aside>
 
   <section class="escena">
-    <canvas id="lienzo"></canvas>
+    <canvas id="lienzo" tabindex="0" aria-label="Composición de piezas. Usá las flechas para mover la pieza seleccionada." aria-describedby="instrucciones-piezas"></canvas>
     <div class="acciones">
-      <button class="accion accion--fuerte" id="generar" title="Generar otro símbolo (G)" aria-label="Generar otro símbolo">
+      <button class="accion accion--fuerte" id="generar" title="Combinar las piezas del pueblo (G)" aria-label="Combinar piezas">
         <svg class="ic"><use href="#ic-generar"/></svg>
       </button>
       <button class="accion accion--compartir" id="png" title="Compartir símbolo" aria-label="Compartir símbolo">
@@ -102,27 +98,28 @@
         <svg class="ic"><use href="#ic-vaciar"/></svg>
       </button>
     </div>
+    <p id="instrucciones-piezas" class="piezas-instrucciones">Arrastrá para mover · Flechas del teclado para ajustar · R para girar</p>
     <p class="estado" id="estado" role="status" aria-live="polite"></p>
   </section>
 
   <aside class="rail rail--der">
-    <h2 class="rotulo">herramienta</h2>
-    <div class="segm" id="modos">
-      <button data-modo="pincel" aria-pressed="true" title="Pincel (Q)" aria-label="Pincel">
-        <svg class="ic"><use href="#ic-pincel"/></svg><small>q</small>
-      </button>
-      <button data-modo="borrador" aria-pressed="false" title="Borrador (W)" aria-label="Borrador">
-        <svg class="ic"><use href="#ic-borrador"/></svg><small>w</small>
-      </button>
-      <button data-modo="seleccion" aria-pressed="false" title="Selección (E)" aria-label="Selección">
-        <svg class="ic"><use href="#ic-seleccion"/></svg><small>e</small>
-      </button>
-      <button data-modo="cuentagotas" aria-pressed="false" title="Copiar color (I)" aria-label="Copiar color">
-        <svg class="ic"><use href="#ic-cuentagotas"/></svg><small>i</small>
-      </button>
+    <h2 class="rotulo">Piezas para combinar</h2>
+    <p class="piezas-ayuda">Tocá una pieza para sumarla. Arrastrala en el lienzo para ubicarla.</p>
+    <div id="banco-piezas" class="banco-piezas"></div>
+    <label class="piezas-etiqueta" for="pieza-actual">Pieza seleccionada</label>
+    <select id="pieza-actual" aria-label="Pieza seleccionada"></select>
+    <div class="pieza-acciones">
+      <button id="pieza-girar" type="button">Girar</button><button id="pieza-espejar" type="button">Espejar</button>
+      <button id="pieza-duplicar" type="button">Duplicar</button><button id="pieza-quitar" type="button">Quitar</button>
     </div>
+    <div class="pieza-historial"><button id="pieza-deshacer" type="button">Deshacer</button><button id="pieza-rehacer" type="button">Rehacer</button></div>
+    <h2 class="rotulo">Color</h2>
+    <div class="color-alcance" role="group" aria-label="Cambiar color por">
+      <button type="button" data-alcance="pieza" aria-pressed="true">Pieza completa</button>
+      <button type="button" data-alcance="celda" aria-pressed="false">Una celda</button>
+    </div>
+    <p id="ayuda-color-pieza" class="piezas-ayuda">Elegí una pieza y después un color.</p>
 
-    <h2 class="rotulo">colores del territorio</h2>
     <div class="paleta" id="paleta">
       <label class="mas" title="Cualquier color" aria-label="Cualquier color">
         <svg class="ic"><use href="#ic-mas"/></svg>
@@ -133,29 +130,27 @@
 
     <h2 class="rotulo">lienzo</h2>
     <label class="fila"><span>fondo</span><input type="color" id="colorFondo" value="#F2EDE5"></label>
-    <label class="fila"><span>grilla</span>
-      <select id="lado">
-        <option value="7">7 × 7</option>
-        <option value="9">9 × 9</option>
-        <option value="11" selected>11 × 11</option>
-        <option value="13">13 × 13</option>
-      </select>
-    </label>
-    <label class="fila"><span>espejo al pintar</span><input type="checkbox" id="espejo" checked></label>
   </aside>
 
 </main>
+<dialog class="referencia-dialog" id="referencia-dialog" aria-labelledby="referencia-titulo">
+  <button type="button" class="referencia-cerrar" aria-label="Cerrar referencia"><svg class="ic" aria-hidden="true"><use href="#ic-cerrar"/></svg></button>
+  <img id="referencia-imagen" src="assets/referencias/omaguaca-faja.png" alt="Faja textil kolla">
+  <div class="referencia-texto"><p class="referencia-rotulo">DEL ARCHIVO A TU COMPOSICIÓN</p><h2 id="referencia-titulo"></h2><p id="referencia-lugar"></p><strong id="referencia-cultura"></strong><p id="referencia-descripcion"></p><p id="referencia-fuente"></p><p class="referencia-aclaracion" id="referencia-aclaracion"></p><a id="referencia-figma" target="_blank" rel="noopener">Ver ficha en Figma</a></div>
+</dialog>
 
 <script src="js/pueblos.js?v=18"></script>
 <script src="js/mapa.js?v=correcciones-1"></script>
-<script src="js/motor.js?v=ranking-morph-1"></script>
+<script src="js/motor.js?v=piezas-1"></script>
 <script src="../js/header-plantilla.js?v=juego-1"></script><script src="../js/header.js?v=ajustes-3"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
 
 <script src="js/fondo.js?v=main-1"></script>
-<script src="js/simbolo.js?v=18"></script>
+<script src="js/simbolo.js?v=piezas-1"></script>
 <script src="js/mosaico.js?v=main-1"></script>
-<script src="../js/comunidad.js?v=home-1"></script>
-<script src="js/app.js?v=main-1"></script>
+<script src="../js/comunidad.js?v=piezas-1"></script>
+<script src="js/patrones.js?v=piezas-1"></script>
+<script src="js/composicion.js?v=piezas-1"></script>
+<script src="js/app.js?v=piezas-1"></script>
 <script src="../js/pixel-botones.js?v=correcciones-1"></script>
 </body>
 </html>

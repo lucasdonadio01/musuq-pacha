@@ -90,3 +90,4 @@
 .simbolo-local{display:flex;gap:16px;align-items:center;padding:18px;background:var(--home-orange);color:#1a1a1a;text-decoration:none}.simbolo-local canvas{width:80px;height:80px;image-rendering:pixelated}.simbolo-local strong,.simbolo-local small{display:block}.simbolo-local small{margin-top:8px}
 @media(max-width:850px){.ranking-tarjeta--1::after,.ranking-tarjeta--1::before{display:none}}
 @media(max-width:600px){#comunidad .comunidad__cta{flex-direction:column}.comunidad-local{margin-top:48px}}
+#comunidad h2{color:#E4FE44}

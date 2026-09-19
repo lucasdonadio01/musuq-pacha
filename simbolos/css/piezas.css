@@ -1,0 +1,49 @@
+/* Taller modular: el banco queda junto a la composición, las fuentes a izquierda. */
+#taller{grid-template-columns:208px minmax(0,1fr) 300px;grid-template-rows:minmax(0,1fr)}
+.barra{display:none}
+.rail{min-height:0;padding:20px 16px;gap:12px}
+.rail .rotulo{font-size:12px;letter-spacing:.06em;font-weight:500}
+.piezas-ayuda,.referencias-nota{font-size:12px;line-height:1.5;color:#c3c0c8}
+.banco-piezas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pieza-mini{border:1px solid #605965;background:#eee9df;color:#202020;padding:4px;cursor:pointer;font:500 11px/1.2 'Space Grotesk',sans-serif;transition:background .18s,transform .18s}
+.pieza-mini canvas{display:block;width:100%;aspect-ratio:1}
+.pieza-mini span{display:block;min-height:27px}
+.pieza-mini:hover{background:#c6acf2;transform:translateY(-2px)}
+.piezas-etiqueta{font-size:12px;margin-top:8px}
+#pieza-actual{width:100%;min-height:40px;border:1px solid #656069;padding:8px;background:#29252e;color:#fff;font:inherit;font-size:13px}
+.pieza-acciones,.pieza-historial,.color-alcance{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+:is(.pieza-acciones,.pieza-historial,.color-alcance) button{min-height:40px;border:1px solid #62596d;background:#302b37;color:#f5f2eb;font:500 12px 'Space Grotesk',sans-serif;cursor:pointer;padding:7px}
+:is(.pieza-acciones,.pieza-historial,.color-alcance) button:hover{background:#6940ad}
+.color-alcance button[aria-pressed=true]{background:#f66227;color:#181818;border-color:#f66227}
+button:disabled{opacity:.4;cursor:default}
+.referencias-piezas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.referencia-mini{padding:0;border:1px solid #62596d;background:#2a252f;color:#fff;cursor:pointer;font:400 12px/1.35 'Space Grotesk',sans-serif;text-align:left}
+.referencia-mini img{width:100%;aspect-ratio:479/576;object-fit:contain;display:block;background:#eee9df}
+.referencia-mini span{display:block;padding:8px 5px}
+.referencia-mini:hover{border-color:#f66227;background:#43304f}
+.piezas-instrucciones{font-size:12px;text-align:center;padding:12px 18px 0;line-height:1.5;color:var(--tinta)}
+.escena .estado{padding:0 16px;letter-spacing:0;max-width:60ch;font-size:12px}
+#lienzo{cursor:grab}#lienzo:active{cursor:grabbing}#lienzo:focus-visible{outline:2px solid #f66227;outline-offset:-6px}
+.referencia-dialog{margin:auto;padding:32px;border:1px solid #6e547d;background:#202020;color:#f5f2eb;width:min(980px,calc(100% - 40px));max-height:90dvh;overflow:auto;box-shadow:0 24px 80px #0008}
+.referencia-dialog[open]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center}
+.referencia-dialog::backdrop{background:#08060dd9;backdrop-filter:blur(6px)}
+#referencia-imagen{display:block;width:100%;max-height:72dvh;object-fit:contain}
+.referencia-cerrar{position:absolute;right:8px;top:8px;width:44px;height:44px;display:grid;place-items:center;background:#f66227;color:#1a1a1a;border:0;cursor:pointer}
+.referencia-texto{padding:20px 0;font-size:14px;line-height:1.6}
+.referencia-texto h2{font:500 clamp(26px,3vw,40px)/1.1 'Space Grotesk',sans-serif;color:#e4fe44;margin:14px 0 20px;letter-spacing:-.03em}
+.referencia-texto p{margin:14px 0}.referencia-texto .referencia-rotulo{font-size:11px;color:#b999ed;letter-spacing:.08em}
+.referencia-aclaracion{font-size:12px;color:#ccc3d5;border-top:1px solid #594965;padding-top:16px}
+.referencia-texto a{color:#c4a2ff;text-underline-offset:4px}
+.referencia-dialog :is(button,a):focus-visible{outline:3px solid #e4fe44;outline-offset:3px}
+@media(max-width:1000px) and (min-width:761px){#taller{grid-template-columns:176px minmax(0,1fr) 260px}.rail{padding:16px 12px}.banco-piezas{gap:5px}.piezas-instrucciones{font-size:11px}}
+@media(max-width:760px){
+ html,body{height:auto;min-height:100%;overflow:auto}
+ #taller{top:var(--com-alto);height:auto;min-height:calc(100dvh - var(--com-alto));grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(350px,60svh) auto;padding-bottom:var(--com-alto)}
+ .barra{display:flex;grid-column:1;grid-row:1;order:0}.barra__ayuda{font-size:11px;color:#bbb;margin-left:auto;max-width:120px;text-align:right}
+ .escena{grid-column:1;grid-row:2;order:0}.rail--der{grid-column:1;grid-row:3;order:0;padding:24px 20px;border-top:1px solid #62596d;overflow:visible;gap:12px}
+ .rail--der .rotulo,.rail--der .nota{display:block}.rail--der .paleta button,.rail--der .paleta .mas{height:44px}
+ .banco-piezas{grid-template-columns:repeat(3,minmax(0,1fr))}.pieza-mini canvas{max-width:100px;margin:auto}
+ .rail--izq{z-index:40;padding:48px 24px 24px}.referencias-piezas{max-width:350px}.mapa{max-width:160px;height:auto!important}
+ .referencia-dialog{padding:48px 20px 24px;width:calc(100% - 24px)}.referencia-dialog[open]{grid-template-columns:1fr;gap:8px}#referencia-imagen{max-height:43svh}.referencia-texto{padding:0}
+}
+@media(prefers-reduced-motion:reduce){.pieza-mini{transition:none}.pieza-mini:hover{transform:none}}

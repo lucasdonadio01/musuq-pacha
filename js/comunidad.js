@@ -2,7 +2,7 @@
 window.Comunidad = (() => {
   const KEY = 'musuq-comunidad-v1', HEX = /^#[0-9a-f]{6}$/i;
   function validar(v) {
-    if (!v || v.v !== 1 || ![7,9,11,13].includes(v.lado) || !HEX.test(v.fondo) ||
+    if (!v || v.v !== 1 || ![7,9,11,13,21].includes(v.lado) || !HEX.test(v.fondo) ||
         typeof v.nombre !== 'string' || v.nombre.length > 48 || typeof v.pueblo !== 'string' ||
         v.pueblo.length > 40 || !Array.isArray(v.celdas) || !v.celdas.length || v.celdas.length > v.lado ** 2) return null;
     const usadas = new Set();
@@ -17,7 +17,7 @@ window.Comunidad = (() => {
   function decodificar(hash) { try { const s=hash.replace(/^#simbolo=/,''); if(s.length>18000)return null; return validar(JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))))); } catch { return null; } }
   function leer() { try { const a=JSON.parse(localStorage.getItem(KEY)||'[]'); return Array.isArray(a)?a.slice(0,40).map(validar).filter(Boolean):[]; } catch { return []; } }
   function guardar(v) {
-    const d=validar(v);if(!d)throw Error('Generá o pintá un símbolo antes de compartirlo.');
+    const d=validar(v);if(!d)throw Error('Combiná al menos una pieza antes de compartirla.');
     const firma=codificar(d), anteriores=leer().filter(x=>codificar(x)!==firma);
     try { localStorage.setItem(KEY,JSON.stringify([d,...anteriores].slice(0,40))); }
     catch { throw Error('Este navegador no permite guardar el tablero. Podés compartir el enlace sin guardarlo.'); }

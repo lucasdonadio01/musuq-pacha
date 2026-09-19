@@ -7,7 +7,7 @@
 const Simbolo = (() => {
   const figura = Motor.crear(11);
   let pueblo = PUEBLOS[0];
-  let generacion = 0;
+  let generacion = 0, cantidadPiezas = 0;
   let seleccion = new Set(), hover = null;
   let fondo = pueblo.fondo;        // contra que color se decide el contraste
   let paletaGen = pueblo.colores;  // con que colores salio la ultima generacion
@@ -38,8 +38,8 @@ const Simbolo = (() => {
     const angosto = W / H < 1.15;
     // en un formato muy vertical (la historia 9:16) el simbolo se lleva mas
     // ancho: con el 66 % quedaba nadando en el alto del cuadro
-    const anchoUtil = W / H < 0.8 ? 0.80 : 0.66;
-    const celda = Math.min(W * (angosto ? anchoUtil : 0.38), H * (angosto ? 0.56 : 0.66)) / N;
+    const anchoUtil = angosto ? .86 : .5;
+    const celda = Math.min(W * anchoUtil, H * .72) / N;
     const sube = angosto ? H * 0.07 : 0;
     geo = { celda, x0: W / 2 - N * celda / 2, y0: H / 2 - N * celda / 2 - sube, W, H, angosto };
     return geo;
@@ -112,7 +112,7 @@ const Simbolo = (() => {
       ctx.fillText(pueblo.nombre + ' · ' + pueblo.region, W / 2, base);
       ctx.globalAlpha = 0.6;
       ctx.font = '300 ' + cuerpo * 0.86 + 'px "Space Grotesk", system-ui, sans-serif';
-      ctx.fillText('rareza ' + rareza() + ' % · semilla ' + figura.firmaSemilla,
+      ctx.fillText(cantidadPiezas + ' piezas · composición propia',
                    W / 2, base + cuerpo * 1.5);
       ctx.globalAlpha = 1;
     } else if (o.textos !== false) {
@@ -125,8 +125,8 @@ const Simbolo = (() => {
       const izq = [
         [pueblo.nombre, '500', 1],
         [pueblo.region, '300', 0.6],
-        ['rareza ' + rareza() + ' %', '300', 0.6],
-        ['semilla ' + figura.firmaSemilla, '300', 0.6]
+        [cantidadPiezas + ' piezas', '300', 0.6],
+        ['composición propia', '300', 0.6]
       ];
       const arranque = H / 2 - ((izq.length - 1) * salto) / 2;
       izq.forEach(([texto, peso, alfa], i) => {
@@ -175,6 +175,11 @@ const Simbolo = (() => {
 
   return {
     componer, celdaEn,
+    set cantidadPiezas(v){cantidadPiezas=v;},
+    cargar(grilla,ahora,animar=true){
+      if(animar)figura.cargar(grilla,ahora);
+      else figura.fijar(grilla,ahora);
+    },
     generar(ahora, sem) {
       generacion++;
       // la semilla se resuelve acá y no adentro del motor, así el acento y la
