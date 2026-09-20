@@ -15,7 +15,7 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
 
 .mapa-entrada{position:absolute;right:clamp(24px,9vw,150px);bottom:clamp(28px,4vh,56px);z-index:4;display:inline-flex;align-items:center;gap:10px;padding:6px 2px;border:0;background:none;color:#e6f0e4;font:400 clamp(14px,1.22vw,18px)/1.2 'Space Grotesk',Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;text-underline-offset:8px;text-decoration-thickness:1px;cursor:pointer;opacity:.6;transition:color .25s ease,opacity .25s ease,gap .25s ease}
-.mapa-entrada svg{width:1em;height:1em;fill:currentColor;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.mapa-entrada svg{width:1.15em;height:1.15em;fill:currentColor;transition:transform .3s cubic-bezier(.16,1,.3,1)}
 .mapa-entrada:hover,.mapa-entrada:focus-visible{opacity:1}
 .mapa-entrada:hover{color:#e4fe44}
 .mapa-entrada:hover svg{transform:translate(3px,-3px)}
