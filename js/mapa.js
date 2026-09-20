@@ -2334,6 +2334,7 @@
     else{zonaFijada=null;zonaBajoCursor=null;pausaAutomatica=performance.now()+1200;suavidadHover=7;activarZona(null);document.getElementById('liberar-zona').hidden=true;entrar.focus({preventScroll:true});}
   }
   entrar.addEventListener('click',()=>cambiarModo(true));
+  document.getElementById('invitacion-mapa')?.addEventListener('click',()=>cambiarModo(true));
   salir.addEventListener('click',()=>cambiarModo(false));
   document.getElementById('liberar-zona').addEventListener('click',()=>fijarZona(null));
   document.getElementById('boton-fronteras').addEventListener('click',e=>{mostrarFronteras=!mostrarFronteras;e.currentTarget.setAttribute('aria-pressed',String(mostrarFronteras));});
