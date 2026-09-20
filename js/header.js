@@ -207,6 +207,18 @@
   addEventListener('storage',e => { if(e.key === key || e.key === null)cambiarSesion(e.key === null ? false : e.newValue === 'activa',false); });
   window.MUSUQ_SESION = {get activa(){return activa;}, avatar};
   dibujarSesion();
+  document.querySelectorAll('[data-pie-registro]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (window.MUSUQ_ACCESO) {
+        window.MUSUQ_ACCESO.abrir({vista:'registro', origen:b, nombre:cuenta.nombre, alEntrar:() => cambiarSesion(true)});
+      }
+    });
+  });
+  document.querySelectorAll('[data-pie-accesibilidad]').forEach(b => {
+    b.addEventListener('click', () => {
+      document.getElementById('abrir-accesibilidad')?.click();
+    });
+  });
   document.addEventListener('click',e => {if(!e.composedPath().includes(header)){cerrarPerfil();cerrarNavegacion();}});
   document.addEventListener('keydown',e => {
     if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;

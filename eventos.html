@@ -41,8 +41,9 @@
   <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
   <link rel="stylesheet" href="css/grilla.css?v=juego-1">
   <link rel="stylesheet" href="css/eventos.css?v=limpieza-1">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
-<body class="pagina-eventos">
+<body class="pagina-eventos" id="arriba">
   <a class="eventos-saltar" href="#evento-titulo">Saltar al próximo evento</a>
   <header class="nav site-header" id="header" data-seccion="eventos"><a class="nav__marca" href="index.html">MUSUQ PACHA</a></header>
   <div class="eventos-fondo" aria-hidden="true"><canvas id="eventos-pixel-blast"></canvas></div>
@@ -50,7 +51,7 @@
 
   <main class="eventos">
     <section class="eventos-vista eventos-portada" id="portada" aria-labelledby="evento-titulo">
-      <div class="evento-principal">
+      <div class="evento-principal" id="evento-principal">
         <p class="evento-rotulo">Próximo evento</p>
         <article class="evento-tarjeta" aria-labelledby="evento-titulo">
           <span class="evento-pixel evento-pixel--a" aria-hidden="true"></span><span class="evento-pixel evento-pixel--b" aria-hidden="true"></span><span class="evento-pixel evento-pixel--c" aria-hidden="true"></span><span class="evento-pixel evento-pixel--d" aria-hidden="true"></span><span class="evento-pixel evento-pixel--e" aria-hidden="true"></span><span class="evento-pixel evento-pixel--f" aria-hidden="true"></span>
@@ -64,11 +65,11 @@
           <figure class="evento-imagen"><img src="assets/eventos/rural/ingreso.jpg" width="1600" height="912" alt="Entrada de uno de los pabellones de La Rural, con su gran arco de piedra."></figure>
           <div class="evento-lateral">
             <p>Una tarde en La Rural para recorrer el territorio en pantalla grande, jugar con el equipo y armar tu símbolo con piezas de textiles documentados. La entrada es libre con inscripción y, al llegar, te llevás un código para canjear en tu perfil.</p>
-            <button class="evento-boton" type="button" data-abrir="dialogo-inscripcion" aria-haspopup="dialog"><span class="ev-icono ev-icono--inscribir" aria-hidden="true"></span>Inscribirse</button>
+            <button class="evento-boton" id="inscripcion" type="button" data-abrir="dialogo-inscripcion" aria-haspopup="dialog"><span class="ev-icono ev-icono--inscribir" aria-hidden="true"></span>Inscribirse</button>
             <a class="evento-boton evento-boton--secundario" href="#actividades"><span class="ev-icono ev-icono--actividades" aria-hidden="true"></span>Actividades</a>
           </div>
         </article>
-        <aside class="evento-propuesta" aria-labelledby="propuesta-titulo">
+        <aside class="evento-propuesta" id="proyecto" aria-labelledby="propuesta-titulo">
           <div>
             <h2 id="propuesta-titulo">¿Tenés una propuesta? Contanos y lo hacemos</h2>
             <p>Publicá tu proyecto, buscá con quién seguirlo y enterate de lo que se viene.</p>
@@ -77,7 +78,7 @@
         </aside>
       </div>
 
-      <section class="eventos-previos" aria-labelledby="previos-titulo">
+      <section class="eventos-previos" id="eventos-previos" aria-labelledby="previos-titulo">
         <h2 id="previos-titulo">Eventos previos</h2>
         <ul class="previos-grilla">
           <li class="previo"><img src="assets/eventos/rural/desfile.jpg" width="1000" height="570" alt="" decoding="async"><p class="previo__texto"><span>Julio 2026</span><strong>Encuentro de invierno</strong></p></li>
@@ -133,6 +134,66 @@
       </footer>
     </article>
   </main>
+  <footer class="pie site-footer" id="pie">
+    <div class="pie__contenedor">
+      <div class="pie__marca">
+        <a class="pie__logo" href="index.html">MUSUQ PACHA</a>
+        <p class="pie__lema">Un territorio,<br>muchas historias.</p>
+      </div>
+
+      <nav class="pie__nav" aria-label="Navegación del pie de página">
+        <div class="pie__columna">
+          <h3 class="pie__titulo">Territorio</h3>
+          <ul class="pie__lista">
+            <li><a href="index.html#territorio">Explorar el mapa</a></li>
+            <li><a href="index.html#archivo">Los pueblos</a></li>
+            <li><a href="archivo.html">Archivo de los pueblos</a></li>
+            <li><a href="arboles.html">Árboles nativos</a></li>
+          </ul>
+        </div>
+
+        <div class="pie__columna">
+          <h3 class="pie__titulo">Juego</h3>
+          <ul class="pie__lista">
+            <li><a href="juego.html">Conocé el juego</a></li>
+            <li><a href="juego.html#avance">Ver avance</a></li>
+            <li><a href="juego.html#descarga">Descargar prototipo</a></li>
+            <li><a href="juego.html#descarga">Versión y plataformas</a></li>
+          </ul>
+        </div>
+
+        <div class="pie__columna">
+          <h3 class="pie__titulo">Comunidad</h3>
+          <ul class="pie__lista">
+            <li><a href="simbolos/">Crear un símbolo</a></li>
+            <li><a href="index.html#comunidad">Ranking semanal</a></li>
+            <li><button type="button" class="pie__boton" data-abrir="dialogo-proyecto">Subir un proyecto</button></li>
+            <li><button type="button" class="pie__boton" data-pie-registro>Crear cuenta</button></li>
+          </ul>
+        </div>
+
+        <div class="pie__columna">
+          <h3 class="pie__titulo">Eventos</h3>
+          <ul class="pie__lista">
+            <li><a href="#evento-principal">Próximo encuentro</a></li>
+            <li><a href="#actividades">Programa</a></li>
+            <li><button type="button" class="pie__boton" data-abrir="dialogo-inscripcion">Inscripción</button></li>
+            <li><a href="#eventos-previos">Eventos anteriores</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="pie__inferior">
+      <div class="pie__inferior-contenedor">
+        <p class="pie__credito">MUSUQ PACHA · Proyecto académico TIF · Diseño Multimedia y de Interacción · UADE · 2026</p>
+        <div class="pie__inferior-enlaces">
+          <button type="button" class="pie__boton pie__boton--inferior" data-pie-accesibilidad>Accesibilidad</button>
+          <a class="pie__arriba" href="#arriba" aria-label="Volver al inicio de la página">Volver arriba ↑</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <dialog class="evento-dialogo" id="dialogo-inscripcion" aria-labelledby="inscripcion-titulo">
     <form class="evento-form" method="dialog" data-autocompletar="inscripcion">
@@ -203,6 +264,6 @@
   <script src="simbolos/js/fondo.js?v=18"></script>
   <script src="simbolos/js/motor.js?v=ranking-morph-1"></script>
   <script src="js/eventos.js?v=eventos-4"></script>
-  <script src="js/pixel-botones.js?v=encuentro-1"></script>
+  <script src="js/pixel-botones.js?v=tiendas-1"></script>
 </body>
 </html>

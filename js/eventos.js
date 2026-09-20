@@ -200,4 +200,9 @@
     const boton = portada.querySelector('[data-abrir="dialogo-inscripcion"]');
     setTimeout(() => { boton.focus({preventScroll:true}); abrir(document.getElementById('dialogo-inscripcion'), boton); }, quieto() ? 0 : 450);
   }
+  if (location.hash === '#proyecto' || location.hash === '#propuesta') {
+    history.replaceState(null, '', location.pathname + location.search);
+    const boton = portada.querySelector('[data-abrir="dialogo-proyecto"]');
+    setTimeout(() => { boton.focus({preventScroll:true}); abrir(document.getElementById('dialogo-proyecto'), boton); }, quieto() ? 0 : 450);
+  }
 })();

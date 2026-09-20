@@ -338,7 +338,7 @@
   async function abrir(op = {}) {
     montar();
     if (dialogo.open) return;
-    opciones = op; vista = 'ingreso'; ocupado = cerrando = false; logro.hidden = true;
+    opciones = op; vista = op.vista || 'ingreso'; ocupado = cerrando = false; logro.hidden = true;
     pintar();
     dialogo.classList.remove('acceso--armado', 'acceso--visible');
     dialogo.showModal(); dialogo.scrollTop = 0;

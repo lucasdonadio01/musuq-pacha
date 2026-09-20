@@ -1,0 +1,305 @@
+/* =========================================================
+   MUSUQ PACHA · Footer / Pie de página
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.site-footer {
+  box-sizing: border-box;
+  width: 100%;
+  background: var(--site-carbon, #202020);
+  color: #d6d6d6;
+  font-family: Archivo, Arial, sans-serif;
+  border-top: 1px solid rgba(158, 111, 248, 0.25);
+  position: relative;
+  z-index: 10;
+  clear: both;
+}
+
+.site-footer * {
+  box-sizing: border-box;
+}
+
+/* Contenedor principal con márgenes del sistema */
+.pie__contenedor {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 64px var(--site-margin, clamp(24px, 6.2vw, 120px)) 52px;
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(130px, 1fr));
+  gap: clamp(24px, 3.2vw, 44px);
+  align-items: start;
+}
+
+/* Marca / Identidad a la izquierda */
+.pie__marca {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pie__logo {
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--site-orange, #F66227);
+  text-decoration: none;
+  line-height: 1.1;
+  display: inline-block;
+  transition: color 0.18s ease;
+}
+
+.pie__logo:hover {
+  color: #ffffff;
+}
+
+.pie__lema {
+  margin: 0;
+  font-family: Archivo, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #a3a3a3;
+  max-width: 22ch;
+}
+
+/* Columnas de navegación */
+.pie__nav {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: clamp(20px, 2.5vw, 36px);
+}
+
+.pie__columna {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pie__titulo {
+  margin: 0;
+  font-family: 'Space Grotesk', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--site-violet, #9E6FF8);
+  line-height: 1.2;
+}
+
+.pie__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pie__lista li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Enlaces y botones de acción en las columnas */
+.pie__lista a,
+.pie__boton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  font-family: Archivo, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #cfcfcf;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.18s ease;
+}
+
+.pie__lista a:hover,
+.pie__boton:hover {
+  color: #ffffff;
+}
+
+/* Focus visible para navegación accesible por teclado */
+.site-footer :is(a, button):focus-visible {
+  outline: 2px solid var(--site-violet, #9E6FF8);
+  outline-offset: 3px;
+  border-radius: 1px;
+  color: #ffffff;
+}
+
+/* Franja inferior */
+.pie__inferior {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.pie__inferior-contenedor {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 22px var(--site-margin, clamp(24px, 6.2vw, 120px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.pie__credito {
+  margin: 0;
+  font-family: Archivo, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #888888;
+}
+
+.pie__inferior-enlaces {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-shrink: 0;
+}
+
+.pie__boton--inferior {
+  font-size: 12px;
+  color: #a3a3a3;
+}
+
+.pie__boton--inferior:hover {
+  color: #ffffff;
+}
+
+.pie__arriba {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: Archivo, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--site-orange, #F66227);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.pie__arriba:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =========================================================
+   Responsive Design
+   ========================================================= */
+
+/* Tablet horizontal (hasta 1024px) */
+@media (max-width: 1024px) {
+  .pie__contenedor {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-top: 48px;
+    padding-bottom: 40px;
+  }
+  .pie__nav {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .pie__lema {
+    max-width: none;
+  }
+}
+
+/* Tablet vertical / Móvil apaisado (hasta 768px) */
+@media (max-width: 768px) {
+  .pie__nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+  .pie__inferior-contenedor {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-top: 18px;
+    padding-bottom: 24px;
+  }
+  .pie__inferior-enlaces {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Móvil (hasta 600px, incluye 390px) */
+@media (max-width: 600px) {
+  .pie__contenedor {
+    padding-top: 40px;
+    padding-bottom: 36px;
+    gap: 32px;
+  }
+  .pie__nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+  }
+  .pie__columna {
+    gap: 12px;
+  }
+  .pie__lista {
+    gap: 10px;
+  }
+  .pie__lista a,
+  .pie__boton {
+    font-size: 13px;
+    min-height: 28px;
+  }
+  .pie__credito {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+}
+
+/* Accesibilidad: Alto contraste */
+html[data-color=contraste] .site-footer {
+  background: #000000;
+  color: #ffffff;
+  border-top: 2px solid #ffffff;
+}
+
+html[data-color=contraste] .pie__logo {
+  color: #ffffff;
+}
+
+html[data-color=contraste] .pie__titulo {
+  color: #ffff00;
+}
+
+html[data-color=contraste] :is(.pie__lista a, .pie__boton, .pie__lema, .pie__credito) {
+  color: #ffffff;
+}
+
+html[data-color=contraste] .pie__arriba {
+  color: #ffff00;
+}
+
+html[data-color=contraste] .site-footer :is(a, button):focus-visible {
+  outline: 3px solid #004fdf;
+}
+
+/* Accesibilidad: Reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  .site-footer * {
+    transition: none !important;
+  }
+}

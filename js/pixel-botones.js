@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const selector = '.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton,.juego-descarga__boton,.evento-boton,.home-encuentro .boton';
+  const selector = '.plataforma,.territorio__texto .boton,.comunidad .boton,.nav__ingresar,.bloque .boton,.acciones > .accion,.compartir__acciones .boton,.juego-descarga__boton,.evento-boton,.home-encuentro .boton';
   const estados = new Set();
   const permiteHover = matchMedia('(hover:hover)');
   const marcarClaros=raiz=>raiz.querySelectorAll('button,a.boton,a[download]').forEach(b=>{

@@ -46,7 +46,7 @@
 <link rel="stylesheet" href="css/home-encuentro.css?v=limpieza-1">
 <link rel="stylesheet" href="css/ranking-home.css?v=limpieza-1">
 <link rel="stylesheet" href="css/visor-simbolo.css?v=proximos-1">
-<link rel="stylesheet" href="css/home-descarga.css?v=ranking-2">
+<link rel="stylesheet" href="css/home-descarga.css?v=tiendas-1"><link rel="stylesheet" href="css/plataformas.css?v=tiendas-20">
 <link rel="stylesheet" href="css/mapa-social.css?v=correcciones-1">
 <link rel="stylesheet" href="css/flora-querandi.css?v=especies-3d-1">
 <link rel="stylesheet" href="css/zoom-detalle.css?v=zoom-detalle-1">
@@ -56,8 +56,9 @@
 <script src="js/archivo-transicion.js?v=viaje-1"></script>
 <link rel="stylesheet" href="css/header.css?v=limpieza-1"><link rel="stylesheet" href="css/acceso.css?v=pixeles-4">
 <link rel="stylesheet" href="css/grilla.css?v=juego-1">
+<link rel="stylesheet" href="css/footer.css">
 </head>
-<body>
+<body id="arriba">
 <a class="saltar-contenido" href="#territorio-titulo">Saltar al contenido</a>
 <svg class="iconos-sitio" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
 <symbol id="i-buscar" viewBox="0 -960 960 960"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></symbol>
@@ -188,18 +189,78 @@
         <div class="juego-descarga__contenido">
           <h2 id="home-descarga-titulo">Descargá ahora<strong>MUSUQ PACHA</strong></h2>
           <div class="juego-descarga__acciones">
-            <button type="button" class="juego-descarga__boton" data-plataforma="Windows" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--windows" aria-hidden="true"></span><span>DESCARGAR PARA WINDOWS</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
-            <button type="button" class="juego-descarga__boton juego-descarga__boton--mac" data-plataforma="Mac" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--mac" aria-hidden="true"></span><span>DESCARGAR PARA MAC</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+            <button type="button" class="juego-descarga__boton" data-plataforma="Windows" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--windows" aria-hidden="true"></span><span>Descargar para Windows</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
+            <button type="button" class="juego-descarga__boton juego-descarga__boton--mac" data-plataforma="Mac" aria-describedby="home-descarga-prototipo"><span class="juego-icono juego-icono--mac" aria-hidden="true"></span><span>Descargar para Mac</span><span class="juego-icono juego-icono--download" aria-hidden="true"></span></button>
           </div>
           <dl class="juego-datos">
             <div><dt><span class="juego-icono juego-icono--package" aria-hidden="true"></span>VERSIÓN</dt><dd>1.0 · 7 de septiembre de 2026</dd></div>
             <div><dt><span class="juego-icono juego-icono--drive" aria-hidden="true"></span>TAMAÑO</dt><dd>2,4 GB</dd></div>
             <div><dt><span class="juego-icono juego-icono--translate" aria-hidden="true"></span>IDIOMA</dt><dd>Español rioplatense · subtítulos</dd></div>
           </dl>
-          <img class="juego-plataformas" src="assets/juego/plataformas.png" width="1252" height="127" alt="Referencia de plataformas: PlayStation 5, PC, Xbox Series X/S, Google Play Games, App Store, Google Play y Epic Games Store. Clasificación de referencia: Teen. Imagen del prototipo, sin enlaces de descarga.">
           <p class="solo-lectores" id="home-descarga-prototipo">Solo prototipo: no hay archivos de descarga disponibles.</p>
         </div>
-      </section>
+        <div class="plataformas" data-plataformas="home-descarga-prototipo" aria-label="Plataformas y clasificación del prototipo"></div>
+        </section>
+<footer class="pie site-footer" id="pie">
+  <div class="pie__contenedor">
+    <div class="pie__marca">
+      <a class="pie__logo" href="#arriba">MUSUQ PACHA</a>
+      <p class="pie__lema">Un territorio,<br>muchas historias.</p>
+    </div>
+
+    <nav class="pie__nav" aria-label="Navegación del pie de página">
+      <div class="pie__columna">
+        <h3 class="pie__titulo">Territorio</h3>
+        <ul class="pie__lista">
+          <li><a href="#territorio">Explorar el mapa</a></li>
+          <li><a href="#archivo">Los pueblos</a></li>
+          <li><a href="archivo.html">Archivo de los pueblos</a></li>
+          <li><a href="arboles.html">Árboles nativos</a></li>
+        </ul>
+      </div>
+
+      <div class="pie__columna">
+        <h3 class="pie__titulo">Juego</h3>
+        <ul class="pie__lista">
+          <li><a href="juego.html">Conocé el juego</a></li>
+          <li><a href="juego.html#avance">Ver avance</a></li>
+          <li><a href="#descarga">Descargar prototipo</a></li>
+          <li><a href="#descarga">Versión y plataformas</a></li>
+        </ul>
+      </div>
+
+      <div class="pie__columna">
+        <h3 class="pie__titulo">Comunidad</h3>
+        <ul class="pie__lista">
+          <li><a href="simbolos/">Crear un símbolo</a></li>
+          <li><a href="#comunidad">Ranking semanal</a></li>
+          <li><a href="eventos.html#proyecto">Subir un proyecto</a></li>
+          <li><button type="button" class="pie__boton" data-pie-registro>Crear cuenta</button></li>
+        </ul>
+      </div>
+
+      <div class="pie__columna">
+        <h3 class="pie__titulo">Eventos</h3>
+        <ul class="pie__lista">
+          <li><a href="eventos.html#evento-principal">Próximo encuentro</a></li>
+          <li><a href="eventos.html#actividades">Programa</a></li>
+          <li><a href="eventos.html#inscripcion">Inscripción</a></li>
+          <li><a href="eventos.html#eventos-previos">Eventos anteriores</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div class="pie__inferior">
+    <div class="pie__inferior-contenedor">
+      <p class="pie__credito">MUSUQ PACHA · Proyecto académico TIF · Diseño Multimedia y de Interacción · UADE · 2026</p>
+      <div class="pie__inferior-enlaces">
+        <button type="button" class="pie__boton pie__boton--inferior" data-pie-accesibilidad>Accesibilidad</button>
+        <a class="pie__arriba" href="#arriba" aria-label="Volver al inicio de la página">Volver arriba ↑</a>
+      </div>
+    </div>
+  </div>
+</footer>
 <div class="audio-mapa" id="audio-mapa" hidden><button class="boton-icono boton-audio" data-audio="efectos" type="button" aria-label="Silenciar sonidos" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-volumen"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-volumen-lleno"/></svg></button><button class="boton-icono boton-audio" data-audio="musica" type="button" aria-label="Silenciar música" aria-pressed="false"><svg class="audio__linea" aria-hidden="true"><use href="#i-musica"/></svg><svg class="audio__lleno" aria-hidden="true"><use href="#i-musica"/></svg></button></div>
 <button class="acceso-mapa boton-icono" id="accesibilidad-mapa" type="button" aria-label="Abrir menú de accesibilidad" aria-haspopup="dialog" aria-controls="menu-accesibilidad" aria-expanded="false" hidden><svg><use href="#i-acceso"/></svg></button>
 
@@ -216,7 +277,7 @@
 <script src="simbolos/js/fondo.js?v=18"></script>
 <script src="js/home-ambiente.js?v=correcciones-1"></script>
 <script src="js/mapa-social.js?v=limpieza-1"></script>
-<script src="js/pixel-botones.js?v=encuentro-1"></script>
+<script src="js/plataformas.js?v=tiendas-7"></script><script src="js/pixel-botones.js?v=tiendas-1"></script>
 <script src="js/home-eventos.js?v=ajustes-3"></script>
 <script src="js/home-encuentro.js?v=encuentro-1"></script>
 </body></html>
