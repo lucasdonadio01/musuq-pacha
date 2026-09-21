@@ -55,7 +55,7 @@
   const perfil = document.createElement('div');
   perfil.className = 'perfil-demo'; perfil.id = 'main-perfil-demo'; perfil.hidden = true;
   const usuario = '@tomi.rivas', nombrePorDefecto = 'Tomás Rivas';
-  perfil.innerHTML = '<strong class="perfil-nombre"></strong><span class="perfil-demo__estado">'+usuario+'</span><p class="perfil-notificacion">Tenés desbloqueados <strong>Qom, Querandí y Omaguaca</strong>.</p><nav aria-label="Tu cuenta"><button type="button" data-cuenta="perfil">Mi perfil '+icono('login')+'</button><button type="button" data-cuenta="canjear">Canjear código '+icono('qr')+'</button><button type="button" data-cuenta="configuracion">Configuración '+icono('acceso')+'</button><button class="perfil-demo__salir" type="button">Cerrar sesión '+icono('login')+'</button></nav>';
+  perfil.innerHTML = '<strong class="perfil-nombre"></strong><span class="perfil-demo__estado">'+usuario+'</span><button type="button" class="perfil-canje" data-cuenta="canjear">'+icono('qr')+'Canjear código</button><nav aria-label="Tu cuenta"><button type="button" data-cuenta="perfil">Mi perfil '+icono('login')+'</button><button type="button" class="perfil-demo__ajustes">Configuración '+icono('ajustes')+'</button><button class="perfil-demo__salir" type="button">Cerrar sesión '+icono('login')+'</button></nav>';
   header.append(perfil);
   const cuentaKey='musuq-perfil-local-v1';
   let cuenta={nombre:nombrePorDefecto,notificaciones:true};
@@ -79,7 +79,7 @@
     }else{
       contenido.innerHTML='<form class="cuenta-form"><label>Nombre de perfil<input name="nombre" maxlength="40" required autocomplete="nickname"></label><label class="cuenta-check"><span>Mostrar avisos de territorios desbloqueados</span><input name="notificaciones" type="checkbox"></label><button type="button" class="cuenta-accesibilidad">Ajustes de accesibilidad</button><button class="cuenta-primario" type="submit">Guardar cambios</button><p role="status" class="cuenta-estado"></p></form>';
       const form=contenido.querySelector('form');form.elements.nombre.value=cuenta.nombre;form.elements.notificaciones.checked=cuenta.notificaciones;
-      form.onsubmit=e=>{e.preventDefault();cuenta.nombre=form.elements.nombre.value.trim()||nombrePorDefecto;cuenta.notificaciones=form.elements.notificaciones.checked;perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;try{localStorage.setItem(cuentaKey,JSON.stringify(cuenta));contenido.querySelector('[role=status]').textContent='Cambios guardados.';}catch{contenido.querySelector('[role=status]').textContent='Cambios aplicados en esta visita.';}};
+      form.onsubmit=e=>{e.preventDefault();cuenta.nombre=form.elements.nombre.value.trim()||nombrePorDefecto;cuenta.notificaciones=form.elements.notificaciones.checked;perfil.querySelector('.perfil-nombre').textContent=cuenta.nombre;try{localStorage.setItem(cuentaKey,JSON.stringify(cuenta));contenido.querySelector('[role=status]').textContent='Cambios guardados.';}catch{contenido.querySelector('[role=status]').textContent='Cambios aplicados en esta visita.';}};
       contenido.querySelector('.cuenta-accesibilidad').onclick=()=>{cerrarCuenta(true);document.getElementById('abrir-accesibilidad').click();};
     }
     cuentaDialog.querySelector('[data-cuenta-cerrar]').onclick=()=>cerrarCuenta();
@@ -187,7 +187,6 @@
       login.title = 'Iniciar sesión';
     }
     document.body.classList.toggle('sesion-demo',activa);
-    perfil.querySelector('.perfil-notificacion').hidden=!cuenta.notificaciones;
   }
   function cambiarSesion(valor, persistir = true) {
     activa = valor; cerrarPerfil(); dibujarSesion();

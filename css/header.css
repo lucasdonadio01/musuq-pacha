@@ -66,8 +66,8 @@ html[data-color=contraste] .site-header .nav__links,html[data-color=contraste] .
 .site-header .perfil-demo nav button{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:12px 14px;border:0;border-radius:0;background:#363636;color:#fff;font:500 14px 'Space Grotesk',sans-serif;cursor:pointer;text-align:left}
 .site-header .perfil-demo nav button:hover{background:#6a40bc;color:#fff}
 .site-header .perfil-demo nav .perfil-demo__salir{background:#f66227;color:#1a1a1a}
-.site-header .perfil-demo .perfil-notificacion{padding:14px;background:#33283f;color:#d6bcff;font-size:13px}
-.site-header .perfil-notificacion strong{font-size:inherit;font-weight:600}
+.site-header .perfil-demo .perfil-canje{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin:18px 0;padding:14px;border:0;border-radius:0;background:#33283f;color:#e4fe44;font:500 14px 'Space Grotesk',sans-serif;text-align:left;cursor:pointer;transition:background .2s ease}.site-header .perfil-demo .perfil-canje svg{width:20px;height:20px;flex:none;fill:currentColor}.site-header .perfil-demo .perfil-canje:hover{background:#43304f}.site-header .perfil-demo .perfil-canje:focus-visible{outline:3px solid #e4fe44;outline-offset:2px}
+
 .cuenta-dialog{box-sizing:border-box;width:520px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 48px);overflow:auto;border:0;border-radius:0;padding:32px;background:#222;color:#fff;box-shadow:8px 16px 32px #0006;font-family:'Space Grotesk',sans-serif}
 .cuenta-dialog::backdrop{background:#101010a6;backdrop-filter:blur(5px)}
 .cuenta-cabecera{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:28px;border-bottom:1px solid #645074;padding-bottom:16px}
