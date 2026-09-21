@@ -2531,16 +2531,6 @@
     const tambien = document.getElementById('vista-arbol-tambien');
     tambien.textContent = otras.length ? 'También en: ' + [...new Set(otras)].join(' · ') : '';
     tambien.hidden = !otras.length;
-    const lista = gruposZona();
-    const indice = lista.findIndex((g) => g.clave === grupo.clave);
-    const siguiente = lista.slice(indice + 1).concat(lista.slice(0, Math.max(0, indice))).find((g) => g.id !== grupo.id) || null;
-    const botonSiguiente = document.getElementById('vista-arbol-siguiente');
-    botonSiguiente.hidden = !siguiente;
-    if (siguiente) {
-      botonSiguiente.dataset.clave = siguiente.clave;
-      document.getElementById('vista-arbol-siguiente-nombre').textContent = 'Ver ' + window.MUSUQ_BOSQUES.especies[siguiente.id].nombre;
-      document.getElementById('vista-arbol-siguiente-sub').textContent = 'También nativo de los ' + zonaFijada.nombre.toLowerCase();
-    }
     vistaArbol.style.setProperty('--zona-color', colorDeZona(zonaFijada));
   }
 
@@ -2581,12 +2571,6 @@
   }
 
   document.getElementById('vista-arbol-volver')?.addEventListener('click', cerrarArbol);
-  document.getElementById('vista-arbol-siguiente')?.addEventListener('click', (e) => {
-    const grupo = gruposZona().find((g) => g.clave === e.currentTarget.dataset.clave);
-    if (grupo) {
-      abrirArbol(grupo);
-    }
-  });
   document.getElementById('ver-arboles')?.addEventListener('click', () => {
     const lista = gruposZona();
     if (lista.length) {
@@ -3005,6 +2989,13 @@
     return i===null?null:{x:C.x[i],y:sueloCelda(i)+.025,z:-C.y[i],i};
   }
   window.MUSUQ_MAPA_UI={
+    // árboles nativos de la zona fijada, uno por especie, para el panel de fauna y flora
+    arbolesZona(){
+      if(!zonaFijada||!window.MUSUQ_BOSQUES)return [];
+      const vistos=new Set();
+      return gruposZona().filter(g=>!vistos.has(g.id)&&vistos.add(g.id)).map(g=>({clave:g.clave,id:g.id,nombre:window.MUSUQ_BOSQUES.especies[g.id]?.nombre||g.id}));
+    },
+    verArbol(clave){const grupo=gruposZona().find(g=>g.clave===clave);if(grupo)abrirArbol(grupo);},
     zonas:zonas.map(({id,nombre,criterio})=>({id,nombre,criterio})),
     estado:()=>({explorando,zonaId:zonaFijada?.id||null,nivel:viviendasMapa?.interior||floraMapa?.seleccion||habitat?.seleccion?3:viviendasMapa?.seleccion||arbolFoco?2:zonaFijada?1:0,arbol:arbolFoco?.id||null,filtro:filtroElementos,fauna:habitat?.seleccion||null,flora:floraMapa?.seleccion||null,faunaLista:!!habitat?.disponible,vivienda:viviendasMapa?.seleccion||null,interior:!!viviendasMapa?.interior}),
     verVivienda(id){return viviendasMapa?.abrir(id);},

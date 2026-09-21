@@ -146,8 +146,6 @@
     const criterio = panel.querySelector('.panel__criterio');
     if (criterio) criterio.classList.add('ficha-ubicacion');
     protegerScroll(panel);
-    const siguiente=document.getElementById('vista-arbol-siguiente');
-    document.getElementById('vista-arbol-descripcion')?.after(siguiente);
   }
   function construirComentarios() {
     panelComentarios = crear('aside', 'mapa-comentarios'); panelComentarios.id = 'mapa-comentarios'; panelComentarios.setAttribute('aria-label', 'Comentarios de ejemplo');
@@ -348,7 +346,21 @@
     especies.inert=!detalle||filtros.classList.contains('mapa-elementos--cerrado');
     estadoFiltros.hidden=detalle||!estadoFiltros.textContent;
     especies.querySelectorAll('.mapa-especies__grupo').forEach(g=>g.hidden=estado.zonaId!==14);
-    especies.querySelector('.mapa-especies__vacio').hidden=estado.zonaId===14;
+    // Árboles nativos de la zona: cada uno abre su vista, el que se está viendo queda marcado
+    let arboles=especies.querySelector('.mapa-especies__grupo--arboles');
+    if(!arboles){
+      arboles=crear('div','mapa-especies__grupo mapa-especies__grupo--arboles');arboles.append(crear('p','mapa-especies__rotulo','Árboles nativos'));especies.prepend(arboles);
+      arboles.addEventListener('click',e=>{const b=e.target.closest('[data-arbol]');if(b)ui.verArbol(b.dataset.arbol);});
+    }
+    const listaArboles=detalle?(ui.arbolesZona?.()||[]):[];
+    const firmaArboles=listaArboles.map(a=>a.clave).join(',');
+    if(arboles.dataset.firma!==firmaArboles){
+      arboles.dataset.firma=firmaArboles;arboles.querySelectorAll('[data-arbol]').forEach(b=>b.remove());
+      listaArboles.forEach(a=>{const b=crear('button','mapa-especie');b.type='button';b.dataset.arbol=a.clave;b.dataset.especieArbol=a.id;b.innerHTML=icono('arbol');b.append(crear('span','',a.nombre));arboles.append(b);});
+    }
+    arboles.hidden=!listaArboles.length;
+    arboles.querySelectorAll('[data-arbol]').forEach(b=>b.setAttribute('aria-pressed',String(estado.arbol===b.dataset.especieArbol)));
+    especies.querySelector('.mapa-especies__vacio').hidden=estado.zonaId===14||listaArboles.length>0;
     especies.querySelectorAll('[data-especie]').forEach(b=>{
       b.setAttribute('aria-pressed',String(estado[b.dataset.tipo]===b.dataset.especie));
       b.disabled=b.dataset.tipo==='fauna'&&!estado.faunaLista;
