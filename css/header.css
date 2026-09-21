@@ -130,3 +130,17 @@ html[data-color=contraste] #menu-accesibilidad button{background:#fff;color:#000
 .cuenta-logro h3{margin:4px 0 0;font:500 clamp(30px,2.8vw,44px)/1.06 'Space Grotesk',Arial,sans-serif;letter-spacing:-.02em;color:#7ee2a0}
 .cuenta-logro p:not(.cuenta-canje__codigo){max-width:40ch;margin:0;font:400 16px/1.5 Archivo,Arial,sans-serif;color:#ddd}
 .cuenta-logro .cuenta-primario{min-width:180px;margin-top:10px}
+/* Aviso de código inválido: se abre encima del canje y deja escribirlo de nuevo */
+.cuenta-canje--error input[name=codigo]{border-color:#f66227;box-shadow:0 0 0 1px #f66227;color:#f66227}
+dialog.cuenta-error{box-sizing:border-box;width:400px;max-width:calc(100vw - 40px);margin:auto;padding:32px 28px;border:0;border-radius:0;background:#2b2b2b;color:#fff;box-shadow:8px 16px 32px #0008;font-family:'Space Grotesk',sans-serif;text-align:center}
+dialog.cuenta-error[open]{display:grid;justify-items:center;gap:12px}
+dialog.cuenta-error::backdrop{background:#101010b3;backdrop-filter:blur(3px)}
+.cuenta-error__icono{display:grid;place-items:center;width:64px;height:64px;background:#f66227;color:#1a1a1a}
+.cuenta-error__icono svg{width:40px;height:40px;fill:currentColor}
+.cuenta-error h3{margin:6px 0 0;font-size:22px;line-height:1.2;font-weight:500;color:#fff}
+.cuenta-error p{max-width:32ch;margin:0;font-size:14px;line-height:1.5;color:#ddd}
+.cuenta-error .cuenta-primario{min-width:200px;margin-top:10px}
+.cuenta-error .cuenta-primario:hover{background:#6a40bc;color:#fff}
+.cuenta-error :focus-visible{outline:3px solid #b58aff;outline-offset:3px}
+html[data-color=contraste] dialog.cuenta-error{background:#fff;color:#000;border:2px solid #111}
+html[data-color=contraste] .cuenta-error :is(h3,p){color:#000}

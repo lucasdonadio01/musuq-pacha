@@ -87,20 +87,43 @@
     if(!quiet())cuentaDialog.animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:240,easing:'cubic-bezier(.16,1,.3,1)'});
     cuentaDialog.querySelector('[data-cuenta-cerrar]').focus();
   }
+  /* Prevención de errores del canje: el primer intento se completa con una letra cambiada, el
+     aviso lo marca como inválido y "Escribir de nuevo" completa el código correcto. */
+  const errorCodigo=document.createElement('dialog');errorCodigo.className='cuenta-error';
+  errorCodigo.setAttribute('aria-labelledby','cuenta-error-titulo');errorCodigo.setAttribute('aria-describedby','cuenta-error-texto');
+  errorCodigo.innerHTML='<span class="cuenta-error__icono" aria-hidden="true"><svg viewBox="0 -960 960 960" focusable="false"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></span><h3 id="cuenta-error-titulo">Este código no es válido</h3><p id="cuenta-error-texto">Revisá que las letras estén bien escritas y en orden. Los códigos tienen seis letras.</p><button class="cuenta-primario" type="button">Escribir de nuevo</button>';
+  document.body.append(errorCodigo);
+  let alCerrarError=null;
+  const cerrarError=()=>{if(!errorCodigo.open)return;errorCodigo.close();const seguir=alCerrarError;alCerrarError=null;seguir?.();};
+  errorCodigo.querySelector('button').addEventListener('click',cerrarError);
+  errorCodigo.addEventListener('cancel',e=>{e.preventDefault();cerrarError();});
+  errorCodigo.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();cerrarError();}});
   function armarCanje(contenido){
-    const codigo='PAMPAS';
+    const codigo='PAMPAS',codigoErrado='PAMAPS';let intento=0;
     contenido.innerHTML='<form class="cuenta-form cuenta-canje"><p class="cuenta-canje__ayuda">Ingresá el código que recibiste en un evento o en el juego. Tocá el campo y lo completamos por vos.</p><label>Código<input name="codigo" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label><button class="cuenta-primario" type="submit" disabled>Canjear</button><p role="status" class="cuenta-estado"></p></form>';
     const form=contenido.querySelector('form'),campo=form.elements.codigo,boton=form.querySelector('[type=submit]'),estado=form.querySelector('[role=status]');
     let fase='vacio';
     const completar=async()=>{
       if(fase!=='vacio')return;fase='llenando';form.classList.add('cuenta-canje--escribiendo');
-      for(let i=1;i<=codigo.length;i++){campo.value=codigo.slice(0,i);if(!quiet())await new Promise(r=>setTimeout(r,110));}
+      const escrito=intento===0?codigoErrado:codigo;
+      for(let i=1;i<=escrito.length;i++){campo.value=escrito.slice(0,i);if(!quiet())await new Promise(r=>setTimeout(r,110));}
       form.classList.remove('cuenta-canje--escribiendo');fase='listo';boton.disabled=false;estado.textContent='Código listo. Tocá Canjear.';
+      if(intento>0)boton.focus();
+    };
+    const reescribir=()=>{
+      form.inert=false;form.classList.remove('cuenta-canje--error');campo.removeAttribute('aria-invalid');
+      campo.value='';boton.disabled=true;estado.textContent='';fase='vacio';intento=1;completar();
     };
     campo.addEventListener('pointerdown',completar);campo.addEventListener('focus',completar);
     form.onsubmit=e=>{
       e.preventDefault();if(fase!=='listo')return;
-      if(campo.value.trim().toUpperCase()!==codigo){estado.textContent='Ese código no es válido. Revisalo y probá de nuevo.';return;}
+      if(campo.value.trim().toUpperCase()!==codigo){
+        form.classList.add('cuenta-canje--error');campo.setAttribute('aria-invalid','true');estado.textContent='';
+        if(!quiet())campo.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(7px)'},{transform:'translateX(-4px)'},{transform:'translateX(0)'}],{duration:320,easing:'ease-out'});
+        form.inert=true;alCerrarError=reescribir;errorCodigo.showModal();errorCodigo.querySelector('button').focus();
+        if(!quiet())errorCodigo.animate([{opacity:0,transform:'translateY(12px) scale(.97)'},{opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.16,1,.3,1)'});
+        return;
+      }
       contenido.innerHTML='<div class="cuenta-logro" role="status"><canvas width="260" height="260" aria-hidden="true"></canvas><p class="cuenta-canje__codigo">'+codigo+'</p><h3>¡Código canjeado!</h3><p>La recompensa ya está en tu partida. La vas a ver en tu inventario la próxima vez que abras Musuq Pacha.</p><button class="cuenta-primario" type="button" data-cuenta-listo>Listo</button></div>';
       cuentaDialog.classList.add('cuenta-dialog--logro');
       if(!quiet())cuentaDialog.animate([{opacity:0},{opacity:1}],{duration:380,easing:'ease-out'});
