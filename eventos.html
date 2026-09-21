@@ -37,10 +37,10 @@
   <link rel="stylesheet" href="css/fuente.css">
   <link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
   <link rel="stylesheet" href="css/sonido.css?v=audio-3">
-  <link rel="stylesheet" href="css/header.css?v=perfil-2"><link rel="stylesheet" href="css/acceso.css?v=pixeles-4">
+  <link rel="stylesheet" href="css/header.css?v=canje-error-1"><link rel="stylesheet" href="css/acceso.css?v=pixeles-4">
   <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
   <link rel="stylesheet" href="css/grilla.css?v=juego-1">
-  <link rel="stylesheet" href="css/eventos.css?v=limpieza-1">
+  <link rel="stylesheet" href="css/eventos.css?v=verificar-2">
   <link rel="stylesheet" href="css/footer.css">
 </head>
 <body class="pagina-eventos" id="arriba">
@@ -249,6 +249,13 @@
     </form>
   </dialog>
 
+  <dialog class="evento-dialogo confirmar-dialogo" id="dialogo-verificar-proyecto" aria-labelledby="verificar-titulo" aria-describedby="verificar-texto">
+    <p class="confirmar-dialogo__rotulo">Antes de enviar</p>
+    <h2 id="verificar-titulo">¿Enviar tu propuesta?</h2>
+    <p class="confirmar-dialogo__texto" id="verificar-texto">Vamos a mandar «<span data-verificar-nombre></span>» al equipo del encuentro con tu nombre y tu correo. Revisá que esté todo bien antes de confirmar.</p>
+    <div class="confirmar-dialogo__acciones"><button class="confirmar-boton confirmar-boton--cancelar" type="button" data-cerrar><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>Cancelar</button><button class="confirmar-boton confirmar-boton--aceptar" type="button" data-verificar-confirmar><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>Confirmar</button></div>
+  </dialog>
+
   <dialog class="evento-confirmacion" id="dialogo-confirmacion" aria-labelledby="confirmacion-titulo" aria-describedby="confirmacion-texto">
     <canvas class="evento-confirmacion__patron" width="280" height="280" aria-hidden="true"></canvas>
     <h2 id="confirmacion-titulo">¡Inscripción confirmada!</h2>
@@ -257,12 +264,12 @@
   </dialog>
 
   <script src="js/header-plantilla.js?v=perfil-2"></script>
-  <script src="js/acceso.js?v=pixeles-5"></script><script src="js/header.js?v=perfil-2"></script>
+  <script src="js/acceso.js?v=pixeles-5"></script><script src="js/header.js?v=canje-error-2"></script>
   <script src="js/accesibilidad.js?v=main-1"></script>
   <script src="js/sonido.js?v=main-1"></script>
   <script src="simbolos/js/fondo.js?v=18"></script>
   <script src="simbolos/js/motor.js?v=ranking-morph-1"></script>
-  <script src="js/eventos.js?v=eventos-4"></script>
+  <script src="js/eventos.js?v=verificar-1"></script>
   <script src="js/pixel-botones.js?v=tiendas-1"></script>
 </body>
 </html>

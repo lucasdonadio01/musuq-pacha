@@ -221,3 +221,20 @@ html[data-color=contraste] .pagina-eventos{background:#000}
 html[data-color=contraste] :is(.evento-tarjeta,.evento-pixel){background:#000;outline:2px solid #fff}
 html[data-color=contraste] .evento-propuesta{background:#000;outline:2px solid #fff}
 html[data-color=grises] .eventos-fondo{filter:grayscale(1)}
+
+/* Overlays de confirmación: mismo sistema en el generador de símbolos y en eventos */
+dialog.confirmar-dialogo{box-sizing:border-box;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:30px;border:0;border-radius:0;background:#222;color:#f5f2eb;box-shadow:12px 20px 70px #0008;font-family:'Space Grotesk',Arial,sans-serif;overflow:auto}
+dialog.confirmar-dialogo::backdrop{background:rgb(16 16 16 / .66);backdrop-filter:blur(5px)}
+.confirmar-dialogo__rotulo{margin:0 0 12px;font:500 12px/1.2 'Space Grotesk',Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#cbb0f7}
+.confirmar-dialogo h2{margin:0 0 16px;font:500 28px/1.1 'Space Grotesk',Arial,sans-serif;letter-spacing:-.02em;color:#e4fe44}
+.confirmar-dialogo__texto{margin:0;font:400 15px/1.5 Archivo,Arial,sans-serif;color:#ddd}
+.confirmar-dialogo__acciones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+.confirmar-boton{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:0;width:100%;height:52px;padding:0 16px;border:2px solid #f66227;border-radius:0;background:#f66227;color:#1a1a1a;font:500 15px/1 'Space Grotesk',Arial,sans-serif;letter-spacing:0;text-transform:none;box-shadow:none;cursor:pointer;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.confirmar-boton svg{display:block;width:20px;height:20px;flex:none;fill:currentColor}
+.confirmar-boton--cancelar{background:transparent;border-color:#6b6b6b;color:#f5f2eb}
+.confirmar-boton--cancelar:hover{background:#d93a2f;border-color:#d93a2f;color:#fff}
+.confirmar-boton--aceptar:hover{background:#6a40bc;border-color:#6a40bc;color:#fff}
+.confirmar-boton:focus-visible{outline:3px solid #b58aff;outline-offset:3px}
+@media(max-width:560px){dialog.confirmar-dialogo{padding:22px}.confirmar-dialogo h2{font-size:24px}}
+html[data-color=contraste] dialog.confirmar-dialogo{background:#fff;color:#000;border:2px solid #111}
+html[data-color=contraste] .confirmar-dialogo :is(h2,p){color:#000}

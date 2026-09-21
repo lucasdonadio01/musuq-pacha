@@ -177,10 +177,22 @@
     };
     form.addEventListener('pointerdown', disparar);
     form.addEventListener('focusin', disparar);
+    // Subir proyecto pide confirmación antes de enviar, en un diálogo encima del formulario
+    const verificar = form.dataset.autocompletar === 'proyecto' ? document.getElementById('dialogo-verificar-proyecto') : null;
+    verificar?.querySelector('[data-verificar-confirmar]').addEventListener('click', () => { verificar.sinFoco = true; cerrar(verificar); enviarDatos(); });
     form.addEventListener('submit', e => {
       e.preventDefault();
       if (fase !== 'listo') return;
       if (!form.checkValidity()) { form.reportValidity(); return; }
+      if (verificar) {
+        verificar.querySelector('[data-verificar-nombre]').textContent = form.elements.proyecto.value.trim();
+        abrir(verificar, enviar);
+        verificar.querySelector('[data-verificar-confirmar]').focus();
+        return;
+      }
+      enviarDatos();
+    });
+    function enviarDatos() {
       const correo = form.elements.correo.value.trim();
       confirmacion.querySelector('h2').textContent = d.titulo;
       confirmacion.querySelector('p').textContent = d.mensaje(correo);
@@ -192,7 +204,7 @@
         abrir(confirmacion, origen);
         iniciarPatron();
       }, quieto() ? 0 : 280);
-    });
+    }
   });
 
   if (location.hash === '#inscripcion') {
