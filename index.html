@@ -33,7 +33,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#202020"><title>Musuq Pacha · El territorio</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="css/estilos.css?v=mapa-entrada-4">
+<link rel="stylesheet" href="css/estilos.css?v=deslizar-3">
 <link rel="stylesheet" href="css/accesibilidad.css?v=main-1">
 <link rel="stylesheet" href="css/sonido.css?v=audio-3">
 <link rel="stylesheet" href="css/bosques.css?v=archivo-1">
@@ -47,16 +47,18 @@
 <link rel="stylesheet" href="css/ranking-home.css?v=limpieza-1">
 <link rel="stylesheet" href="css/visor-simbolo.css?v=proximos-1">
 <link rel="stylesheet" href="css/home-descarga.css?v=tiendas-1"><link rel="stylesheet" href="css/plataformas.css?v=tiendas-20">
-<link rel="stylesheet" href="css/mapa-social.css?v=correcciones-1">
+<link rel="stylesheet" href="css/mapa-social.css?v=ficha-scroll-1">
 <link rel="stylesheet" href="css/flora-querandi.css?v=especies-3d-1">
 <link rel="stylesheet" href="css/zoom-detalle.css?v=zoom-detalle-1">
 <link rel="stylesheet" href="css/fotos-especies.css?v=correcciones-1">
 <link rel="stylesheet" href="css/viviendas.css?v=omaguaca-1">
 <link rel="stylesheet" href="css/pixel-botones.css?v=correcciones-1">
 <script src="js/archivo-transicion.js?v=viaje-1"></script>
-<link rel="stylesheet" href="css/header.css?v=limpieza-1"><link rel="stylesheet" href="css/acceso.css?v=pixeles-4">
+<link rel="stylesheet" href="css/header.css?v=perfil-2"><link rel="stylesheet" href="css/acceso.css?v=pixeles-4">
 <link rel="stylesheet" href="css/grilla.css?v=juego-1">
 <link rel="stylesheet" href="css/footer.css">
+<link rel="stylesheet" href="css/deslizar.css?v=deslizar-2">
+<link rel="stylesheet" href="css/fichas-plegables.css?v=plegables-2">
 </head>
 <body id="arriba">
 <a class="saltar-contenido" href="#territorio-titulo">Saltar al contenido</a>
@@ -267,7 +269,7 @@
 
 
 <script src="simbolos/js/pueblos.js?v=18"></script><script src="simbolos/js/motor.js?v=ranking-morph-1"></script>
-<script src="js/header-plantilla.js?v=perfil-1"></script><script src="js/acceso.js?v=pixeles-5"></script><script src="js/header.js?v=acceso-1"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
+<script src="js/header-plantilla.js?v=perfil-2"></script><script src="js/acceso.js?v=pixeles-5"></script><script src="js/header.js?v=perfil-2"></script><script src="js/accesibilidad.js?v=main-1"></script><script src="js/sonido.js?v=main-1"></script>
 <script src="js/three.min.js"></script><script src="js/GLTFLoader.js?v=r128"></script><script src="js/viviendas-detalle.js?v=ajustes-3"></script><script src="js/viviendas-querandi.js?v=ajustes-3"></script><script src="js/datos-mapa.js"></script><script src="js/omaguaca-territorio.js?v=omaguaca-1"></script><script src="js/arboles-sprites.js"></script><script src="js/fichas.js"></script><script src="js/bosques.js?v=omaguaca-1"></script><script src="js/cartel-pixel.js?v=frame2816-margen-2"></script><script src="js/especie-cartel.js?v=flora-zoom3-1"></script><script src="js/ambiente-formas.js?v=ambiente-1"></script><script src="js/ambiente.js?v=omaguaca-1"></script><script src="js/viento.js?v=hojas-2"></script><script src="js/fotos-especies.js?v=correcciones-1"></script><script src="js/habitat.js?v=omaguaca-1"></script><script src="js/flora-querandi.js?v=fotos-1"></script><script src="js/mapa.js?v=mapa-entrada-1"></script>
 <script src="js/patron-vivo.js?v=ranking-morph-1"></script>
 <script src="simbolos/js/patrones.js?v=piezas-2"></script><script src="simbolos/js/composicion.js?v=piezas-1"></script>
@@ -279,4 +281,13 @@
 <script src="js/plataformas.js?v=tiendas-7"></script><script src="js/pixel-botones.js?v=tiendas-1"></script>
 <script src="js/home-eventos.js?v=ajustes-3"></script>
 <script src="js/home-encuentro.js?v=encuentro-1"></script>
+<button class="deslizar" id="deslizar" type="button" data-sentido="abajo" aria-label="Bajar a la siguiente sección">
+  <span class="deslizar__icono" aria-hidden="true">
+    <svg class="deslizar__mouse" viewBox="15.5 0 14 20" focusable="false"><path d="M22.5 20C20.5667 20 18.9167 19.3167 17.55 17.95C16.1833 16.5833 15.5 14.9333 15.5 13V7C15.5 5.06667 16.1833 3.41667 17.55 2.05C18.9167 0.683333 20.5667 0 22.5 0C24.4333 0 26.0833 0.683333 27.45 2.05C28.8167 3.41667 29.5 5.06667 29.5 7V13C29.5 14.9333 28.8167 16.5833 27.45 17.95C26.0833 19.3167 24.4333 20 22.5 20ZM23.5 7H27.5C27.5 5.8 27.1208 4.74167 26.3625 3.825C25.6042 2.90833 24.65 2.33333 23.5 2.1V7ZM17.5 7H21.5V2.1C20.35 2.33333 19.3958 2.90833 18.6375 3.825C17.8792 4.74167 17.5 5.8 17.5 7ZM22.5 18C23.8833 18 25.0625 17.5125 26.0375 16.5375C27.0125 15.5625 27.5 14.3833 27.5 13V9H17.5V13C17.5 14.3833 17.9875 15.5625 18.9625 16.5375C19.9375 17.5125 21.1167 18 22.5 18Z"/></svg>
+    <svg class="deslizar__flechas" viewBox="16.5 22 12 13.4" focusable="false"><path class="deslizar__flecha deslizar__flecha--1" d="M27.1 22.0004L28.5 23.4004L22.5 29.4004L16.5 23.4004L17.9 22.0004L22.5 26.5754L27.1 22.0004Z"/><path class="deslizar__flecha deslizar__flecha--2" d="M27.1 28.0004L28.5 29.4004L22.5 35.4004L16.5 29.4004L17.9 28.0004L22.5 32.5754L27.1 28.0004Z"/></svg>
+  </span>
+  <span class="deslizar__texto">Deslizar</span>
+</button>
+<script src="js/deslizar.js?v=deslizar-1"></script>
+<script src="js/fichas-plegables.js?v=plegables-1"></script>
 </body></html>

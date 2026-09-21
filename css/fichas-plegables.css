@@ -1,0 +1,24 @@
+/* Fichas del árbol, la fauna y la flora en el celular: arrancan plegadas (volver, rótulo y nombre)
+   para que se vea la ilustración, y se despliegan con la flecha o tocando la ficha. */
+.ficha-plegable .ficha-plegable__toggle{display:none}
+@media(max-width:760px){
+  .ficha-plegable .ficha-plegable__toggle{position:absolute;top:14px;right:12px;z-index:2;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:0;background:#363636;color:#fff;cursor:pointer;transition:background .2s ease,color .2s ease}
+  .ficha-plegable .ficha-plegable__toggle svg{display:block;width:26px;height:26px;fill:currentColor;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+  .ficha-plegable .ficha-plegable__toggle[aria-expanded=true] svg{transform:rotate(180deg)}
+  .ficha-plegable .ficha-plegable__toggle:hover{background:#6a40bc}
+  .ficha-plegable .ficha-plegable__toggle:focus-visible{outline:2px solid #f66227;outline-offset:3px}
+
+  .ficha-plegable.ficha--plegada{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:4px;align-items:center;align-content:center;min-height:0;padding-top:16px;padding-bottom:18px;padding-right:66px;overflow:hidden;cursor:pointer}
+  .ficha-plegable.ficha--plegada>:not(.ficha-plegable__fija):not(.ficha-plegable__toggle){display:none!important}
+  .ficha-plegable.ficha--plegada>.ficha-plegable__volver{grid-row:1/span 2;margin:0!important;min-width:44px;min-height:44px}
+  .ficha-plegable.ficha--plegada>.ficha-plegable__fija:not(.ficha-plegable__volver){grid-column:2;margin:0!important}
+  .ficha-plegable.ficha--plegada :is(.vista-arbol__nombre,#fauna-nombre,.flora-ficha h2){font-size:24px;line-height:1.1;margin:0}
+  .ficha-plegable.ficha--plegada #fauna-cientifico{display:none}
+  /* Plegada, la vuelta queda sólo con la flecha: el texto sigue disponible para lectores de pantalla. */
+  .ficha-plegable.ficha--plegada #fauna-volver{font-size:0;gap:0;padding:0;justify-content:center;width:44px}
+  .ficha-plegable.ficha--plegada .flora-cerrar{padding:0;justify-content:center;width:44px}
+  .ficha-plegable.ficha--plegada .flora-cerrar span{display:none}
+  .ficha-plegable.ficha--animando{overflow:hidden}
+}
+@media(prefers-reduced-motion:reduce){.ficha-plegable .ficha-plegable__toggle,.ficha-plegable .ficha-plegable__toggle svg{transition:none}}
+html[data-detener=true] :is(.ficha-plegable__toggle,.ficha-plegable__toggle svg){transition:none}

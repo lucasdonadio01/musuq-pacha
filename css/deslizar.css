@@ -1,0 +1,70 @@
+/* Indicador de scroll del home: mouse + doble flecha + rótulo.
+   Vive en la última columna de la grilla, pegado al margen derecho. */
+.deslizar{
+  --deslizar-ciclo:2.6s;
+  --deslizar-corrimiento:0px;
+  position:fixed;
+  right:var(--site-margin);
+  bottom:clamp(28px,4vh,56px);
+  z-index:40;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+  width:max(68px,var(--site-column));
+  padding:4px 0;
+  border:0;
+  background:none;
+  color:#e3e3e3;
+  cursor:pointer;
+  transform:translateX(var(--deslizar-corrimiento));
+  transition:color .25s ease,opacity .25s ease;
+}
+/* Corrido a la derecha del margen; el tope evita que se salga de la ventana en pantallas chicas. */
+@media(min-width:1101px){
+  .deslizar{--deslizar-corrimiento:min(155px,calc(var(--site-margin) + (var(--site-column) - 66px)/2 - 8px))}
+}
+.deslizar__icono{display:flex;flex-direction:column;align-items:center;gap:4px}
+.deslizar .deslizar__mouse{width:18px;height:26px;fill:currentColor;animation:deslizar-mouse var(--deslizar-ciclo) cubic-bezier(.34,1.56,.64,1) infinite}
+.deslizar .deslizar__flechas{width:20px;height:22px;fill:currentColor}
+.deslizar__flecha{opacity:.3;animation:deslizar-brillo var(--deslizar-ciclo) ease-in-out infinite}
+.deslizar__flecha--1{animation-delay:.2s}
+.deslizar__flecha--2{animation-delay:.42s}
+.deslizar__texto{
+  font:400 12px/1 'Space Grotesk',Arial,sans-serif;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:#fff;
+  opacity:.45;
+  animation:deslizar-rotulo var(--deslizar-ciclo) ease-in-out .66s infinite;
+}
+/* Al llegar al pie se da vuelta entero: rótulo arriba, flechas hacia arriba y el mouse abajo. */
+.deslizar[data-sentido=arriba]{flex-direction:column-reverse}
+.deslizar[data-sentido=arriba] .deslizar__icono{flex-direction:column-reverse}
+.deslizar[data-sentido=arriba] .deslizar__flechas{transform:scaleY(-1)}
+
+.deslizar:hover,.deslizar:focus-visible{color:#e4fe44}
+.deslizar:hover .deslizar__texto,.deslizar:focus-visible .deslizar__texto{color:#e4fe44}
+.deslizar:focus-visible{outline:3px solid #e4fe44;outline-offset:6px}
+/* En el mapa inmersivo y con un diálogo abierto se retira. */
+.en-mapa .deslizar,body:has(dialog[open]) .deslizar{opacity:0;pointer-events:none}
+
+@keyframes deslizar-mouse{
+  0%,58%,100%{transform:translateY(0)}
+  18%{transform:translateY(-4px)}
+  36%{transform:translateY(2px)}
+  46%{transform:translateY(0)}
+}
+@keyframes deslizar-brillo{0%,100%{opacity:.3}18%{opacity:1}48%{opacity:.3}}
+@keyframes deslizar-rotulo{0%,100%{opacity:.45}18%{opacity:1}48%{opacity:.45}}
+
+@media(max-width:700px){
+  .deslizar{right:var(--site-margin);bottom:22px;gap:5px;width:max(66px,var(--site-column))}
+  .deslizar .deslizar__mouse{width:16px;height:23px}
+  .deslizar .deslizar__flechas{width:18px;height:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  .deslizar__mouse,.deslizar__flecha,.deslizar__texto{animation:none}
+  .deslizar__flecha,.deslizar__texto{opacity:1}
+}
+html[data-detener=true] .deslizar__flecha,html[data-detener=true] .deslizar__texto{opacity:1}

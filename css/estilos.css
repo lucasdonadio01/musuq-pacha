@@ -21,6 +21,7 @@
 .mapa-entrada:hover svg{transform:translate(3px,-3px)}
 .mapa-entrada:focus-visible{outline:3px solid #e4fe44;outline-offset:6px}
 .en-mapa .mapa-entrada{opacity:0;pointer-events:none}
-@media(max-width:700px){.mapa-entrada{right:20px;bottom:22px;font-size:13px;gap:8px;text-underline-offset:6px}}
+@media(max-width:1100px){.mapa-entrada{right:calc(var(--site-margin) + max(68px,var(--site-column)) + var(--site-gutter))}}
+@media(max-width:700px){.mapa-entrada{bottom:22px;font-size:13px;gap:8px;text-underline-offset:6px}}
 @media(prefers-reduced-motion:reduce){.mapa-entrada,.mapa-entrada svg{transition:none}}
 html[data-detener=true] .mapa-entrada{transition:none}

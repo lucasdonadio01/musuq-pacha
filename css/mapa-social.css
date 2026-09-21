@@ -177,3 +177,10 @@ html[data-detener=true] :is(.mapa-comentarios,.mapa-elementos){transition:none;t
 .mapa-globo__cifras .comentario-like{min-width:42px;min-height:32px;font:inherit}
 .mapa-marcadores .mapa-globo__cifras{color:#706975}.mapa-marcadores .mapa-globo__autor{color:#706975}
 @media(prefers-reduced-motion:reduce){.mapa-comentarios.mapa-ui-activo,.mapa-elementos.mapa-ui-activo{translate:none}}
+/* Ficha del pueblo: con la ficha desplegada el bloque de datos scrollea en vez de recortarse.
+   El recorte sólo hace falta mientras se pliega (panel--resumen). */
+.en-mapa .panel:not(.panel--resumen) .panel__despliegue>div{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#9E6FF8 #242424;-webkit-overflow-scrolling:touch}
+@media(max-width:760px){
+  .en-mapa .panel:not(.panel--resumen){display:flex;flex-direction:column}
+  .en-mapa .panel:not(.panel--resumen) .panel__despliegue{flex:0 1 auto;min-height:0;max-height:none}
+}
