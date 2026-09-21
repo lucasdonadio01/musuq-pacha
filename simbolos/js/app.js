@@ -83,7 +83,14 @@
   }}requestAnimationFrame(cuadro);
  }
  function ondaDesdeElSimbolo(){if(Fondo.cfg.quieto)return;const r=lienzo.getBoundingClientRect();Fondo.onda(r.left+r.width/2,r.top+r.height/2);}
- function generar(){C.variation(pueblo.id);celda=null;sync();ondaDesdeElSimbolo();avisar('Nueva combinación de las mismas piezas. Podés deshacerla.');}
+ /* Mitad de las veces conserva los colores de cada pieza; la otra mitad usa dos o tres
+    colores del pueblo elegidos contra el fondo, como los símbolos del tablero. */
+ function paletaRonda(){
+  if(Math.random()<.5)return null;
+  const tonos=Motor.paletaContra(pueblo.colores,fondo,4).map(c=>c.h).sort(()=>Math.random()-.5);
+  return tonos.slice(0,2+Math.floor(Math.random()*2));
+ }
+ function generar(){C.ronda(pueblo.id,paletaRonda());celda=null;sync();ondaDesdeElSimbolo();avisar('Nuevo símbolo con piezas de '+pueblo.nombre+'. Podés deshacerlo.');}
  const celdaDe=e=>{const r=lienzo.getBoundingClientRect();return Simbolo.celdaEn(e.clientX-r.left,e.clientY-r.top);};
  lienzo.addEventListener('pointerdown',e=>{
   if(e.button&&e.button!==0)return;const cell=celdaDe(e);if(!cell)return;const item=C.hit(...cell);if(!item){celda=null;C.select(null);sync(false);return;}
@@ -195,6 +202,7 @@
   if(entrar.yendo)return;entrar.yendo=true;taller.hidden=false;dibujarMapa();sync();
   portada.classList.add('portada--sale');await Mosaico.caer();portada.hidden=true;Mosaico.detener();ondaDesdeElSimbolo();
   avisar('Sumá una pieza desde el banco. Arrastrala para combinarla.');
+  window.Tutorial?.abrir();
  }
  $('#entrar').onclick=entrar;
  const movimiento=matchMedia('(prefers-reduced-motion:reduce)');

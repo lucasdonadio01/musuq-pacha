@@ -38,11 +38,12 @@
 <link rel="stylesheet" href="css/app.css?v=18">
 <link rel="stylesheet" href="css/comunidad.css?v=main-1">
 <link rel="stylesheet" href="css/piezas.css?v=piezas-1">
+<link rel="stylesheet" href="css/tutorial.css?v=tuto-3">
 
 <link rel="stylesheet" href="../css/accesibilidad.css?v=main-1">
 <link rel="stylesheet" href="../css/sonido.css?v=audio-3">
 <link rel="stylesheet" href="../css/pixel-botones.css?v=correcciones-1">
-<link rel="stylesheet" href="../css/header.css?v=limpieza-1"><link rel="stylesheet" href="../css/acceso.css?v=pixeles-4">
+<link rel="stylesheet" href="../css/header.css?v=perfil-2"><link rel="stylesheet" href="../css/acceso.css?v=pixeles-4">
 <link rel="stylesheet" href="../css/grilla.css?v=juego-1">
 </head>
 <body>
@@ -116,7 +117,7 @@
   <section class="escena">
     <canvas id="lienzo" tabindex="0" aria-label="Composición de piezas. Usá las flechas para mover la pieza seleccionada." aria-describedby="instrucciones-piezas"></canvas>
     <div class="acciones">
-      <button class="accion accion--fuerte" id="generar" title="Combinar las piezas del pueblo (G)" aria-label="Combinar piezas">
+      <button class="accion accion--fuerte" id="generar" title="Generar un símbolo (G)" aria-label="Generar un símbolo">
         <svg class="ic"><use href="#ic-generar"/></svg>
       </button>
       <button class="accion accion--compartir" id="png" title="Compartir símbolo" aria-label="Compartir símbolo">
@@ -161,6 +162,16 @@
   </aside>
 
 </main>
+<dialog class="tuto" id="tutorial" aria-labelledby="tuto-titulo" aria-describedby="tuto-texto">
+  <div class="tuto__velo" aria-hidden="true"></div>
+  <div class="tuto__carta">
+    <svg class="tuto__foco" viewBox="11 16 32 32" aria-hidden="true" focusable="false"><path d="M24.5 39.5C23.8125 39.5 23.224 39.2552 22.7344 38.7656C22.2448 38.276 22 37.6875 22 37V35.4375C20.8125 34.625 19.8906 33.5833 19.2344 32.3125C18.5781 31.0417 18.25 29.6875 18.25 28.25C18.25 25.8125 19.099 23.7448 20.7969 22.0469C22.4948 20.349 24.5625 19.5 27 19.5C29.4375 19.5 31.5052 20.349 33.2031 22.0469C34.901 23.7448 35.75 25.8125 35.75 28.25C35.75 29.6875 35.4219 31.0365 34.7656 32.2969C34.1094 33.5573 33.1875 34.6042 32 35.4375V37C32 37.6875 31.7552 38.276 31.2656 38.7656C30.776 39.2552 30.1875 39.5 29.5 39.5H24.5ZM24.5 37H29.5V34.125L30.5625 33.375C31.4167 32.7917 32.0781 32.0469 32.5469 31.1406C33.0156 30.2344 33.25 29.2708 33.25 28.25C33.25 26.5208 32.6406 25.0469 31.4219 23.8281C30.2031 22.6094 28.7292 22 27 22C25.2708 22 23.7969 22.6094 22.5781 23.8281C21.3594 25.0469 20.75 26.5208 20.75 28.25C20.75 29.2708 20.9844 30.2344 21.4531 31.1406C21.9219 32.0469 22.5833 32.7917 23.4375 33.375L24.5 34.125V37ZM24.5 44.5C24.1458 44.5 23.849 44.3802 23.6094 44.1406C23.3698 43.901 23.25 43.6042 23.25 43.25V42H30.75V43.25C30.75 43.6042 30.6302 43.901 30.3906 44.1406C30.151 44.3802 29.8542 44.5 29.5 44.5H24.5Z"/></svg>
+    <div class="tuto__texto" aria-live="polite"><h2 id="tuto-titulo"></h2><p id="tuto-texto"></p></div>
+    <button class="tuto__siguiente" id="tuto-siguiente" type="button" aria-label="Siguiente consejo">
+      <svg viewBox="301 80 32 32" aria-hidden="true" focusable="false"><path d="M315.458 112C313.429 111.786 311.54 111.229 309.791 110.332C308.042 109.434 306.514 108.268 305.205 106.834C303.897 105.4 302.869 103.759 302.121 101.91C301.374 100.06 301 98.0905 301 96C301 91.7923 302.395 88.1742 305.185 85.1457C307.975 82.1173 311.4 80.402 315.458 80V83.2563C312.281 83.6583 309.611 85.0586 307.448 87.4573C305.285 89.8559 304.204 92.7035 304.204 96C304.204 99.2965 305.285 102.144 307.448 104.543C309.611 106.941 312.281 108.342 315.458 108.744V112Z"/><path class="tuto__tramo" data-orden="0" d="M324.87 85.8693C323.989 85.1725 323.028 84.5963 321.986 84.1407C320.945 83.6851 319.837 83.3903 318.662 83.2563V80C320.264 80.1608 321.786 80.5494 323.228 81.1658C324.67 81.7822 325.991 82.5729 327.193 83.5377L324.87 85.8693Z"/><path class="tuto__tramo" data-orden="1" d="M329.756 94.392C329.622 93.2127 329.329 92.0938 328.875 91.0352C328.421 89.9765 327.847 89.005 327.153 88.1206L329.436 85.8291C330.397 87.0352 331.191 88.3618 331.819 89.809C332.446 91.2563 332.84 92.7839 333 94.392H329.756Z"/><path class="tuto__tramo" data-orden="2" d="M329.436 106.171L327.153 103.879C327.847 102.995 328.421 102.023 328.875 100.965C329.329 99.9062 329.622 98.7873 329.756 97.608H333C332.84 99.2161 332.446 100.744 331.819 102.191C331.191 103.638 330.397 104.965 329.436 106.171Z"/><path class="tuto__tramo" data-orden="3" d="M318.662 112V108.744C319.837 108.61 320.952 108.315 322.006 107.859C323.061 107.404 324.029 106.827 324.91 106.131L327.193 108.462C325.991 109.427 324.67 110.218 323.228 110.834C321.786 111.451 320.264 111.839 318.662 112Z"/><path class="tuto__flecha" d="M309.01 94.4341L318.903 94.4341L314.737 90.2532L317.02 88.002L325.03 96.0422L317.02 104.082L314.777 101.791L318.903 97.6502L309.01 97.6502L309.01 94.4341Z"/></svg>
+    </button>
+  </div>
+</dialog>
 <dialog class="referencia-dialog" id="referencia-dialog" aria-labelledby="referencia-titulo">
   <button type="button" class="referencia-cerrar" aria-label="Cerrar referencia"><svg class="ic" aria-hidden="true"><use href="#ic-cerrar"/></svg></button>
   <img id="referencia-imagen" src="assets/referencias/omaguaca-faja.png" alt="Faja textil kolla">
@@ -170,15 +181,16 @@
 <script src="js/pueblos.js?v=18"></script>
 <script src="js/mapa.js?v=correcciones-1"></script>
 <script src="js/motor.js?v=piezas-1"></script>
-<script src="../js/header-plantilla.js?v=perfil-1"></script><script src="../js/acceso.js?v=pixeles-5"></script><script src="../js/header.js?v=acceso-1"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
+<script src="../js/header-plantilla.js?v=perfil-2"></script><script src="../js/acceso.js?v=pixeles-5"></script><script src="../js/header.js?v=perfil-2"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
 
 <script src="js/fondo.js?v=main-1"></script>
-<script src="js/simbolo.js?v=piezas-1"></script>
+<script src="js/simbolo.js?v=tablero-2"></script>
 <script src="js/mosaico.js?v=main-1"></script>
 <script src="../js/comunidad.js?v=piezas-1"></script>
 <script src="js/patrones.js?v=piezas-2"></script>
-<script src="js/composicion.js?v=piezas-1"></script>
-<script src="js/app.js?v=confirmacion-1"></script>
+<script src="js/composicion.js?v=ronda-3"></script>
+<script src="js/tutorial.js?v=tuto-3"></script>
+<script src="js/app.js?v=ronda-1"></script>
 <script src="../js/pixel-botones.js?v=tiendas-1"></script>
 </body>
 </html>

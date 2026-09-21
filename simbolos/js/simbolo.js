@@ -30,7 +30,7 @@ const Simbolo = (() => {
   /* En una pantalla angosta el símbolo se lleva mucho más ancho —no hay
      volantas a los costados que lo aprieten— y sube un poco para dejarle
      lugar al pie. */
-  function medirGeo(W, H) {
+  function medirGeo(W, H, pantalla) {
     const N = figura.lado;
     // manda la proporcion: un lienzo cuadrado o vertical lleva las volantas al
     // pie, uno apaisado a los costados. Asi el PNG 9:16 y el 1:1 se componen
@@ -38,8 +38,11 @@ const Simbolo = (() => {
     const angosto = W / H < 1.15;
     // en un formato muy vertical (la historia 9:16) el simbolo se lleva mas
     // ancho: con el 66 % quedaba nadando en el alto del cuadro
-    const anchoUtil = angosto ? .86 : .5;
-    const celda = Math.min(W * anchoUtil, H * .72) / N;
+    // en pantalla el tablero es un poco más grande para que las celdas se toquen fácil;
+    // la imagen que se comparte mantiene su proporción
+    const anchoUtil = angosto ? (pantalla ? .9 : .86) : (pantalla && W >= 760 ? .58 : .5);
+    const altoUtil = pantalla ? (angosto ? .76 : .82) : .72;
+    const celda = Math.min(W * anchoUtil, H * altoUtil) / N;
     const sube = angosto ? H * 0.07 : 0;
     geo = { celda, x0: W / 2 - N * celda / 2, y0: H / 2 - N * celda / 2 - sube, W, H, angosto };
     return geo;
@@ -61,7 +64,7 @@ const Simbolo = (() => {
      para el PNG, así lo que ves es exactamente lo que baja. */
   function componer(ctx, W, H, ahora, opc) {
     const o = opc || {};
-    const g = medirGeo(W, H);
+    const g = medirGeo(W, H, o.interfaz);
     const tinta = o.tinta || '#1B1A19';
     const t = Motor.aRgb(tinta);
 
@@ -80,6 +83,21 @@ const Simbolo = (() => {
           ctx.fill();
         }
       }
+    }
+
+    // 1b. el tablero: las celdas donde se arman las piezas, solo en pantalla
+    if (o.interfaz) {
+      const N = figura.lado, x0 = Math.round(g.x0), y0 = Math.round(g.y0);
+      const x1 = Math.round(g.x0 + N * g.celda), y1 = Math.round(g.y0 + N * g.celda);
+      ctx.strokeStyle = 'rgba(' + t.join(',') + ',0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= N; i++) {
+        const x = Math.round(g.x0 + i * g.celda) + 0.5, y = Math.round(g.y0 + i * g.celda) + 0.5;
+        ctx.moveTo(x, y0); ctx.lineTo(x, y1);
+        ctx.moveTo(x0, y); ctx.lineTo(x1, y);
+      }
+      ctx.stroke();
     }
 
     // 2. los pixeles del simbolo
@@ -143,7 +161,9 @@ const Simbolo = (() => {
         .map(h => (nombres.find(c => c.h.toLowerCase() === h.toLowerCase()) || {}).n || h)
         .slice(0, 6);
       const texto = pueblo.nota + ': ' + (usados.join(', ') || 'lienzo vacío');
-      const lineas = envolver(ctx, texto, W * 0.21);
+      // la columna derecha se achica si el tablero le come lugar
+      const libre = W * 0.94 - (g.x0 + figura.lado * g.celda) - 24;
+      const lineas = envolver(ctx, texto, Math.max(110, Math.min(W * 0.21, libre)));
       const inicio = H / 2 - ((lineas.length - 1) * salto) / 2;
       lineas.forEach((l, i) => ctx.fillText(l, W * 0.94, inicio + i * salto));
     }
