@@ -23,6 +23,7 @@
   const categoryButtons=[];
   const categorySummaries={creencias:'Relatos y formas de comprender el mundo.',viviendas:'Refugios, materiales y formas de habitar.',muerte:'Memoria y vínculos con los antepasados.',sociedad:'Escenas de la vida y encuentros en el territorio.',personajes:'Personas, trayectorias y voces del archivo.',naturaleza:'Paisajes y plantas del territorio.',fauna:'Animales y sus ambientes.',patrones:'Formas, motivos y técnicas visuales.'};
   const thanks=document.createElement('p');thanks.className='aporte-gracias';thanks.hidden=true;thanks.setAttribute('role','status');root.append(thanks);
+  let textoPlegado=false;
   let width=1,height=1,mobile=false,time=0,lastTime=0,frame=0,sceneReady=false;
   let renderer,scene,camera,target,postScene,postCamera,postMat,tiles,tileUniforms;
   const cards=[],labels=[],hitMeshes=[],resources=new Set(),textures=new Map(),piles=[];
@@ -82,7 +83,7 @@
   function updateView(){
     thanks.hidden=true;
     window.MUSUQ_ARCHIVO_APORTES?.cambiarVista();
-    document.body.dataset.vista=vista;
+    document.body.dataset.vista=vista;if(vista!=='lamina')plegarTexto(false);
     $('categoria-cabecera').hidden=vista==='mesa';$('detalle').hidden=vista==='mesa';fichaVisible(vista==='lamina');$('volver-categoria').querySelector('span').textContent=vista==='lamina'?'Volver al montón':'Volver a la mesa';$('inspector-controles').hidden=vista!=='lamina';
     $('laminas-accesibles').hidden=vista!=='categoria';document.querySelector('.archivo-titulo').setAttribute('aria-hidden',String(vista!=='mesa'));
     $('hover-etiqueta').hidden=true;hover=null;pan.set(0,0,0);lastAction=performance.now();tilt.set(0,0);
@@ -109,7 +110,7 @@
     const selectedCard=cards.find(x=>x.ci===ci&&x.li===li);if(selectedCard)selectedCard.zoomHint=performance.now()+700;
     if(!desdeMonton||!$('detalle-categoria').textContent){$('detalle-pueblo').textContent='Archivo / '+nombre;$('detalle-categoria').textContent=c.nombre;$('detalle-contexto').textContent=c.contexto;renderContextSources($('detalle-fuentes'),c);}
     $('lamina-tipo').textContent=l.enInvestigacion?'Investigación pendiente':l.tipo||l.atribucion||'Documento / '+(l.fecha||'Fuente histórica');
-    $('lamina-titulo').textContent=l.titulo;$('lamina-descripcion').textContent=l.descripcion;$('lamina-limite').textContent=l.limite||'';
+    $('lamina-titulo').textContent=l.titulo;$('plegado-titulo').textContent=l.titulo;$('lamina-descripcion').textContent=l.descripcion;$('lamina-limite').textContent=l.limite||'';
     $('lamina-credito').textContent=[l.credito,l.licencia].filter(Boolean).join(' · ');$('lamina-fuente').hidden=!l.fuente;if(l.fuente)$('lamina-fuente').href=l.fuente;
     $('lamina-relacion').hidden=!l.fuenteRelacion;if(l.fuenteRelacion){const link=$('lamina-relacion').querySelector('a');link.href=l.fuenteRelacion;link.textContent=l.fuenteRelacionNombre||'Leer el contexto comunitario';}
     $('lamina-contador').textContent=(index+1)+' / '+c.laminas.length;$('lamina-anterior').disabled=index===0;$('lamina-siguiente').disabled=index===c.laminas.length-1;
@@ -125,7 +126,7 @@
     button.setAttribute('aria-label',label);button.title=card?.back?(card.volteo?'Volver al frente':'Dar vuelta'):'Girar 360 grados';
   }
   $('girar-imagen').onclick=()=>{
-    const card=activeCard();
+    const card=activeCard();plegarTexto(true);
     if(card?.back){
       card.volteo=card.volteo?0:Math.PI;syncSpinButton();
       if(!card.volteo){announce('Frente de la imagen.');return;}
@@ -134,6 +135,15 @@
     }
     if(!reduced.matches)spinGoal+=Math.PI*2;announce('Vista de la imagen en 360 grados.');
   };
+  /* En el celular, girar o acercar la imagen pliega el texto de abajo y la lámina se centra;
+     la flecha lo vuelve a desplegar. */
+  function plegarTexto(valor){
+    valor=!!valor&&mobile&&vista==='lamina';if(valor===textoPlegado)return;textoPlegado=valor;
+    root.classList.toggle('texto-plegado',valor);$('detalle').inert=valor;
+    const t=$('detalle-toggle');t.setAttribute('aria-expanded',String(!valor));t.setAttribute('aria-label',valor?'Ver el texto de la imagen':'Plegar el texto');
+  }
+  $('detalle-toggle').onclick=()=>plegarTexto(!textoPlegado);
+  $('plegado-volver').onclick=()=>back();
   function syncZoomButton(){
     const enlarged=inspectZoom<.999,button=$('zoom-imagen');
     const label=enlarged?'Restablecer zoom':'Acercar imagen';
@@ -141,7 +151,7 @@
     button.querySelector('use').setAttribute('href',enlarged?'#i-zoom-out':'#i-zoom-in');
   }
   $('zoom-imagen').onclick=()=>{
-    if(vista!=='lamina')return;
+    if(vista!=='lamina')return;plegarTexto(true);
     inspectZoom=inspectZoom<.999?1:.68;syncZoomButton();
     announce(inspectZoom<1?'Imagen ampliada. Volvé a pulsar para restablecer el zoom.':'Zoom restablecido.');
   };
@@ -250,14 +260,14 @@
       for(int i=0;i<12;i++){float a=float(i)*2.39996;float rad=sqrt((float(i)+.5)/12.);vec2 o=vec2(cos(a),sin(a))*rad*pixel*r;sum+=texture2D(color,vUv+o).rgb;}c=sum/14.;c*=1.-dim*smoothstep(36.,130.,d-focus);gl_FragColor=vec4(c,1.);}` }));
     postScene.add(new T.Mesh(track(new T.PlaneGeometry(2,2)),postMat));
   }
-  function resize(){width=root.clientWidth;height=root.clientHeight;const was=mobile;mobile=width<=700;renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.4:1.65));renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();const ratio=renderer.getPixelRatio();target.setSize(Math.round(width*ratio),Math.round(height*ratio));postMat.uniforms.pixel.value.set(1/width,1/height);if(was!==mobile||!sceneReady)arrange();if(!sceneReady){cameraGoal();camera.position.copy(camGoal);look.copy(desiredLook);camera.lookAt(look);} }
+  function resize(){width=root.clientWidth;height=root.clientHeight;const was=mobile;mobile=width<=700;renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.4:1.65));renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();const ratio=renderer.getPixelRatio();target.setSize(Math.round(width*ratio),Math.round(height*ratio));postMat.uniforms.pixel.value.set(1/width,1/height);if(!mobile&&textoPlegado)plegarTexto(false);if(was!==mobile||!sceneReady)arrange();if(!sceneReady){cameraGoal();camera.position.copy(camGoal);look.copy(desiredLook);camera.lookAt(look);} }
   let panelAncho=0;
   const panelFrac=()=>{if(mobile||vista==='mesa')return 0;const w=$('detalle').offsetWidth;if(w)panelAncho=w;return panelAncho/width;};
   function cameraGoal(){
     const fov=Math.tan(T.MathUtils.degToRad(camera.fov*.5));let span;
     if(vista==='mesa'){span=(mobile?Math.max(1170,720/camera.aspect):Math.max(800,1500/camera.aspect))*boardZoom;desiredLook.set(pan.x,pan.y+10,0);}
     else if(vista==='categoria'){span=mobile?Math.max(1380,680/camera.aspect):Math.max(810,1120/camera.aspect);desiredLook.copy(piles[ci].center).add(pan);desiredLook.y-=15;if(mobile)desiredLook.y-=span*.26;else desiredLook.x+=span*camera.aspect*panelFrac()/2;}
-    else{span=(mobile?Math.max(980,650/camera.aspect):Math.max(715,1120/camera.aspect))*inspectZoom;desiredLook.copy(piles[ci].center);desiredLook.x+=mobile?0:150;desiredLook.y+=mobile?-180:0;}
+    else{span=(mobile?Math.max(980,650/camera.aspect):Math.max(715,1120/camera.aspect))*inspectZoom;desiredLook.copy(piles[ci].center);desiredLook.x+=mobile?0:150;desiredLook.y+=mobile?(textoPlegado?70-span*.05:-180):0;}
     const dist=span/(2*fov);camGoal.set(desiredLook.x+parallax.x,desiredLook.y-dist*.045+parallax.y,dist);
   }
   function desiredCard(card){
@@ -343,7 +353,7 @@
   canvas.addEventListener('pointerdown',e=>{if(!sceneReady||anotando||e.button!==0)return;const h=hit(e);drag={x:e.clientX,y:e.clientY,moved:false,hit:h,mode:vista==='lamina'?'tilt':'pan',tiltX:tilt.x,tiltY:tilt.y,panX:pan.x,panY:pan.y};canvas.setPointerCapture(e.pointerId);canvas.classList.add('arrastrando');});
   canvas.addEventListener('pointermove',onMove);
   canvas.addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;canvas.classList.remove('arrastrando');if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);if(d.moved)return;
-    const h=d.hit;if(h){const c=h.object.userData.card;if(c){if(vista==='mesa'||c.ci!==ci)openCategory(c.ci,true);else if(vista==='categoria'||c.li!==li)openDetail(c.li,true);}}else{setPointer(e);if(raycaster.ray.intersectPlane(floor,floorPoint))pulse(floorPoint);}
+    const h=d.hit;if(h){const c=h.object.userData.card;if(c){if(vista==='mesa'||c.ci!==ci)openCategory(c.ci,true);else if(vista==='categoria'||c.li!==li)openDetail(c.li,true);}}else{setPointer(e);if(raycaster.ray.intersectPlane(floor,floorPoint))pulse(floorPoint);if(vista==='lamina')back();}
   });
   ['pointercancel','lostpointercapture'].forEach(k=>canvas.addEventListener(k,()=>{drag=null;canvas.classList.remove('arrastrando');}));
   canvas.addEventListener('pointerleave',()=>{if(!drag){hover=null;pointer.set(0,0);$('hover-etiqueta').hidden=true;}});

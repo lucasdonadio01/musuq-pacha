@@ -17,3 +17,24 @@
 @media(max-height:560px){.archivo-titulo{top:14px}.archivo-titulo h1{font-size:25px}.categoria-etiqueta.seleccionada{font-size:22px;min-height:40px}.categoria-etiqueta{font-size:10px}#detalle{padding-top:14px}#volver-categoria{margin-bottom:12px}}
 body[data-vista=categoria] #volver-mesa{display:none}
 #detalle .archivo-acciones{position:sticky;top:-28px;z-index:4;margin-top:-28px;padding:28px 0 14px;background:rgb(250,247,239)}@media(max-width:700px){#detalle .archivo-acciones{top:-18px;margin-top:-18px;padding-top:18px}}
+/* Celular: al girar o acercar la imagen el texto se pliega y la lámina se centra; queda una barra
+   con volver, el título y la flecha para desplegarlo. */
+#detalle-plegado,#detalle-toggle{display:none}
+@media(max-width:700px){
+  body[data-vista=lamina] #detalle-toggle{position:absolute;right:16px;top:calc(47% - 56px);z-index:23;display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;background:var(--ink,#171717);color:#fff;box-shadow:4px 7px 10px #16110c26;transition:top .45s cubic-bezier(.22,1,.36,1)}
+  #detalle-toggle svg{display:block;width:26px;height:26px;fill:currentColor;transform:rotate(180deg);transition:transform .35s cubic-bezier(.22,1,.36,1)}
+  #detalle-toggle:focus-visible{outline:3px solid #fc6020;outline-offset:3px}
+  .texto-plegado #detalle-toggle svg{transform:none}
+  body[data-vista=lamina] .texto-plegado #detalle-toggle{top:calc(100% - 58px)}
+  /* clip y no hidden: el texto plegado queda debajo del borde y no debe volver scrolleable la mesa */
+  #archivo-experiencia{overflow:clip}
+  #detalle{transition:transform .45s cubic-bezier(.22,1,.36,1)}
+  .texto-plegado #detalle{transform:translateY(100%)}
+  #inspector-controles{transition:top .45s cubic-bezier(.22,1,.36,1)}
+  .texto-plegado #inspector-controles{top:calc(100% - 136px)}
+  .texto-plegado #detalle-plegado{position:absolute;left:0;right:0;bottom:0;z-index:22;display:flex;align-items:center;gap:14px;height:72px;padding:0 72px 0 16px;background:rgb(250,247,239);box-shadow:0 -8px 20px #16110c1f;animation:plegado-entra .45s cubic-bezier(.22,1,.36,1) both}
+  #plegado-volver{flex:none;width:44px;height:44px;min-height:44px;padding:0}
+  #plegado-volver .icon{width:24px;height:24px}
+  #plegado-titulo{margin:0;font:500 15px/1.25 'Space Grotesk',sans-serif;color:#171717;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+@keyframes plegado-entra{from{transform:translateY(100%)}to{transform:none}}
