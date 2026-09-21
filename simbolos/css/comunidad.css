@@ -29,3 +29,24 @@ html,body{background:var(--com-negro)}
 @media(max-width:700px){.bloque{gap:14px;padding:16px}.bloque .titulo{font-size:clamp(24px,6vw,40px)}.bloque .bajada{font-size:12px;line-height:1.4}.bloque .boton{padding:12px 20px;min-height:44px}.compartir{padding:22px}.compartir h2{font-size:26px}.compartir__cuerpo{grid-template-columns:110px 1fr;gap:16px}.compartir__acciones .boton{flex:1;justify-content:center;font-size:11px;padding:12px}.rail--izq{top:var(--com-alto)}.barra .barra__sub{display:none}}
 @media(prefers-reduced-motion:reduce){.bloque .boton::before,.bloque .boton::after,.acciones .accion::before{transition:none}}
 @media(max-width:760px){.rail--der .paleta button,.rail--der .paleta .mas{aspect-ratio:auto;min-height:36px;height:36px}.rail--der{gap:6px}.rail--izq{background:#202020;top:var(--com-alto)}}
+@font-face{font-family:Archivo;font-style:normal;font-weight:400;font-display:swap;src:url('../../assets/ranking/archivo-regular.ttf') format('truetype')}
+/* Overlays de confirmación: mismo sistema en el generador de símbolos y en eventos */
+dialog.confirmar-dialogo{box-sizing:border-box;width:min(460px,calc(100vw - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:30px;border:0;border-radius:0;background:#222;color:#f5f2eb;box-shadow:12px 20px 70px #0008;font-family:'Space Grotesk',Arial,sans-serif;overflow:auto}
+dialog.confirmar-dialogo::backdrop{background:rgb(16 16 16 / .66);backdrop-filter:blur(5px)}
+.confirmar-dialogo__rotulo{margin:0 0 12px;font:500 12px/1.2 'Space Grotesk',Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#cbb0f7}
+.confirmar-dialogo h2{margin:0 0 16px;font:500 28px/1.1 'Space Grotesk',Arial,sans-serif;letter-spacing:-.02em;color:#e4fe44}
+.confirmar-dialogo__texto{margin:0;font:400 15px/1.5 Archivo,Arial,sans-serif;color:#ddd}
+.confirmar-dialogo__acciones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+.confirmar-boton{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:0;width:100%;height:52px;padding:0 16px;border:2px solid #f66227;border-radius:0;background:#f66227;color:#1a1a1a;font:500 15px/1 'Space Grotesk',Arial,sans-serif;letter-spacing:0;text-transform:none;box-shadow:none;cursor:pointer;transition:background .2s ease,border-color .2s ease,color .2s ease}
+.confirmar-boton svg{display:block;width:20px;height:20px;flex:none;fill:currentColor}
+.confirmar-boton--cancelar{background:transparent;border-color:#6b6b6b;color:#f5f2eb}
+.confirmar-boton--cancelar:hover{background:#d93a2f;border-color:#d93a2f;color:#fff}
+.confirmar-boton--aceptar:hover{background:#6a40bc;border-color:#6a40bc;color:#fff}
+.confirmar-boton:focus-visible{outline:3px solid #b58aff;outline-offset:3px}
+@media(max-width:560px){dialog.confirmar-dialogo{padding:22px}.confirmar-dialogo h2{font-size:24px}}
+html[data-color=contraste] dialog.confirmar-dialogo{background:#fff;color:#000;border:2px solid #111}
+html[data-color=contraste] .confirmar-dialogo :is(h2,p){color:#000}
+/* El generador suma la vista previa del símbolo junto al texto */
+.confirmar-publicar__cuerpo{display:grid;grid-template-columns:96px 1fr;gap:20px;align-items:center}
+.confirmar-publicar canvas{width:100%;height:auto;image-rendering:pixelated}
+@media(max-width:560px){.confirmar-publicar__cuerpo{grid-template-columns:72px 1fr;gap:14px}}

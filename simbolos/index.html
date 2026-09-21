@@ -36,14 +36,14 @@
 <meta name="description" content="Generador de símbolos en grilla para los pueblos originarios argentinos. Musuq Pacha, TIF UADE 2026.">
 <link rel="stylesheet" href="css/fuente.css?v=18">
 <link rel="stylesheet" href="css/app.css?v=18">
-<link rel="stylesheet" href="css/comunidad.css?v=main-1">
+<link rel="stylesheet" href="css/comunidad.css?v=confirmar-2">
 <link rel="stylesheet" href="css/piezas.css?v=piezas-1">
 <link rel="stylesheet" href="css/tutorial.css?v=tuto-3">
 
 <link rel="stylesheet" href="../css/accesibilidad.css?v=main-1">
 <link rel="stylesheet" href="../css/sonido.css?v=audio-3">
 <link rel="stylesheet" href="../css/pixel-botones.css?v=correcciones-1">
-<link rel="stylesheet" href="../css/header.css?v=perfil-2"><link rel="stylesheet" href="../css/acceso.css?v=pixeles-4">
+<link rel="stylesheet" href="../css/header.css?v=canje-error-1"><link rel="stylesheet" href="../css/acceso.css?v=pixeles-4">
 <link rel="stylesheet" href="../css/grilla.css?v=juego-1">
 </head>
 <body>
@@ -111,7 +111,6 @@
     <p class="mapa__pie" id="mapaPie"></p>
     <h2 class="rotulo">Referencias reales</h2>
     <div id="referencias-piezas" class="referencias-piezas"></div>
-    <p id="referencias-nota" class="referencias-nota"></p>
   </aside>
 
   <section class="escena">
@@ -162,6 +161,12 @@
   </aside>
 
 </main>
+<dialog class="confirmar-dialogo confirmar-publicar" id="confirmar-publicar" aria-labelledby="confirmar-titulo" aria-describedby="confirmar-texto">
+  <p class="confirmar-dialogo__rotulo">Antes de publicar</p>
+  <h2 id="confirmar-titulo">¿Sumar tu símbolo al tablero?</h2>
+  <div class="confirmar-publicar__cuerpo"><canvas id="confirmar-preview" aria-hidden="true"></canvas><p class="confirmar-dialogo__texto" id="confirmar-texto">Una vez publicado lo ve toda la comunidad y entra en el ranking de la semana próxima.</p></div>
+  <div class="confirmar-dialogo__acciones"><button class="confirmar-boton confirmar-boton--cancelar" type="button" id="confirmar-cancelar"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>Cancelar</button><button class="confirmar-boton confirmar-boton--aceptar" type="button" id="confirmar-aceptar"><svg viewBox="0 -960 960 960" aria-hidden="true" focusable="false"><path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/></svg>Confirmar</button></div>
+</dialog>
 <dialog class="tuto" id="tutorial" aria-labelledby="tuto-titulo" aria-describedby="tuto-texto">
   <div class="tuto__velo" aria-hidden="true"></div>
   <div class="tuto__carta">
@@ -181,16 +186,16 @@
 <script src="js/pueblos.js?v=18"></script>
 <script src="js/mapa.js?v=correcciones-1"></script>
 <script src="js/motor.js?v=piezas-1"></script>
-<script src="../js/header-plantilla.js?v=perfil-2"></script><script src="../js/acceso.js?v=pixeles-5"></script><script src="../js/header.js?v=perfil-2"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
+<script src="../js/header-plantilla.js?v=perfil-2"></script><script src="../js/acceso.js?v=pixeles-5"></script><script src="../js/header.js?v=canje-error-2"></script><script src="../js/accesibilidad.js?v=main-1"></script><script src="../js/sonido.js?v=main-1"></script>
 
 <script src="js/fondo.js?v=main-1"></script>
 <script src="js/simbolo.js?v=tablero-2"></script>
 <script src="js/mosaico.js?v=main-1"></script>
 <script src="../js/comunidad.js?v=piezas-1"></script>
-<script src="js/patrones.js?v=piezas-2"></script>
+<script src="js/patrones.js?v=textos-1"></script>
 <script src="js/composicion.js?v=ronda-3"></script>
 <script src="js/tutorial.js?v=tuto-3"></script>
-<script src="js/app.js?v=ronda-1"></script>
+<script src="js/app.js?v=confirmar-1"></script>
 <script src="../js/pixel-botones.js?v=tiendas-1"></script>
 </body>
 </html>

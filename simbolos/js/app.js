@@ -48,7 +48,7 @@
   });
   $('#referencias-piezas').replaceChildren();[...new Set(Patrones.piezas[pueblo.id].map(p=>p.ref))].forEach(id=>{
    const ref=Patrones.refs[id],b=document.createElement('button'),im=document.createElement('img'),s=document.createElement('span');b.type='button';b.className='referencia-mini';b.setAttribute('aria-label','Ver referencia: '+ref.titulo);im.src='assets/referencias/'+ref.imagen;im.alt=ref.titulo+' · '+ref.cultura;s.textContent=ref.titulo;b.append(im,s);b.onclick=()=>abrirReferencia(ref,b);$('#referencias-piezas').append(b);
-  });$('#referencias-nota').textContent=Patrones.avisos[pueblo.id];
+  });
  }
  function sync(animate=true){
   Simbolo.lado=C.N;Simbolo.cantidadPiezas=C.items.length;Simbolo.cargar(C.compose(),performance.now(),animate);Simbolo.seleccion.clear();const item=C.current();
@@ -182,7 +182,19 @@
     if (compartido) compartido.nombre = nombreSimbolo.value;
     $('#publicar-simbolo').disabled = false;
   });
+  /* Prevención de errores: antes de publicar pide confirmación en un diálogo encima de Compartir. */
+  const confirmarPublicar=$('#confirmar-publicar');
   $('#publicar-simbolo').addEventListener('click',()=>{
+    if(!compartido)return;
+    $('#confirmar-titulo').textContent='¿Sumar «'+(compartido.nombre||'Tu símbolo')+'» al tablero?';
+    Comunidad.dibujar($('#confirmar-preview'),compartido);
+    confirmarPublicar.showModal();$('#confirmar-aceptar').focus();
+    if(!quiet())confirmarPublicar.animate([{opacity:0,transform:'translateY(14px) scale(.97)'},{opacity:1,transform:'none'}],{duration:260,easing:'cubic-bezier(.16,1,.3,1)'});
+  });
+  $('#confirmar-cancelar').addEventListener('click',()=>{confirmarPublicar.close();$('#publicar-simbolo').focus();});
+  confirmarPublicar.addEventListener('click',e=>{if(e.target===confirmarPublicar){confirmarPublicar.close();$('#publicar-simbolo').focus();}});
+  $('#confirmar-aceptar').addEventListener('click',()=>{
+    confirmarPublicar.close();
     try {
       Comunidad.guardar(compartido);$('#publicar-simbolo').disabled=true;
       const confirmacion={origen:overlay,foco:$('#png'),titulo:'¡Símbolo sumado!',detalle:(compartido.nombre||'Tu símbolo')+' ya está en el tablero',accion:{texto:'Ver tablero',href:'../index.html#comunidad'},antes:()=>overlay.close()};
