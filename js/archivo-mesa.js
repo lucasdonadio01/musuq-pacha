@@ -233,8 +233,31 @@
     const edge=new T.Mesh(track(new T.BoxGeometry(w,h,.9)),track(new T.MeshBasicMaterial({color:0xe5dfd0})));group.add(edge);
     const sh=shadow(w,h);scene.add(sh);scene.add(group);
     const card={group,front,edge,shadow:sh,ci:catIndex,li:itemIndex,item,w,h,base:v3(),goal:v3(),angle:0,hover:0,volteo:0,giro:0,revelado:false,revelarPendiente:false,revelarDesde:null};front.userData.card=card;hitMeshes.push(front);cards.push(card);
-    if(item.codigo){const back=new T.Mesh(track(new T.PlaneGeometry(w,h)),paperMaterial(reverseTexture(item)));back.material.side=T.FrontSide;back.rotation.y=Math.PI;back.position.z=-1.2;group.add(back);card.back=back;}
+    if(item.codigo){const back=new T.Mesh(track(new T.PlaneGeometry(w,h)),paperMaterial(reverseTexture(item)));back.material.side=T.FrontSide;back.rotation.y=Math.PI;back.position.z=-1.2;group.add(back);card.back=back;card.destello=destello(card);}
     return card;
+  }
+  /* Lámina con código escondido: en su montón late con un halo, la cruza un reflejo y se sacude
+     cada tanto para que se note; se apaga cuando se descubre el código. */
+  function destello(card){
+    const {w,h,group}=card,mx=1.4,my=1.34,vert='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
+    const halo=new T.Mesh(track(new T.PlaneGeometry(w*mx,h*my)),track(new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,uniforms:{fuerza:{value:0}},vertexShader:vert,
+      fragmentShader:`uniform float fuerza;varying vec2 vUv;void main(){vec2 p=abs(vUv-.5)*2.;vec2 lado=vec2(${(1/mx).toFixed(4)},${(1/my).toFixed(4)});vec2 q=max(p-lado,0.)/(1.-lado);float d=length(q);float a=exp(-d*d*4.5)*fuerza;gl_FragColor=vec4(1.,.9,.55,a);}`})));
+    halo.position.z=-1.6;halo.visible=false;
+    const reflejo=new T.Mesh(track(new T.PlaneGeometry(w,h)),track(new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,uniforms:{pos:{value:-1},fuerza:{value:0}},vertexShader:vert,
+      fragmentShader:'uniform float pos,fuerza;varying vec2 vUv;void main(){float x=vUv.x*.8+vUv.y*.45;float b=exp(-pow((x-pos)/.075,2.))+.35*exp(-pow((x-pos+.16)/.03,2.));gl_FragColor=vec4(1.,1.,.94,b*.5*fuerza);}'})));
+    reflejo.position.z=4.2;reflejo.visible=false;
+    group.add(halo,reflejo);
+    return {halo,reflejo,fuerza:0};
+  }
+  const cicloDestello=2.8;
+  function faseDestello(){return (time+.4)%cicloDestello;}
+  function actualizarDestello(card){
+    const d=card.destello,encendido=vista==='categoria'&&card.ci===ci&&!card.revelado?1:0;
+    d.fuerza+=(encendido-d.fuerza)*(reduced.matches?1:.07);
+    d.halo.visible=d.reflejo.visible=d.fuerza>.01;
+    d.halo.material.uniforms.fuerza.value=d.fuerza*(reduced.matches?.55:.42+.2*Math.sin(time*2.4));
+    d.reflejo.material.uniforms.pos.value=reduced.matches?-1:-.25+faseDestello()/.9*1.7;
+    d.reflejo.material.uniforms.fuerza.value=d.fuerza;
   }
   const scatter=[[-56,39,-.20],[52,20,.23],[-43,-49,.12],[70,-35,-.18],[9,67,-.08],[7,-12,.055]];
   function arrange(){
@@ -271,7 +294,7 @@
     const dist=span/(2*fov);camGoal.set(desiredLook.x+parallax.x,desiredLook.y-dist*.045+parallax.y,dist);
   }
   function desiredCard(card){
-    card.goal.copy(card.base);let angle=card.angle,rx=0,ry=0,scale=1;
+    card.goal.copy(card.base);let angle=card.angle,rx=0,ry=0,scale=1,sacudida=0;
     if(vista!=='mesa'&&card.ci!==ci){const away=card.base.clone().sub(piles[ci].center);away.z=0;if(away.lengthSq()>0)away.normalize();card.goal.addScaledVector(away,mobile?300:440);scale=.82;}
     if(vista!=='mesa'&&card.ci===ci){const center=piles[ci].center,count=piles[ci].cards.length;
       if(count>1){const spots=mobile?[[-114,160],[100,150],[-113,-28],[116,-36],[-99,-220],[124,-218]]:[[-244,60],[-135,-93],[-5,98],[117,-77],[240,77],[48,-172]];const s=spots[card.li%spots.length];card.goal.set(center.x+s[0],center.y+s[1],18+card.li*2.4);}else card.goal.z=18;
@@ -282,8 +305,9 @@
     else if(hover===card){card.goal.z+=vista==='mesa'?40:70;angle*=.6;rx=-.035;ry=.028;}
     if(active&&anotando)return {angle,rx,ry,scale,active};
     if(!reduced.matches){const slow=time*.56+card.ci*.7+card.li*.8;card.goal.z+=Math.sin(slow)*(active?7:1.0);rx+=Math.sin(slow*.73)*(active?.038:.007);ry+=Math.cos(slow*.62)*(active?.052:.006);if(active)angle+=Math.sin(slow*.4)*.023;
+      if(card.destello&&vista==='categoria'&&card.ci===ci&&!card.revelado&&hover!==card){const k=faseDestello()/.7;if(k<1){sacudida=Math.sin(k*Math.PI*5)*.06*(1-k);card.goal.z+=Math.sin(k*Math.PI)*12;}}
       const age=time-tileUniforms.start.value;if(age>=0&&age<2.8){const d=Math.hypot(card.goal.x-tileUniforms.origin.value.x,card.goal.y-tileUniforms.origin.value.y);const band=Math.max(0,Math.abs(d-age*630)-Math.hypot(card.w,card.h)*.6);card.goal.z+=Math.exp(-band*band/(85*85))*31*(1-T.MathUtils.smoothstep(age,1.9,2.8));}}
-    return {angle,rx,ry,scale,active};
+    return {angle,rx,ry,scale,active,sacudida};
   }
   function updateCategoryLabels(ease){
     categoryButtons.forEach((entry,i)=>{let x,y,rotation=0;const selected=vista!=='mesa'&&i===ci;
@@ -311,9 +335,9 @@
       if(card.back){card.giro=reduced.matches?card.volteo:card.giro+(card.volteo-card.giro)*(1-Math.exp(-dt*3.2));
         if(card.revelarPendiente&&card.giro>Math.PI/2){card.revelarPendiente=false;card.revelarDesde=reduced.matches?now-5000:now;pulse(card.group.position);}
         if(card.revelarDesde!=null){const t=now-card.revelarDesde;if(t>=0){card.back.material.uniforms.map.value.userData.pintar(t>2700?Infinity:t);if(t>2700)card.revelarDesde=null;}}}
-      const g=desiredCard(card);card.group.position.lerp(card.goal,ease);card.group.rotation.x+=(g.rx-card.group.rotation.x)*fast;card.group.rotation.y+=(g.ry-card.group.rotation.y)*fast;card.group.rotation.z+=(g.angle-card.group.rotation.z)*ease;card.group.scale.lerp(v3(g.scale,g.scale,g.scale),ease);
+      const g=desiredCard(card);card.group.position.lerp(card.goal,ease);card.group.rotation.x+=(g.rx-card.group.rotation.x)*fast;card.group.rotation.y+=(g.ry-card.group.rotation.y)*fast;card.group.rotation.z-=card.sacudida||0;card.group.rotation.z+=(g.angle-card.group.rotation.z)*ease;card.sacudida=g.sacudida||0;card.group.rotation.z+=card.sacudida;card.group.scale.lerp(v3(g.scale,g.scale,g.scale),ease);
       const elevated=card.group.position.z-card.base.z;card.shadow.position.set(card.group.position.x+4+elevated*.10,card.group.position.y-8-elevated*.14,card.base.z-2);card.shadow.rotation.z=card.group.rotation.z;card.shadow.scale.setScalar(card.group.scale.x*(1+elevated*.002));card.shadow.material.uniforms.opacity.value=.19/(1+elevated*.006);
-      const shade=vista!=='mesa'&&card.ci!==ci?.52:vista==='lamina'&&!g.active?.76:1;card.front.material.uniforms.shade.value+=(shade-card.front.material.uniforms.shade.value)*ease;if(card.back)card.back.material.uniforms.shade.value=card.front.material.uniforms.shade.value;
+      const shade=vista!=='mesa'&&card.ci!==ci?.52:vista==='lamina'&&!g.active?.76:1;card.front.material.uniforms.shade.value+=(shade-card.front.material.uniforms.shade.value)*ease;if(card.back)card.back.material.uniforms.shade.value=card.front.material.uniforms.shade.value;if(card.destello)actualizarDestello(card);
       const aporteAge=card.aporteInicio==null||reduced.matches?10:Math.max(0,(now-card.aporteInicio)/1000);
       card.front.material.uniforms.aporte.value=aporteAge;card.edge.visible=aporteAge>=1.35;
       if(g.active&&!thanks.hidden&&card.aporteInicio!=null){
