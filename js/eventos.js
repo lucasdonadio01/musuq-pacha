@@ -73,6 +73,43 @@
     previo.addEventListener('pointercancel', soltar);
   });
 
+  const galeria = document.querySelector('.evento-imagen[data-galeria]');
+  if (galeria) {
+    const fotos = [...galeria.querySelectorAll('.evento-foto')];
+    const puntos = [...galeria.querySelectorAll('.evento-puntos button')];
+    const estadoGaleria = galeria.querySelector('[data-galeria-estado]');
+    let actual = 0, reloj = 0, pausa = false;
+    const programar = () => { clearTimeout(reloj); if (!pausa && !document.hidden && !quieto() && !body.classList.contains('eventos--actividades')) reloj = setTimeout(() => ir(actual + 1, false), 4500); };
+    function ir(indice, anunciar = true) {
+      actual = (indice + fotos.length) % fotos.length;
+      fotos.forEach((foto, i) => {
+        const activa = i === actual;
+        foto.classList.toggle('evento-foto--activa', activa);
+        if (activa) { foto.removeAttribute('aria-hidden'); foto.loading = 'eager'; } else foto.setAttribute('aria-hidden', 'true');
+      });
+      puntos.forEach((punto, i) => { if (i === actual) punto.setAttribute('aria-current', 'true'); else punto.removeAttribute('aria-current'); });
+      if (anunciar) estadoGaleria.textContent = `Imagen ${actual + 1} de ${fotos.length}`;
+      programar();
+    }
+    puntos.forEach((punto, i) => punto.addEventListener('click', () => ir(i)));
+    galeria.addEventListener('pointerenter', () => { pausa = true; programar(); });
+    galeria.addEventListener('pointerleave', () => { pausa = false; programar(); });
+    galeria.addEventListener('focusin', () => { pausa = true; programar(); });
+    galeria.addEventListener('focusout', e => { if (!galeria.contains(e.relatedTarget)) { pausa = false; programar(); } });
+    let inicio = null;
+    galeria.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') inicio = e.clientX; });
+    galeria.addEventListener('pointerup', e => {
+      if (inicio === null) return;
+      const recorrido = e.clientX - inicio; inicio = null;
+      if (Math.abs(recorrido) > 40) ir(actual + (recorrido < 0 ? 1 : -1));
+    });
+    document.addEventListener('visibilitychange', programar);
+    addEventListener('musuq:accesibilidad', programar);
+    addEventListener('hashchange', programar);
+    addEventListener('load', () => fotos.forEach(foto => { foto.loading = 'eager'; }));
+    ir(0, false);
+  }
+
   const compartir = document.querySelector('[data-compartir]');
   const estadoCompartir = document.querySelector('.actividades-estado');
   compartir?.addEventListener('click', async () => {
@@ -103,11 +140,17 @@
   });
 
   const datos = {
-    inscripcion: {
-      texto: {nombre:'Marta Gimenez', correo:'marta.gimenez@ejemplo.com'},
-      opciones: {compania:['En familia'], interes:['Taller de símbolos','Recorrido']},
-      titulo: '¡Inscripción confirmada!',
-      mensaje: correo => `Te esperamos el jueves 24 de septiembre en La Rural. Te mandamos los detalles a ${correo}.`
+    entradas: {
+      texto: {nombre:'Marta Gimenez', correo:'marta.gimenez@ejemplo.com', dni:'32.458.910'},
+      opciones: {dia:['sabado'], pago:['mercadopago']},
+      cantidad: 2,
+      tarjeta: {tarjeta:'4509 9535 6623 3704', vencimiento:'11/30', codigo:'123'},
+      titulo: '¡Compra confirmada!',
+      esperamos: '¡Te esperamos!',
+      mensaje: (correo, form) => {
+        const n = Number(form.elements.cantidad.value), dia = form.querySelector('input[name="dia"]:checked');
+        return `Te enviamos ${n === 1 ? 'la entrada' : `las ${n} entradas`} a ${correo}. Nos vemos ${dia ? dia.dataset.texto : ''} en el Palacio Libertad, de 14 a 20 h: mostrá el QR del mail en la puerta.`;
+      }
     },
     proyecto: {
       texto: {proyecto:'Tejidos en píxel', nombre:'Tomás Rivas', correo:'tomas.rivas@ejemplo.com', descripcion:'Una mesa para pasar patrones de fajas y matras a píxeles y armar entre todos un símbolo grande durante el encuentro.'},
@@ -150,34 +193,87 @@
     const enviar = form.querySelector('[type=submit]');
     const estado = form.querySelector('.evento-form__estado');
     let fase = 'vacio';
+    const salida = form.elements.cantidad;
+    const total = form.querySelector('[data-total]');
+    const pesos = n => '$ ' + n.toLocaleString('es-AR');
+    function actualizarTotal() {
+      if (!total) return;
+      const dia = form.querySelector('input[name="dia"]:checked');
+      const nuevo = pesos((dia ? Number(dia.dataset.precio) : 0) * Number(salida.value));
+      if (total.textContent === nuevo) return;
+      total.textContent = nuevo;
+      if (quieto()) return;
+      total.parentElement.classList.add('evento-total--cambia');
+      setTimeout(() => total.parentElement.classList.remove('evento-total--cambia'), 220);
+    }
+    function fijarCantidad(n) {
+      if (!salida) return;
+      salida.value = Math.min(10, Math.max(1, n));
+      form.querySelector('[data-cantidad="-1"]').disabled = salida.value <= 1;
+      form.querySelector('[data-cantidad="1"]').disabled = salida.value >= 10;
+      actualizarTotal();
+    }
+    async function escribir(campo, valor) {
+      const caja = campo.closest('.evento-campo');
+      caja.classList.add('evento-campo--escribiendo');
+      if (quieto()) campo.value = valor;
+      else for (let i = 1; i <= valor.length; i++) { campo.value = valor.slice(0, i); await esperar(valor.length > 40 ? 9 : 28); }
+      caja.classList.remove('evento-campo--escribiendo');
+    }
+    let llenandoTarjeta = false;
+    async function mostrarPago() {
+      const elegido = form.querySelector('input[name="pago"]:checked')?.value;
+      form.querySelectorAll('[data-pago]').forEach(panel => { panel.hidden = panel.dataset.pago !== elegido; });
+      form.querySelectorAll('.evento-tarjeta-datos input').forEach(campo => { campo.required = elegido === 'tarjeta'; });
+      if (elegido !== 'tarjeta' || !d.tarjeta || llenandoTarjeta || fase === 'vacio') return;
+      const vacios = Object.entries(d.tarjeta).filter(([nombre]) => !form.elements[nombre].value);
+      if (!vacios.length) return;
+      llenandoTarjeta = true;
+      enviar.disabled = true;
+      estado.textContent = 'Completando los datos de la tarjeta…';
+      await esperar(220);
+      for (const [nombre, valor] of vacios) { await escribir(form.elements[nombre], valor); await esperar(90); }
+      llenandoTarjeta = false;
+      if (fase === 'listo') { enviar.disabled = false; estado.textContent = 'Listo. Revisá los datos y tocá Pagar.'; }
+    }
+    if (salida) {
+      form.querySelectorAll('[data-cantidad]').forEach(boton => boton.addEventListener('click', () => fijarCantidad(Number(salida.value) + Number(boton.dataset.cantidad))));
+      form.addEventListener('change', e => {
+        if (e.target.name === 'dia') actualizarTotal();
+        if (e.target.name === 'pago') mostrarPago();
+      });
+      fijarCantidad(1);
+    }
     async function completar() {
       fase = 'llenando';
       estado.textContent = 'Completando tus datos…';
       for (const [nombre, valor] of Object.entries(d.texto)) {
-        const campo = form.elements[nombre], caja = campo.closest('.evento-campo');
-        caja.classList.add('evento-campo--escribiendo');
-        if (quieto()) campo.value = valor;
-        else for (let i = 1; i <= valor.length; i++) { campo.value = valor.slice(0, i); await esperar(valor.length > 40 ? 9 : 28); }
-        caja.classList.remove('evento-campo--escribiendo');
+        await escribir(form.elements[nombre], valor);
         await esperar(90);
       }
       for (const [nombre, valores] of Object.entries(d.opciones)) {
+        const marcada = form.querySelector(`input[name="${nombre}"]:checked`);
+        if (marcada && marcada.type === 'radio') continue;
         for (const opcion of form.querySelectorAll(`input[name="${nombre}"]`)) {
           if (!valores.includes(opcion.value)) continue;
-          opcion.checked = true; await esperar(150);
+          opcion.checked = true;
+          opcion.dispatchEvent(new Event('change', {bubbles:true}));
+          await esperar(150);
         }
       }
+      if (d.cantidad && salida) for (let n = Number(salida.value) + 1; n <= d.cantidad; n++) { await esperar(180); fijarCantidad(n); }
       fase = 'listo';
+      await mostrarPago();
+      if (llenandoTarjeta) return;
       enviar.disabled = false;
-      estado.textContent = 'Listo. Revisá los datos y tocá Finalizar.';
+      estado.textContent = `Listo. Revisá los datos y tocá ${enviar.textContent.trim()}.`;
     }
     const disparar = e => {
       if (fase !== 'vacio' || e.target.closest('[data-cerrar],[type=submit]')) return;
-      if (e.target.closest('.evento-campo,.evento-opciones')) completar();
+      if (e.target.closest('.evento-campo,.evento-opciones,.evento-cantidad')) completar();
     };
     form.addEventListener('pointerdown', disparar);
     form.addEventListener('focusin', disparar);
-    // Subir proyecto pide confirmación antes de enviar, en un diálogo encima del formulario
     const verificar = form.dataset.autocompletar === 'proyecto' ? document.getElementById('dialogo-verificar-proyecto') : null;
     verificar?.querySelector('[data-verificar-confirmar]').addEventListener('click', () => { verificar.sinFoco = true; cerrar(verificar); enviarDatos(); });
     form.addEventListener('submit', e => {
@@ -195,22 +291,26 @@
     function enviarDatos() {
       const correo = form.elements.correo.value.trim();
       confirmacion.querySelector('h2').textContent = d.titulo;
-      confirmacion.querySelector('p').textContent = d.mensaje(correo);
+      confirmacion.querySelector('p').textContent = d.mensaje(correo, form);
+      const esperamos = confirmacion.querySelector('.evento-confirmacion__esperamos');
+      esperamos.textContent = d.esperamos || '';
+      esperamos.hidden = !d.esperamos;
       const origen = dialogo.origen;
       dialogo.sinFoco = true;
       cerrar(dialogo);
       setTimeout(() => {
         form.reset(); fase = 'vacio'; enviar.disabled = true; estado.textContent = '';
+        if (salida) { fijarCantidad(1); mostrarPago(); }
         abrir(confirmacion, origen);
         iniciarPatron();
       }, quieto() ? 0 : 280);
     }
   });
 
-  if (location.hash === '#inscripcion') {
+  if (location.hash === '#entradas' || location.hash === '#inscripcion') {
     history.replaceState(null, '', location.pathname + location.search);
-    const boton = portada.querySelector('[data-abrir="dialogo-inscripcion"]');
-    setTimeout(() => { boton.focus({preventScroll:true}); abrir(document.getElementById('dialogo-inscripcion'), boton); }, quieto() ? 0 : 450);
+    const boton = portada.querySelector('[data-abrir="dialogo-entradas"]');
+    setTimeout(() => { boton.focus({preventScroll:true}); abrir(document.getElementById('dialogo-entradas'), boton); }, quieto() ? 0 : 450);
   }
   if (location.hash === '#proyecto' || location.hash === '#propuesta') {
     history.replaceState(null, '', location.pathname + location.search);

@@ -32,6 +32,7 @@
 .encuentro-icono--donde{--encuentro-i:url('../assets/eventos/iconos/location-on.svg')}
 .encuentro-icono--entrada{--encuentro-i:url('../assets/eventos/iconos/confirmation-number.svg')}
 .encuentro-icono--inscribir{--encuentro-i:url('../assets/eventos/iconos/edit-square.svg');width:22px;height:22px}
+.encuentro-icono--entradas{--encuentro-i:url('../assets/eventos/iconos/confirmation-number.svg');width:22px;height:22px}
 .encuentro-icono--actividades{--encuentro-i:url('../assets/eventos/iconos/person-play.svg');width:22px;height:22px}
 .encuentro-acciones{display:flex;flex-wrap:wrap;gap:16px;margin-top:51px}
 .home-encuentro .boton{--pixel-base:var(--encuentro-naranja);--pixel-tinta:#1a1a1a;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:230px;height:56px;padding:0 32px;border:1px solid var(--encuentro-naranja);border-radius:2px;background:var(--encuentro-naranja);color:#1a1a1a;font:500 16px/1 Archivo,Arial,sans-serif;text-decoration:none}

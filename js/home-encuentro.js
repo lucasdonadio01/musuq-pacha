@@ -6,7 +6,9 @@
   const fotos = [...marco.querySelectorAll('.encuentro-foto')];
   const puntos = [...galeria.querySelectorAll('.encuentro-puntos button')];
   const estado = galeria.querySelector('[data-galeria-estado]');
-  let actual = 0, inicio = null;
+  const quieto = () => matchMedia('(prefers-reduced-motion:reduce)').matches || document.documentElement.dataset.detener === 'true';
+  let actual = 0, inicio = null, reloj = 0, pausa = false, visible = false;
+  const programar = () => { clearTimeout(reloj); if (!pausa && visible && !document.hidden && !quieto()) reloj = setTimeout(() => ir(actual + 1, false), 4500); };
   function ir(indice, anunciar = true) {
     actual = (indice + fotos.length) % fotos.length;
     fotos.forEach((foto, i) => {
@@ -16,7 +18,14 @@
     });
     puntos.forEach((punto, i) => { if (i === actual) punto.setAttribute('aria-current', 'true'); else punto.removeAttribute('aria-current'); });
     if (anunciar) estado.textContent = `Foto ${actual + 1} de ${fotos.length}`;
+    programar();
   }
+  galeria.addEventListener('pointerenter', () => { pausa = true; programar(); });
+  galeria.addEventListener('pointerleave', () => { pausa = false; programar(); });
+  galeria.addEventListener('focusin', () => { pausa = true; programar(); });
+  galeria.addEventListener('focusout', e => { if (!galeria.contains(e.relatedTarget)) { pausa = false; programar(); } });
+  document.addEventListener('visibilitychange', programar);
+  addEventListener('musuq:accesibilidad', programar);
   galeria.querySelector('[data-galeria-prev]').addEventListener('click', () => ir(actual - 1));
   galeria.querySelector('[data-galeria-next]').addEventListener('click', () => ir(actual + 1));
   puntos.forEach((punto, i) => punto.addEventListener('click', () => ir(i)));
@@ -36,5 +45,6 @@
     fotos.forEach(foto => { foto.loading = 'eager'; });
     observador.disconnect();
   }, {rootMargin:'400px 0px'}).observe(galeria);
+  new IntersectionObserver(entradas => { visible = entradas.some(entrada => entrada.isIntersecting); programar(); }).observe(galeria);
   ir(0, false);
 })();
