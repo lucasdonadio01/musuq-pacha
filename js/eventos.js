@@ -6,7 +6,8 @@
   const quieto = () => reduced.matches || root.dataset.detener === 'true';
   const esperar = ms => new Promise(listo => setTimeout(listo, quieto() ? 0 : ms));
   const portada = document.getElementById('portada');
-  const actividades = document.getElementById('actividades');
+  const vistas = {portada, actividades: document.getElementById('actividades')};
+  const compra = document.getElementById('entradas');
 
   let fondoActivo = false;
   try {
@@ -18,43 +19,52 @@
   } catch { fondoActivo = false; }
   if (!fondoActivo) document.querySelector('.eventos-fondo').classList.add('eventos-fondo--estatico');
   const pausarFondo = () => {
-    if (fondoActivo) Fondo.cfg.quieto = quieto() || document.hidden || body.classList.contains('eventos--actividades');
+    if (fondoActivo) Fondo.cfg.quieto = quieto() || document.hidden || body.classList.contains('eventos--landing');
   };
   pausarFondo();
   document.addEventListener('visibilitychange', pausarFondo);
   addEventListener('musuq:accesibilidad', pausarFondo);
   reduced.addEventListener('change', pausarFondo);
 
-  let vista = null, cambio = 0, desdePortada = false;
-  function mostrar(nombre, animar) {
-    if (vista === nombre) return;
-    const entra = nombre === 'actividades' ? actividades : portada;
-    const sale = entra === actividades ? portada : actividades;
+  let vista = null, anterior = null, cambio = 0, desdePortada = false, origenPortada = null;
+  const irACompra = suave => {
+    compra.scrollIntoView({behavior: suave && !quieto() ? 'smooth' : 'instant', block:'start'});
+    document.getElementById('entradas-titulo').focus({preventScroll:true});
+  };
+  function mostrar(nombre, animar, destino) {
+    if (vista === nombre) { if (destino) irACompra(animar); return; }
+    const entra = vistas[nombre];
+    const salen = Object.values(vistas).filter(v => v !== entra && !v.hidden);
     const habiaVista = vista !== null;
-    vista = nombre;
-    body.classList.toggle('eventos--actividades', nombre === 'actividades');
+    anterior = vista; vista = nombre;
+    body.classList.toggle('eventos--landing', nombre !== 'portada');
     pausarFondo();
     const turno = ++cambio, suave = animar && !quieto();
     const terminar = () => {
       if (turno !== cambio) return;
-      sale.hidden = true; sale.classList.remove('eventos-vista--sale');
+      salen.forEach(sale => { sale.hidden = true; sale.classList.remove('eventos-vista--sale'); });
       if (suave) entra.classList.add('eventos-vista--entra');
       entra.hidden = false;
-      scrollTo({top:0, behavior:'instant'});
+      if (destino) compra.scrollIntoView({behavior:'instant', block:'start'}); else scrollTo({top:0, behavior:'instant'});
       if (suave) requestAnimationFrame(() => requestAnimationFrame(() => entra.classList.remove('eventos-vista--entra')));
       if (!habiaVista) return;
-      const foco = nombre === 'actividades' ? document.getElementById('actividades-titulo') : portada.querySelector('a[href="#actividades"]');
+      const foco = nombre === 'portada' ? (origenPortada?.isConnected ? origenPortada : portada.querySelector('a[href="#actividades"]')) : document.getElementById((destino ? 'entradas' : nombre) + '-titulo');
       foco?.focus({preventScroll:true});
     };
-    if (!suave || sale.hidden) terminar();
-    else { sale.classList.add('eventos-vista--sale'); setTimeout(terminar, 380); }
+    if (!suave || !salen.length) terminar();
+    else { salen.forEach(sale => sale.classList.add('eventos-vista--sale')); setTimeout(terminar, 380); }
   }
-  const segunHash = animar => mostrar(location.hash === '#actividades' ? 'actividades' : 'portada', animar);
+  const segunHash = animar => {
+    if (location.hash === '#inscripcion') history.replaceState(null, '', location.pathname + location.search + '#entradas');
+    const nombre = location.hash.slice(1);
+    mostrar(nombre === 'actividades' || nombre === 'entradas' ? 'actividades' : 'portada', animar, nombre === 'entradas');
+  };
   addEventListener('hashchange', () => segunHash(true));
-  portada.querySelectorAll('a[href="#actividades"]').forEach(enlace => enlace.addEventListener('click', () => { desdePortada = true; }));
+  portada.querySelectorAll('a[href="#actividades"], a[href="#entradas"]').forEach(enlace => enlace.addEventListener('click', () => { desdePortada = true; origenPortada = enlace; }));
   document.querySelectorAll('[data-volver]').forEach(enlace => enlace.addEventListener('click', e => {
     e.preventDefault();
-    if (desdePortada) { desdePortada = false; history.back(); return; }
+    if (desdePortada && anterior === 'portada') { desdePortada = false; history.back(); return; }
+    desdePortada = false;
     history.pushState(null, '', location.pathname + location.search);
     segunHash(true);
   }));
@@ -79,7 +89,7 @@
     const puntos = [...galeria.querySelectorAll('.evento-puntos button')];
     const estadoGaleria = galeria.querySelector('[data-galeria-estado]');
     let actual = 0, reloj = 0, pausa = false;
-    const programar = () => { clearTimeout(reloj); if (!pausa && !document.hidden && !quieto() && !body.classList.contains('eventos--actividades')) reloj = setTimeout(() => ir(actual + 1, false), 4500); };
+    const programar = () => { clearTimeout(reloj); if (!pausa && !document.hidden && !quieto() && !body.classList.contains('eventos--landing')) reloj = setTimeout(() => ir(actual + 1, false), 4500); };
     function ir(indice, anunciar = true) {
       actual = (indice + fotos.length) % fotos.length;
       fotos.forEach((foto, i) => {
@@ -149,7 +159,7 @@
       esperamos: '¡Te esperamos!',
       mensaje: (correo, form) => {
         const n = Number(form.elements.cantidad.value), dia = form.querySelector('input[name="dia"]:checked');
-        return `Te enviamos ${n === 1 ? 'la entrada' : `las ${n} entradas`} a ${correo}. Nos vemos ${dia ? dia.dataset.texto : ''} en el Palacio Libertad, de 14 a 20 h: mostrá el QR del mail en la puerta.`;
+        return `Te enviamos ${n === 1 ? 'la entrada' : `las ${n} entradas`} a ${correo}. Nos vemos ${dia ? dia.dataset.texto : ''} en el Palacio Libertad, de 11:30 a 20 h: mostrá el QR del mail en la puerta.`;
       }
     },
     proyecto: {
@@ -185,7 +195,13 @@
     motor.generar(ahora, semilla, verdes);
     cancelAnimationFrame(cuadro); cuadro = requestAnimationFrame(dibujarPatron);
   }
-  confirmacion.addEventListener('close', () => { cancelAnimationFrame(cuadro); cuadro = 0; });
+  confirmacion.addEventListener('close', () => {
+    cancelAnimationFrame(cuadro); cuadro = 0;
+    if (!confirmacion.volverAPortada) return;
+    confirmacion.volverAPortada = false;
+    history.pushState(null, '', location.pathname + location.search);
+    segunHash(true);
+  });
 
   document.querySelectorAll('form[data-autocompletar]').forEach(form => {
     const d = datos[form.dataset.autocompletar];
@@ -295,9 +311,9 @@
       const esperamos = confirmacion.querySelector('.evento-confirmacion__esperamos');
       esperamos.textContent = d.esperamos || '';
       esperamos.hidden = !d.esperamos;
-      const origen = dialogo.origen;
-      dialogo.sinFoco = true;
-      cerrar(dialogo);
+      const origen = dialogo ? dialogo.origen : document.getElementById('entradas-titulo');
+      if (dialogo) { dialogo.sinFoco = true; cerrar(dialogo); }
+      confirmacion.volverAPortada = !dialogo;
       setTimeout(() => {
         form.reset(); fase = 'vacio'; enviar.disabled = true; estado.textContent = '';
         if (salida) { fijarCantidad(1); mostrarPago(); }
@@ -307,11 +323,28 @@
     }
   });
 
-  if (location.hash === '#entradas' || location.hash === '#inscripcion') {
-    history.replaceState(null, '', location.pathname + location.search);
-    const boton = portada.querySelector('[data-abrir="dialogo-entradas"]');
-    setTimeout(() => { boton.focus({preventScroll:true}); abrir(document.getElementById('dialogo-entradas'), boton); }, quieto() ? 0 : 450);
+  const dias = [...document.querySelectorAll('.crono__dia')];
+  function elegirDia(tab, enfocar) {
+    dias.forEach(otro => {
+      const activo = otro === tab;
+      otro.setAttribute('aria-selected', activo);
+      otro.tabIndex = activo ? 0 : -1;
+      document.getElementById(otro.getAttribute('aria-controls')).hidden = !activo;
+    });
+    if (enfocar) tab.focus();
   }
+  dias.forEach((tab, i) => {
+    tab.addEventListener('click', () => elegirDia(tab));
+    tab.addEventListener('keydown', e => {
+      const paso = {ArrowRight:1, ArrowDown:1, ArrowLeft:-1, ArrowUp:-1}[e.key];
+      if (paso) { e.preventDefault(); elegirDia(dias[(i + paso + dias.length) % dias.length], true); }
+      else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); elegirDia(dias[e.key === 'Home' ? 0 : dias.length - 1], true); }
+    });
+  });
+  const hoy = new Date(), fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+  const delEvento = dias.find(tab => document.getElementById(tab.getAttribute('aria-controls')).querySelector('time')?.dateTime.startsWith(fechaHoy));
+  if (delEvento) elegirDia(delEvento);
+
   if (location.hash === '#proyecto' || location.hash === '#propuesta') {
     history.replaceState(null, '', location.pathname + location.search);
     const boton = portada.querySelector('[data-abrir="dialogo-proyecto"]');
