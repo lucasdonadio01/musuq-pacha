@@ -152,14 +152,17 @@
   const datos = {
     entradas: {
       texto: {nombre:'Marta Gimenez', correo:'marta.gimenez@ejemplo.com', dni:'32.458.910'},
-      opciones: {dia:['sabado'], pago:['mercadopago']},
+      opciones: {tipo:['general'], dia:['sabado'], pago:['mercadopago']},
       cantidad: 2,
       tarjeta: {tarjeta:'4509 9535 6623 3704', vencimiento:'11/30', codigo:'123'},
       titulo: '¡Compra confirmada!',
       esperamos: '¡Te esperamos!',
       mensaje: (correo, form) => {
-        const n = Number(form.elements.cantidad.value), dia = form.querySelector('input[name="dia"]:checked');
-        return `Te enviamos ${n === 1 ? 'la entrada' : `las ${n} entradas`} a ${correo}. Nos vemos ${dia ? dia.dataset.texto : ''} en el Palacio Libertad, de 11:30 a 20 h: mostrá el QR del mail en la puerta.`;
+        const n = Number(form.elements.cantidad.value);
+        const tipo = form.querySelector('input[name="tipo"]:checked'), dia = form.querySelector('input[name="dia"]:checked');
+        const cuando = tipo && tipo.value === 'pase' ? tipo.dataset.texto : (dia ? dia.dataset.texto : '');
+        const que = n === 1 ? (tipo ? tipo.dataset.nombre : 'la entrada') : (tipo && tipo.value === 'pase' ? `los ${n} pases` : `las ${n} entradas`);
+        return `Te enviamos ${que} a ${correo}. Nos vemos ${cuando} en el Palacio Libertad, de 11:30 a 20 h: mostrá el QR del mail en la puerta.`;
       }
     },
     proyecto: {
@@ -212,10 +215,22 @@
     const salida = form.elements.cantidad;
     const total = form.querySelector('[data-total]');
     const pesos = n => '$ ' + n.toLocaleString('es-AR');
+    const dias = form.querySelector('[data-dias]');
+    function mostrarDias() {
+      if (!dias) return;
+      const pase = form.querySelector('input[name="tipo"]:checked')?.value === 'pase';
+      dias.classList.toggle('evento-opciones--apagadas', pase);
+      dias.querySelector('[data-dias-pase]').hidden = !pase;
+      dias.querySelectorAll('input').forEach((campo, i) => {
+        campo.disabled = pase;
+        if (pase) campo.checked = false;
+        campo.required = !pase && i === 0;
+      });
+    }
     function actualizarTotal() {
       if (!total) return;
-      const dia = form.querySelector('input[name="dia"]:checked');
-      const nuevo = pesos((dia ? Number(dia.dataset.precio) : 0) * Number(salida.value));
+      const tipo = form.querySelector('input[name="tipo"]:checked');
+      const nuevo = pesos((tipo ? Number(tipo.dataset.precio) : 0) * Number(salida.value));
       if (total.textContent === nuevo) return;
       total.textContent = nuevo;
       if (quieto()) return;
@@ -255,10 +270,11 @@
     if (salida) {
       form.querySelectorAll('[data-cantidad]').forEach(boton => boton.addEventListener('click', () => fijarCantidad(Number(salida.value) + Number(boton.dataset.cantidad))));
       form.addEventListener('change', e => {
-        if (e.target.name === 'dia') actualizarTotal();
+        if (e.target.name === 'tipo') { mostrarDias(); actualizarTotal(); }
         if (e.target.name === 'pago') mostrarPago();
       });
       fijarCantidad(1);
+      mostrarDias();
     }
     async function completar() {
       fase = 'llenando';
@@ -271,7 +287,7 @@
         const marcada = form.querySelector(`input[name="${nombre}"]:checked`);
         if (marcada && marcada.type === 'radio') continue;
         for (const opcion of form.querySelectorAll(`input[name="${nombre}"]`)) {
-          if (!valores.includes(opcion.value)) continue;
+          if (!valores.includes(opcion.value) || opcion.disabled) continue;
           opcion.checked = true;
           opcion.dispatchEvent(new Event('change', {bubbles:true}));
           await esperar(150);
@@ -316,7 +332,7 @@
       confirmacion.volverAPortada = !dialogo;
       setTimeout(() => {
         form.reset(); fase = 'vacio'; enviar.disabled = true; estado.textContent = '';
-        if (salida) { fijarCantidad(1); mostrarPago(); }
+        if (salida) { fijarCantidad(1); mostrarPago(); mostrarDias(); }
         abrir(confirmacion, origen);
         iniciarPatron();
       }, quieto() ? 0 : 280);
