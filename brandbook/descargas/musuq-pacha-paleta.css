@@ -1,0 +1,12 @@
+/* Musuq Pacha · paleta de la marca */
+:root {
+  --musuq-lima: #E4FE44;
+  --musuq-violeta: #6940AE;
+  --musuq-naranja: #F66227;
+  --musuq-placa: #232323;
+  --musuq-blanco: #FFFFFF;
+  --musuq-lila: #C8ACFF;
+
+  --musuq-fuente-principal: 'Space Grotesk', Arial, sans-serif;
+  --musuq-fuente-lectura: Archivo, Arial, sans-serif;
+}

@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Musuq Pacha · Brandbook</title>
+  <meta name="description" content="Sistema de diseño de Musuq Pacha: color, tipografía, recursos gráficos y piezas.">
+  <meta name="theme-color" content="#232323">
+  <meta name="robots" content="noindex, nofollow">
+  <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
+  <link rel="stylesheet" href="fuentes/space-grotesk.css">
+  <link rel="stylesheet" href="marca.css?v=13">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <div class="carga" data-carga>
+    <canvas class="carga-lienzo" data-carga-lienzo aria-hidden="true"></canvas>
+    <div class="carga-paneles" aria-hidden="true">
+      <div class="carga-panel" data-panel style="--c:var(--lima);--t:var(--placa)"><span>Píxel</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--violeta);--t:var(--blanco)"><span>Color</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--naranja);--t:var(--placa)"><span>Letra</span></div>
+    </div>
+    <p class="carga-marca" data-carga-marca aria-hidden="true"><span>Musuq Pacha</span></p>
+    <p class="hud carga-hud ai" aria-hidden="true">Musuq Pacha</p>
+    <p class="hud carga-hud ad" aria-hidden="true">Brandbook · TP5</p>
+    <p class="hud carga-hud bi" data-carga-codigo aria-hidden="true">Cargando el sistema</p>
+    <p class="hud carga-hud bd" aria-hidden="true"><span data-carga-cuenta>000</span> %</p>
+    <button class="carga-saltar" type="button" data-carga-saltar>Saltar intro</button>
+  </div>
+
+  <div class="grilla" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <header class="cabecera" data-cabecera>
+    <div class="marquesina" aria-hidden="true">
+      <div class="marquesina-pista">
+        <span>Sistema de diseño · TP5</span><i></i><span>Yachay: la experiencia de Musuq Pacha</span><i></i><span>9 al 12 de octubre · Palacio Libertad</span><i></i><span>Grupo 7 · UADE 2026</span><i></i>
+        <span>Sistema de diseño · TP5</span><i></i><span>Yachay: la experiencia de Musuq Pacha</span><i></i><span>9 al 12 de octubre · Palacio Libertad</span><i></i><span>Grupo 7 · UADE 2026</span><i></i>
+      </div>
+    </div>
+    <div class="cabecera-fila">
+      <a class="cabecera-marca" href="#inicio"><span class="pixeles" aria-hidden="true"><i></i><i></i><i></i></span>Musuq Pacha</a>
+      <nav class="pastillas" aria-label="Secciones principales" data-pastillas>
+        <span class="pastillas-luz" aria-hidden="true"></span>
+        <a href="#color">Color</a>
+        <a href="#tipografia">Tipografía</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#iconografia">Iconografía</a>
+        <a href="#senaletica">Señalética</a>
+      </nav>
+      <div class="cabecera-acciones">
+        <button class="boton-linea" type="button" data-indice-abrir aria-expanded="false" aria-controls="indice">Índice</button>
+        <a class="boton chico" href="#descargas">Descargas</a>
+      </div>
+    </div>
+    <span class="cabecera-progreso" data-progreso aria-hidden="true"></span>
+  </header>
+
+  <nav class="indice" id="indice" aria-label="Índice del manual" data-indice inert>
+    <div class="indice-cabeza">
+      <p class="hud">Índice · 15 secciones</p>
+      <button class="boton-linea" type="button" data-indice-cerrar>Cerrar</button>
+    </div>
+    <ol class="indice-lista">
+      <li><a href="#introduccion"><b>01</b><span>Introducción</span></a></li>
+      <li class="pendiente"><span><b>02</b><span>La marca</span><em>Pronto</em></span></li>
+      <li class="pendiente"><span><b>03</b><span>Voz y tono</span><em>Pronto</em></span></li>
+      <li class="pendiente"><span><b>04</b><span>Signo identificador</span><em>Pronto</em></span></li>
+      <li><a href="#color"><b>05</b><span>Color</span></a>
+        <ol>
+          <li><a href="#paleta">Paleta principal</a></li>
+          <li><a href="#proporcion">Proporción y roles</a></li>
+          <li><a href="#contrastes">Contrastes</a></li>
+          <li><a href="#escalas">Escalas y tramas</a></li>
+        </ol>
+      </li>
+      <li><a href="#tipografia"><b>06</b><span>Tipografía</span></a>
+        <ol>
+          <li><a href="#familias">Familias</a></li>
+          <li><a href="#tipo-vivo">Letra en movimiento</a></li>
+          <li><a href="#jerarquia">Jerarquía y tamaños</a></li>
+        </ol>
+      </li>
+      <li class="pendiente"><span><b>07</b><span>Grilla</span><em>Pronto</em></span></li>
+      <li><a href="#recursos"><b>08</b><span>Recursos gráficos</span></a>
+        <ol>
+          <li><a href="#pixel">El píxel</a></li>
+          <li><a href="#racimos">Racimos</a></li>
+          <li><a href="#chakana">Chakana</a></li>
+          <li><a href="#ilustraciones">Ilustraciones</a></li>
+        </ol>
+      </li>
+      <li><a href="#iconografia"><b>09</b><span>Iconografía</span></a>
+        <ol>
+          <li><a href="#pictogramas">Pictogramas</a></li>
+          <li><a href="#construccion">Construcción</a></li>
+        </ol>
+      </li>
+      <li class="pendiente"><span><b>10</b><span>Ilustración y fotografía</span><em>Pronto</em></span></li>
+      <li class="pendiente"><span><b>11</b><span>Video y movimiento</span><em>Pronto</em></span></li>
+      <li><a href="#senaletica"><b>12</b><span>Señalética</span></a>
+        <ol>
+          <li><a href="#atomos">Átomos</a></li>
+          <li><a href="#moleculas">Moléculas</a></li>
+          <li><a href="#en-uso">En uso</a></li>
+        </ol>
+      </li>
+      <li class="pendiente"><span><b>13</b><span>Interfaz</span><em>Pronto</em></span></li>
+      <li class="pendiente"><span><b>14</b><span>Aplicaciones</span><em>Pronto</em></span></li>
+      <li><a href="#descargas"><b>15</b><span>Descargas</span></a></li>
+    </ol>
+  </nav>
+
+  <main id="contenido">
+    <section class="portada" id="inicio" aria-labelledby="titulo-portada">
+      <p class="hud portada-hud ai">Musuq Pacha © 2026</p>
+      <p class="hud portada-hud ad">Sistema de diseño · TP5</p>
+      <div class="titular" data-titular>
+        <h1 id="titulo-portada" aria-label="Brandbook"><span class="t-parte" aria-hidden="true"><span class="letra" style="--i:0">B</span><span class="letra" style="--i:1">r</span><span class="letra" style="--i:2">a</span><span class="letra" style="--i:3">n</span><span class="letra" style="--i:4">d</span></span><span class="t-parte" aria-hidden="true"><span class="letra" style="--i:5">b</span><span class="letra" style="--i:6">o</span><span class="letra" style="--i:7">o</span><span class="letra" style="--i:8">k</span></span></h1>
+        <div class="chakana3d" data-chakana3d aria-hidden="true"><span class="chakana3d-luz"></span><canvas data-chakana-lienzo></canvas></div>
+      </div>
+      <div class="portada-fila">
+        <p class="portada-bajada">Sistema de diseño de la marca: del videojuego a la web, el informe y Yachay, la experiencia en el Palacio Libertad.</p>
+        <div class="portada-botones">
+          <a class="boton" href="#introduccion">Empezar</a>
+          <a class="boton-linea" href="#paleta">Ver la paleta</a>
+        </div>
+      </div>
+      <div class="bento">
+        <a class="bento-celda" href="#color">
+          <span class="bento-rotulo">Colores</span><span class="bento-indice">(01)</span>
+          <b class="bento-cifra" data-cuenta="6">6</b>
+          <span class="bento-viz bento-paleta" aria-hidden="true"><i style="--c:var(--lima)"></i><i style="--c:var(--violeta)"></i><i style="--c:var(--naranja)"></i><i style="--c:var(--placa)"></i><i style="--c:var(--blanco)"></i><i style="--c:var(--lila)"></i></span>
+        </a>
+        <a class="bento-celda" href="#tipografia">
+          <span class="bento-rotulo">Familias</span><span class="bento-indice">(02)</span>
+          <b class="bento-cifra" data-cuenta="2">2</b>
+          <span class="bento-viz bento-aa" aria-hidden="true">Aa</span>
+        </a>
+        <a class="bento-celda" href="#iconografia">
+          <span class="bento-rotulo">Pictogramas</span><span class="bento-indice">(03)</span>
+          <b class="bento-cifra" data-cuenta="13">13</b>
+          <span class="bento-viz bento-picto" data-picto-mini="explorar" aria-hidden="true"></span>
+        </a>
+        <a class="bento-celda lima" href="#senaletica">
+          <span class="bento-rotulo">Átomos</span><span class="bento-indice">(04)</span>
+          <b class="bento-cifra" data-cuenta="7">7</b>
+          <span class="bento-viz bento-atomos" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </a>
+      </div>
+      <p class="hud portada-hud bi">Grupo 7 · UADE 2026</p>
+      <a class="hud portada-hud bd" href="#introduccion">Bajá para empezar ↓</a>
+    </section>
+
+    <section class="seccion" id="introduccion" aria-labelledby="titulo-introduccion">
+      <header class="banda" data-banda style="--banda:var(--violeta);--tinta:var(--blanco)">
+        <div class="banda-hud"><span>01 / 15</span><span data-descifrar>#6940AE</span></div>
+        <p class="seccion-numero">01 · Cómo usar este manual</p>
+        <h2 id="titulo-introduccion" class="banda-titulo"><span data-banda-titulo>Introducción</span></h2>
+      </header>
+      <p class="copete" data-aparece>Este manual reúne las reglas visuales de Musuq Pacha: el videojuego, la web, el informe y Yachay, el evento en el Palacio Libertad. Sirve para que cualquier persona del equipo, de una imprenta o de una marca aliada pueda aplicar la identidad sin perder coherencia.</p>
+      <div class="tarjetas tres" data-desfase>
+        <article class="tarjeta" data-aparece data-enfasis>
+          <span class="tarjeta-indice">(01)</span>
+          <h3>Para quién</h3>
+          <p>El equipo de diseño y comunicación, las imprentas y proveedores, y las marcas y artistas que colaboran con el evento.</p>
+        </article>
+        <article class="tarjeta" data-aparece data-enfasis>
+          <span class="tarjeta-indice">(02)</span>
+          <h3>Cómo se lee</h3>
+          <p>Cada sección tiene una introducción, el desarrollo y una conclusión. Los colores, los pictogramas y las fotos se abren en grande con un clic, y las herramientas se prueban en la misma página.</p>
+        </article>
+        <article class="tarjeta" data-aparece data-enfasis>
+          <span class="tarjeta-indice">(03)</span>
+          <h3>Qué incluye</h3>
+          <p>Color, tipografía, recursos gráficos, iconografía, señalética, interfaz, piezas de comunicación y los archivos para descargar.</p>
+        </article>
+      </div>
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Cuando algo no esté en el manual, la regla es volver a la base: la placa oscura, un solo color de identidad por bloque y la tipografía de la marca.</p>
+    </section>
+
+    <section class="seccion" id="color" aria-labelledby="titulo-color">
+      <header class="banda" data-banda style="--banda:var(--lima);--tinta:var(--placa)">
+        <div class="banda-hud"><span>05 / 15</span><span data-descifrar>#E4FE44</span></div>
+        <p class="seccion-numero">05 · Paleta, proporción y contrastes</p>
+        <h2 id="titulo-color" class="banda-titulo"><span data-banda-titulo>Color</span></h2>
+      </header>
+      <p class="copete" data-aparece>La paleta sale del juego: tres colores de identidad que se reconocen de lejos y dos colores de base para leer. Todo el sistema se apoya sobre la placa oscura, el mismo fondo de las pantallas y los carteles del evento.</p>
+
+      <div class="bloque" id="paleta">
+        <h3 class="bloque-titulo" data-aparece>Paleta principal</h3>
+        <p class="bloque-texto" data-aparece>Tocá un color para verlo en grande y copiar sus códigos. El lila acompaña al violeta cuando hay que escribir sobre fondo oscuro.</p>
+        <div class="paleta" data-paleta data-desfase></div>
+        <p class="nota" data-aparece>Los valores CMYK son de referencia: se confirman con una prueba de color en la imprenta.</p>
+      </div>
+
+      <div class="bloque" id="proporcion">
+        <h3 class="bloque-titulo" data-aparece>Proporción y roles</h3>
+        <p class="bloque-texto" data-aparece>Cuánto de cada color entra en una pieza. La placa manda y los colores de identidad aparecen como acentos: nunca compiten dos en el mismo bloque.</p>
+        <div class="proporcion" data-proporcion data-aparece></div>
+        <div class="columnas tres">
+          <div data-aparece>
+            <h4>Reglas</h4>
+            <ul class="lista-reglas">
+              <li>Un solo color de identidad por bloque de texto.</li>
+              <li>El texto va en blanco o lima sobre la placa.</li>
+              <li>El violeta no se usa para texto sobre la placa: para eso está el lila.</li>
+              <li>El lima no va sobre blanco ni el blanco sobre lima.</li>
+              <li>El naranja no se usa de fondo para textos largos.</li>
+            </ul>
+          </div>
+          <div data-aparece>
+            <h4>Código por piso</h4>
+            <ul class="codigos">
+              <li><i style="--c:var(--lima)"></i><b>PB</b> Experiencia Musuq · Plaza Seca</li>
+              <li><i style="--c:var(--violeta)"></i><b>2</b> Auditorio Nacional</li>
+              <li><i style="--c:var(--naranja)"></i><b>4</b> Expo creadores</li>
+              <li><i style="--c:var(--lila)"></i><b>6 · 7</b> Gran Lámpara: zona Samay y museo</li>
+              <li><i style="--c:var(--blanco)"></i><b>9</b> Patio de comidas y mirador</li>
+            </ul>
+          </div>
+          <div data-aparece>
+            <h4>Entradas</h4>
+            <ul class="codigos">
+              <li><i style="--c:var(--lima)"></i>General</li>
+              <li><i style="--c:var(--violeta)"></i>Especial</li>
+              <li><i style="--c:var(--naranja)"></i>Pase de 4 días</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloque" id="contrastes">
+        <h3 class="bloque-titulo" data-aparece>Contrastes</h3>
+        <p class="bloque-texto" data-aparece>Todas las combinaciones, medidas con la norma WCAG 2.1. AA pide 4,5 a 1 para texto común y 3 a 1 para texto grande (24 px, o 19 px en negrita). AAA pide 7 a 1.</p>
+        <div class="probador" data-probador data-aparece>
+          <div class="probador-muestra" data-muestra>
+            <p class="probador-grande">Yachay</p>
+            <p class="probador-chico">La experiencia de Musuq Pacha, del 9 al 12 de octubre.</p>
+          </div>
+          <div class="probador-controles">
+            <p class="probador-rotulo">Texto</p>
+            <div class="chips" data-elige="texto"></div>
+            <p class="probador-rotulo">Fondo</p>
+            <div class="chips" data-elige="fondo"></div>
+            <p class="probador-resultado" data-resultado aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="matriz-contenedor" data-aparece>
+          <table class="matriz" data-matriz>
+            <caption>Relación de contraste entre cada color de texto y cada fondo</caption>
+          </table>
+        </div>
+      </div>
+
+      <div class="bloque" id="escalas">
+        <h3 class="bloque-titulo" data-aparece>Escalas y tramas</h3>
+        <p class="bloque-texto" data-aparece>Los colores de identidad se usan en opacidades sobre la placa para armar tramas de píxeles, como en el juego. Por debajo del 20 % el color se pierde y no se usa.</p>
+        <div class="columnas dos">
+          <div class="escalas" data-escalas data-aparece></div>
+          <figure class="trama-figura" data-aparece>
+            <div class="trama" data-trama aria-hidden="true"></div>
+            <figcaption>Trama de píxeles: el píxel del juego hecho textura. Siempre simétrica en espejo y con el color más fuerte abajo, como en los paneles del evento.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Con cinco colores y uno de apoyo alcanza para todo el sistema: la placa da la base y el contraste, el lima orienta, el violeta crea ambiente y el naranja marca lo importante. Las combinaciones de la tabla aseguran que todo lo que se lee cumpla, como mínimo, la norma AA.</p>
+    </section>
+
+    <section class="seccion" id="tipografia" aria-labelledby="titulo-tipografia">
+      <header class="banda" data-banda style="--banda:var(--blanco);--tinta:var(--placa)">
+        <div class="banda-hud"><span>06 / 15</span><span data-descifrar>#FFFFFF</span></div>
+        <p class="seccion-numero">06 · Familias, movimiento y jerarquía</p>
+        <h2 id="titulo-tipografia" class="banda-titulo"><span data-banda-titulo>Tipografía</span></h2>
+      </header>
+      <p class="copete" data-aparece>Dos familias libres, con licencia OFL de Google Fonts. Space Grotesk, geométrica y con algo de píxel, lleva la voz de la marca. Archivo, neutra y muy legible, es para leer.</p>
+
+      <div class="bloque" id="familias">
+        <h3 class="bloque-titulo" data-aparece>Familias</h3>
+        <div class="columnas dos familias" data-desfase>
+          <article class="familia" data-familia="sg" data-aparece data-enfasis>
+            <p class="familia-rol">Principal</p>
+            <p class="familia-aa">Aa</p>
+            <h4>Space Grotesk</h4>
+            <div class="pesos" role="group" aria-label="Peso de Space Grotesk">
+              <button type="button" data-peso="400">Regular</button>
+              <button type="button" data-peso="500">Medium</button>
+              <button type="button" data-peso="700" aria-pressed="true">Bold</button>
+            </div>
+            <p class="familia-alfabeto">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ<br>abcdefghijklmnñopqrstuvwxyz<br>0123456789 ¿? ¡! · % &amp; @</p>
+            <p class="familia-uso">Titulares, números, botones, rótulos, señalética y la marca dentro de un texto.</p>
+          </article>
+          <article class="familia" data-familia="ar" data-aparece data-enfasis>
+            <p class="familia-rol">De lectura</p>
+            <p class="familia-aa">Aa</p>
+            <h4>Archivo</h4>
+            <div class="pesos" role="group" aria-label="Peso de Archivo">
+              <button type="button" data-peso="400" aria-pressed="true">Regular</button>
+              <button type="button" data-peso="500">Medium</button>
+            </div>
+            <p class="familia-alfabeto">ABCDEFGHIJKLMNÑOPQRSTUVWXYZ<br>abcdefghijklmnñopqrstuvwxyz<br>0123456789 ¿? ¡! · % &amp; @</p>
+            <p class="familia-uso">Textos, copetes, informes, datos de apoyo y la información chica de los carteles.</p>
+          </article>
+        </div>
+        <p class="nota" data-aparece>Si no están instaladas, las dos se reemplazan por Arial.</p>
+      </div>
+
+      <div class="bloque" id="tipo-vivo">
+        <h3 class="bloque-titulo" data-aparece>Letra en movimiento</h3>
+        <p class="bloque-texto" data-aparece>Space Grotesk es variable: su peso va de 300 a 700 dentro de un mismo archivo. En pantalla se anima así, letra por letra. Pasá el cursor por encima para moverla vos.</p>
+        <div class="tipo-vivo" data-tipo-vivo data-aparece role="img" aria-label="Musuq Pacha, con el peso de cada letra en movimiento">Musuq Pacha</div>
+        <div class="cinta" aria-hidden="true">
+          <div class="cinta-pista"><span>Display 96</span><i></i><span>Título 1 · 64</span><i></i><span>Título 2 · 44</span><i></i><span>Título 3 · 30</span><i></i><span>Copete 22</span><i></i><span>Cuerpo 17</span><i></i><span>Rótulo 14</span><i></i><span>Mínimo 12</span><i></i><span>Display 96</span><i></i><span>Título 1 · 64</span><i></i><span>Título 2 · 44</span><i></i><span>Título 3 · 30</span><i></i><span>Copete 22</span><i></i><span>Cuerpo 17</span><i></i><span>Rótulo 14</span><i></i><span>Mínimo 12</span><i></i></div>
+        </div>
+      </div>
+
+      <div class="bloque" id="jerarquia">
+        <h3 class="bloque-titulo" data-aparece>Jerarquía y tamaños</h3>
+        <p class="bloque-texto" data-aparece>Una escala para pantalla, en píxeles, y otra para impresos, en puntos. En pantalla ningún texto baja de 12 px. En los carteles, el número ocupa el 80 % del alto de la placa y el nombre de la zona, el 30 %.</p>
+        <div class="escala-controles" data-aparece>
+          <label class="campo-texto">
+            <span>Probá con tu texto</span>
+            <input type="text" data-prueba placeholder="Escribí algo" maxlength="60">
+          </label>
+          <div class="interruptor" role="group" aria-label="Medida">
+            <button type="button" data-medida="px" aria-pressed="true">Pantalla</button>
+            <button type="button" data-medida="pt">Impreso</button>
+          </div>
+        </div>
+        <div class="escala" data-escala></div>
+      </div>
+
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Dos familias y nueve estilos cubren desde un cartel de tres metros hasta una nota al pie. Space Grotesk le da carácter a lo que se ve de lejos y Archivo hace cómodo lo que se lee de cerca.</p>
+    </section>
+
+    <section class="seccion" id="recursos" aria-labelledby="titulo-recursos">
+      <header class="banda" data-banda style="--banda:var(--violeta);--tinta:var(--blanco)">
+        <div class="banda-hud"><span>08 / 15</span><span data-descifrar>#6940AE</span></div>
+        <p class="seccion-numero">08 · Píxel, racimos, chakana e ilustraciones</p>
+        <h2 id="titulo-recursos" class="banda-titulo"><span data-banda-titulo>Recursos gráficos</span></h2>
+      </header>
+      <p class="copete" data-aparece>Todo el sistema sale de un módulo: el píxel del juego. Con él se arman los paneles, los racimos, las tramas y la chakana, y de las formas del juego salen las ilustraciones del evento.</p>
+
+      <div class="bloque" id="pixel">
+        <h3 class="bloque-titulo" data-aparece>El píxel</h3>
+        <div class="columnas dos centradas">
+          <div data-aparece>
+            <p class="bloque-texto">En el juego, bloques de 49 o 98 px arman y desarman los paneles. En el evento, los mismos cuadrados arman placas, cubos y tótems de ángulos rectos.</p>
+            <ul class="lista-reglas">
+              <li>Siempre cuadrado y con esquinas rectas: nada de bordes redondeados.</li>
+              <li>La separación entre píxeles es un sexto del lado.</li>
+              <li>Los paneles se desarman por los bordes, nunca por el centro.</li>
+            </ul>
+          </div>
+          <div class="modulo" data-modulo data-aparece aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="bloque" id="racimos">
+        <h3 class="bloque-titulo" data-aparece>Racimos</h3>
+        <p class="bloque-texto" data-aparece>Módulos aislados y agrupados, como las tramas de las interfaces del juego. Cada racimo usa un solo color de identidad y es simétrico en espejo. Probá armar uno.</p>
+        <div class="racimo-taller" data-aparece>
+          <div class="racimo" data-racimo aria-hidden="true"></div>
+          <div class="racimo-controles">
+            <p class="probador-rotulo">Color</p>
+            <div class="chips" data-racimo-color></div>
+            <button class="boton" type="button" data-racimo-otro>Otro racimo</button>
+            <p class="nota">Cada racimo sale de la misma regla: más denso abajo y en el centro, y espejado de izquierda a derecha.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloque" id="chakana">
+        <h3 class="bloque-titulo" data-aparece>Chakana</h3>
+        <div class="columnas dos centradas">
+          <div class="chakana" data-chakana data-aparece aria-hidden="true"></div>
+          <div data-aparece>
+            <p class="bloque-texto">La cruz andina dibujada con el módulo. Aparece en el pendón de recepción, en la plaza y como pictograma. Es simétrica en sus dos ejes y no se deforma. En pantalla puede girar sobre su eje como un objeto en volumen, como en la portada; en el plano no se rota.</p>
+            <ul class="lista-reglas">
+              <li>Va completa: no se corta ni se usa a medias.</li>
+              <li>En un solo color, sobre la placa o sobre un color de identidad con buen contraste.</li>
+              <li>En volumen, el frente va en lima y la cara de atrás en violeta.</li>
+              <li>No se combina con otras cruces ni con formas giradas en el plano.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloque" id="ilustraciones">
+        <h3 class="bloque-titulo" data-aparece>Ilustraciones</h3>
+        <p class="bloque-texto" data-aparece>Formas que salen de la flora y la fauna del juego, simplificadas para integrarse a la gráfica. En el evento se imprimen en cartón y se arman como siluetas cruzadas en X. Tocá una para verla en grande.</p>
+        <div class="ilustraciones" data-desfase data-galeria="Ilustraciones">
+          <figure data-aparece data-enfasis><img src="ilustraciones/calden.png" alt="Caldén" width="560" height="560" loading="lazy"><figcaption>Caldén</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/tala.png" alt="Tala" width="560" height="560" loading="lazy"><figcaption>Tala</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/carda.png" alt="Carda" width="560" height="560" loading="lazy"><figcaption>Carda</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/tero.png" alt="Tero" width="560" height="560" loading="lazy"><figcaption>Tero</figcaption></figure>
+        </div>
+      </div>
+
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Un solo módulo alcanza para todo: si una pieza nueva se arma con píxeles cuadrados, respeta la simetría en espejo y usa un color de identidad, ya pertenece a la marca.</p>
+    </section>
+
+    <section class="seccion" id="iconografia" aria-labelledby="titulo-iconografia">
+      <header class="banda" data-banda style="--banda:var(--lima);--tinta:var(--placa)">
+        <div class="banda-hud"><span>09 / 15</span><span data-descifrar>#E4FE44</span></div>
+        <p class="seccion-numero">09 · Pictogramas y construcción</p>
+        <h2 id="titulo-iconografia" class="banda-titulo"><span data-banda-titulo>Iconografía</span></h2>
+      </header>
+      <p class="copete" data-aparece>Trece pictogramas propios, con trazo grueso y terminaciones rectas, como el píxel. Los mismos se repiten en las direccionales, el directorio, los cubos y las puntuales.</p>
+
+      <div class="bloque" id="pictogramas">
+        <h3 class="bloque-titulo" data-aparece>Pictogramas</h3>
+        <p class="bloque-texto" data-aparece>Cambiá el fondo y el tamaño para ver cómo se comportan. Tocá uno para verlo en grande y bajarlo en SVG, en el color que estás viendo.</p>
+        <div class="picto-controles" data-aparece>
+          <div class="interruptor" role="group" aria-label="Fondo de los pictogramas">
+            <button type="button" data-fondo="placa" aria-pressed="true">Sobre placa</button>
+            <button type="button" data-fondo="lima">Sobre lima</button>
+            <button type="button" data-fondo="blanco">Sobre blanco</button>
+          </div>
+          <label class="rango">
+            <span>Tamaño <b data-tam-valor>96 px</b></span>
+            <input type="range" min="24" max="160" step="8" value="96" data-tam>
+          </label>
+        </div>
+        <div class="pictos" data-pictos data-desfase></div>
+        <p class="nota" data-tam-aviso aria-live="polite"></p>
+      </div>
+
+      <div class="bloque" id="construccion">
+        <h3 class="bloque-titulo" data-aparece>Construcción</h3>
+        <div class="tarjetas tres" data-desfase>
+          <article class="tarjeta" data-aparece data-enfasis>
+            <span class="tarjeta-indice">(01)</span>
+            <h3>Trazo</h3>
+            <p>Un solo grosor, de un quinceavo del ancho del pictograma, sin variaciones ni rellenos parciales.</p>
+          </article>
+          <article class="tarjeta" data-aparece data-enfasis>
+            <span class="tarjeta-indice">(02)</span>
+            <h3>Uniones</h3>
+            <p>Esquinas en bisel y extremos rectos, como el píxel: nada de puntas redondas.</p>
+          </article>
+          <article class="tarjeta" data-aparece data-enfasis>
+            <span class="tarjeta-indice">(03)</span>
+            <h3>Tamaño mínimo</h3>
+            <p>24 px en pantalla y 10 mm en impresos. En los carteles va dentro del cuadro de color o sobre la placa.</p>
+          </article>
+        </div>
+      </div>
+
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Un mismo dibujo para el cartel, la web y el mapa: quien visita aprende un pictograma una vez y lo reconoce en todo el recorrido.</p>
+    </section>
+
+    <section class="seccion" id="senaletica" aria-labelledby="titulo-senaletica">
+      <header class="banda" data-banda style="--banda:var(--naranja);--tinta:var(--placa)">
+        <div class="banda-hud"><span>12 / 15</span><span data-descifrar>#F66227</span></div>
+        <p class="seccion-numero">12 · Átomos, moléculas y piezas en uso</p>
+        <h2 id="titulo-senaletica" class="banda-titulo"><span data-banda-titulo>Señalética</span></h2>
+      </header>
+      <p class="copete" data-aparece>La señalética del Palacio Libertad se arma con piezas mínimas, los átomos, que se combinan en cada cartel, las moléculas. Así cualquier cartel nuevo sale del mismo sistema.</p>
+
+      <div class="bloque" id="atomos">
+        <h3 class="bloque-titulo" data-aparece>Átomos</h3>
+        <div class="atomos" data-desfase>
+          <article class="atomo" data-aparece data-enfasis><i style="--c:var(--placa)" class="borde"></i><h4>Placa</h4><p>Fondo oscuro que contiene el resto de los elementos.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i style="--c:var(--lima)"></i><h4>Cuadro de color</h4><p>Lima en las direccionales y violeta en el directorio.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i class="atomo-picto" data-picto-mini="ascensor"></i><h4>Pictograma</h4><p>Uno por servicio o zona.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i class="atomo-numero">2</i><h4>Número de piso</h4><p>En Space Grotesk Bold.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i class="atomo-texto">Aa</i><h4>Rótulo</h4><p>Nombre del servicio o de la zona, en Space Grotesk.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i class="atomo-flecha"></i><h4>Flecha</h4><p>Al final de las direccionales.</p></article>
+          <article class="atomo" data-aparece data-enfasis><i class="atomo-pixeles"></i><h4>Píxeles</h4><p>Se desarman en el borde de cada cuadro, como en el juego.</p></article>
+        </div>
+      </div>
+
+      <div class="bloque" id="moleculas">
+        <h3 class="bloque-titulo" data-aparece>Moléculas</h3>
+        <p class="bloque-texto" data-aparece>Elegí un cartel para ver cómo se arma y cuánto mide. Tocá la pieza para recorrer todos los carteles en grande.</p>
+        <div class="pestanas" role="tablist" aria-label="Carteles" data-pestanas data-aparece></div>
+        <div class="cartel" role="tabpanel" data-cartel data-aparece>
+          <button class="cartel-pieza" type="button" data-cartel-abrir aria-label="Ver todos los carteles en grande"><img data-cartel-img alt=""></button>
+          <div class="cartel-datos">
+            <h4 data-cartel-nombre></h4>
+            <p data-cartel-texto></p>
+            <p class="cartel-medida" data-cartel-medida></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloque" id="en-uso">
+        <h3 class="bloque-titulo" data-aparece>En uso</h3>
+        <p class="bloque-texto" data-aparece>Así se ven los carteles en el Palacio Libertad durante el evento. Tocá una foto para pasarlas en grande.</p>
+        <div class="fotos" data-galeria="En uso">
+          <figure data-aparece data-enfasis><img src="fotos/nucleos-racimo.jpg" alt="Hall de los ascensores con los dos núcleos, su racimo de píxeles y la Plaza Seca al fondo" loading="lazy"><figcaption>Los dos núcleos del hall con su racimo y el número de piso.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/directorio.jpg" alt="Una persona lee el directorio junto a las puertas del ascensor" loading="lazy"><figcaption>El directorio junto a las puertas del ascensor.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/llegada-piso-2.jpg" alt="Llegada al piso 2 por las escaleras mecánicas, frente a la señalética del núcleo" loading="lazy"><figcaption>Llegando al piso 2 por las escaleras mecánicas.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/lona-vestibulo.jpg" alt="La lona de Yachay sobre las puertas giratorias del vestíbulo" loading="lazy"><figcaption>La lona de Yachay sobre las puertas giratorias.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/totem-mapa.jpg" alt="Una familia usa el mapa interactivo del tótem" loading="lazy"><figcaption>El tótem del mapa interactivo con su puntual.</figcaption></figure>
+        </div>
+      </div>
+
+      <p class="conclusion" data-aparece><b>Conclusión.</b> Siete átomos alcanzan para resolver todos los carteles del Palacio. La placa oscura y el cuadro de color hacen que se reconozcan de lejos, y el pictograma y el número se leen antes que el texto.</p>
+    </section>
+
+    <section class="seccion" id="descargas" aria-labelledby="titulo-descargas">
+      <header class="banda" data-banda style="--banda:var(--tarjeta);--tinta:var(--lima)">
+        <div class="banda-hud"><span>15 / 15</span><span data-descifrar>#232323</span></div>
+        <p class="seccion-numero">15 · Archivos de la marca</p>
+        <h2 id="titulo-descargas" class="banda-titulo"><span data-banda-titulo>Descargas</span></h2>
+      </header>
+      <p class="copete" data-aparece>Los archivos para aplicar la marca sin copiar valores a mano.</p>
+      <div class="tarjetas tres" data-desfase>
+        <a class="tarjeta descarga" href="descargas/musuq-pacha-paleta.ase" download data-aparece>
+          <span class="tarjeta-indice">(01)</span>
+          <h3>Paleta para Adobe</h3>
+          <p>Muestras .ase para Illustrator, Photoshop e InDesign.</p>
+          <span class="descarga-formato">ASE</span>
+        </a>
+        <a class="tarjeta descarga" href="descargas/musuq-pacha-paleta.css" download data-aparece>
+          <span class="tarjeta-indice">(02)</span>
+          <h3>Paleta para la web</h3>
+          <p>Variables CSS con los seis colores de la marca.</p>
+          <span class="descarga-formato">CSS</span>
+        </a>
+        <a class="tarjeta descarga" href="descargas/musuq-pacha-marca.json" download data-aparece>
+          <span class="tarjeta-indice">(03)</span>
+          <h3>Colores y letras en datos</h3>
+          <p>Colores, familias y escala tipográfica en un archivo JSON.</p>
+          <span class="descarga-formato">JSON</span>
+        </a>
+        <a class="tarjeta descarga" href="descargas/musuq-pacha-pictogramas.zip" download data-aparece>
+          <span class="tarjeta-indice">(04)</span>
+          <h3>Pictogramas</h3>
+          <p>Los trece pictogramas en SVG, en versión oscura y clara.</p>
+          <span class="descarga-formato">ZIP</span>
+        </a>
+        <a class="tarjeta descarga" href="https://fonts.google.com/specimen/Space+Grotesk" target="_blank" rel="noopener" data-aparece>
+          <span class="tarjeta-indice">(05)</span>
+          <h3>Space Grotesk</h3>
+          <p>La familia principal, en Google Fonts.</p>
+          <span class="descarga-formato">Fuente</span>
+        </a>
+        <a class="tarjeta descarga" href="https://fonts.google.com/specimen/Archivo" target="_blank" rel="noopener" data-aparece>
+          <span class="tarjeta-indice">(06)</span>
+          <h3>Archivo</h3>
+          <p>La familia de lectura, en Google Fonts.</p>
+          <span class="descarga-formato">Fuente</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p class="pie-marca" aria-hidden="true">Musuq Pacha</p>
+    <div class="pie-fila">
+      <p>Grupo 7 · Colacioppo · Donadio · Regazzoni</p>
+      <p>TIF Diseño Multimedia y de Interacción · UADE 2026 · <a href="https://musuqpacha.com.ar/">musuqpacha.com.ar</a></p>
+    </div>
+  </footer>
+
+  <div class="cursor" data-puntero aria-hidden="true"><span data-puntero-texto></span></div>
+  <div class="aviso" role="status" aria-live="polite" data-aviso></div>
+  <script src="pictogramas.js?v=2"></script>
+  <script src="marca.js?v=9"></script>
+  <script src="movimiento.js?v=4"></script>
+</body>
+</html>
