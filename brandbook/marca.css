@@ -139,11 +139,15 @@ main{position:relative;z-index:1;overflow-x:clip}
 .titular h1{font-size:1em;line-height:.86;letter-spacing:-.04em;margin-left:-.05em;white-space:nowrap;clip-path:inset(-.5em -.3em 0 -.3em)}
 .letra{display:inline-block;transition:translate 1.1s var(--curva);transition-delay:calc(.1s + var(--i) * 55ms)}
 .js:not(.listo) .letra{translate:0 104%}
-.chakana3d{position:absolute;z-index:3;left:var(--chak-x);top:var(--chak-y);width:var(--chak-w);aspect-ratio:1;translate:-50% -50%;touch-action:pan-y}
-.chakana3d canvas{position:relative;display:block;width:100%;height:100%;cursor:grab}
-.chakana3d canvas:active{cursor:grabbing}
+.chakana3d{position:absolute;z-index:3;left:var(--chak-x);top:var(--chak-y);width:var(--chak-w);aspect-ratio:1;translate:-50% -50%;touch-action:pan-y;cursor:grab}
+.chakana3d:active{cursor:grabbing}
+.chakana3d canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+.chakana3d.gl [data-chakana-lienzo]{display:none}
 .chakana3d-luz{position:absolute;inset:24%;background:radial-gradient(closest-side,rgba(105,64,174,.6),rgba(105,64,174,0));filter:blur(24px);pointer-events:none;transition:opacity .6s}
-.js.cargando .chakana3d{visibility:hidden}
+.js.cargando main{z-index:auto}
+.js.cargando .chakana3d:not(.flotando){visibility:hidden}
+.chakana3d.flotando{position:fixed;left:50%;top:46%;z-index:120;pointer-events:none}
+.chakana3d.flotando .chakana3d-luz{opacity:0}
 .chakana3d{translate:-50% calc(-50% - var(--h,0) * 34%)}
 .titular h1{translate:0 calc(var(--h,0) * .12em)}
 .portada-fila{display:grid;gap:28px;max-width:min(580px,100%)}

@@ -23,6 +23,30 @@
   };
   const anchoTexto = el => { const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect().width; };
 
+  const est = { ry: quieto ? -0.45 : -0.62, w: 0, inclX: 0, inclY: 0, objX: 0, objY: 0, expl: 0, objExpl: 0, scroll: 0, arrastre: null, t: 0, desde: null };
+  const VUELTA = Math.PI * 2;
+  const avanzar = paso => {
+    est.t += paso;
+    const dt = Math.min(paso, 0.05);
+    if (!est.arrastre) {
+      est.w = mezclar(est.w, 0, 1 - Math.exp(-dt * 1.1));
+      est.ry += est.w * dt;
+      const calma = 1 - limitar(Math.abs(est.w) / 1.6);
+      if (calma > 0) {
+        const balanceo = Math.sin(est.t * 0.45) * 0.5;
+        const objetivo = Math.round((est.ry - balanceo) / VUELTA) * VUELTA + balanceo;
+        est.ry = mezclar(est.ry, objetivo, (1 - Math.exp(-dt * 1.6)) * calma);
+      }
+    }
+    const k4 = 1 - Math.exp(-dt * 4);
+    est.inclX = mezclar(est.inclX, est.objX, k4);
+    est.inclY = mezclar(est.inclY, est.objY, k4);
+    est.expl = mezclar(est.expl, est.objExpl, 1 - Math.exp(-dt * 7));
+    return dt;
+  };
+  const armar = (demora, giro = 9) => { est.desde = est.t + demora; est.w = giro; };
+  const completar = () => { est.desde = -100; };
+
   const chakana = (() => {
     const paso = 7 / 6, D = 30, L = [-0.36, 0.48, -0.8];
     const cubos = [];
@@ -38,25 +62,16 @@
       });
     }));
     const ejes = [[2, 0, 1], [0, 2, 1], [1, 0, 2]];
-    const est = { ry: -0.62, w: 0.42, base: 0.42, inclX: 0, inclY: 0, objX: 0, objY: 0, expl: 0, objExpl: 0, scroll: 0, arrastre: null, t: 0, desde: null };
     let lz = null;
     const asignar = (lienzo, libre) => {
       const m = preparar(lienzo);
       lz = { lienzo, ctx: lienzo.getContext('2d'), ...m, cx: libre ? libre.cx : m.w / 2, cy: libre ? libre.cy : m.h / 2, escala: libre ? libre.escala : m.w * 0.56 / 10.4 };
     };
     const mover = (cx, cy, escala) => { if (!lz) return; lz.cx = cx; lz.cy = cy; if (escala) lz.escala = escala; };
-    const armar = demora => { est.desde = est.t + demora; est.w = 7.5; };
-    const completar = () => { est.desde = -100; };
     const tono = (rgb, k) => `rgb(${Math.min(255, rgb[0] * k) | 0},${Math.min(255, rgb[1] * k) | 0},${Math.min(255, rgb[2] * k) | 0})`;
     const dibujar = paso => {
       if (!lz) return;
-      est.t += paso;
-      const dt = Math.min(paso, 0.05);
-      if (!est.arrastre) { est.w = mezclar(est.w, est.base, 1 - Math.exp(-dt * 1.3)); est.ry += est.w * dt; }
-      const k4 = 1 - Math.exp(-dt * 4);
-      est.inclX = mezclar(est.inclX, est.objX, k4);
-      est.inclY = mezclar(est.inclY, est.objY, k4);
-      est.expl = mezclar(est.expl, est.objExpl, 1 - Math.exp(-dt * 7));
+      avanzar(paso);
       const ry = est.ry + est.inclX * 0.55 + est.scroll, rx = -0.24 + est.inclY * 0.4;
       const cY = Math.cos(ry), sY = Math.sin(ry), cX = Math.cos(rx), sX = Math.sin(rx);
       const rot = (x, y, z) => { const x1 = x * cY + z * sY, z1 = -x * sY + z * cY; return [x1, y * cX - z1 * sX, y * sX + z1 * cX]; };
@@ -99,7 +114,7 @@
         }
       }
     };
-    return { est, asignar, mover, armar, completar, dibujar, lienzo: () => lz && lz.lienzo, escala: () => lz ? lz.escala : 0 };
+    return { asignar, mover, dibujar, lienzo: () => lz && lz.lienzo, escala: () => lz ? lz.escala : 0 };
   })();
 
   const caja = $('[data-chakana3d]'), lienzoHeroe = $('[data-chakana-lienzo]');
@@ -107,46 +122,155 @@
   const carga = $('[data-carga]');
   let enCarga = html.classList.contains('cargando') && !!carga && !!caja && !quieto;
   let heroeVisible = true, corriendo = false, ultimo = 0;
+
+  const glPosible = (() => { try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; } })();
+  const usar3d = !!caja && glPosible && location.protocol !== 'file:';
+  const datosModelo = usar3d ? fetch('modelos/chakana.glb').then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error('modelo ' + r.status))) : null;
+  if (datosModelo) datosModelo.catch(() => {});
+  const cargarScript = src => new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.append(s); });
+  const granoPiedra = (lado, celdas, octavas) => {
+    const lienzo = document.createElement('canvas');
+    lienzo.width = lienzo.height = lado;
+    const ctx = lienzo.getContext('2d'), img = ctx.createImageData(lado, lado);
+    let s = 7;
+    const azar = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+    const capas = [];
+    for (let o = 0; o < octavas; o++) { const n = celdas << o, g = new Float32Array(n * n); for (let i = 0; i < g.length; i++) g[i] = azar(); capas.push({ n, g }); }
+    for (let y = 0; y < lado; y++) for (let x = 0; x < lado; x++) {
+      let v = 0, amp = 0.5, total = 0;
+      for (const { n, g } of capas) {
+        const fx = x / lado * n, fy = y / lado * n, x0 = Math.floor(fx), y0 = Math.floor(fy), tx = suave(fx - x0), ty = suave(fy - y0);
+        const a = g[(y0 % n) * n + x0 % n], b = g[(y0 % n) * n + (x0 + 1) % n], c = g[((y0 + 1) % n) * n + x0 % n], d = g[((y0 + 1) % n) * n + (x0 + 1) % n];
+        v += amp * ((a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty);
+        total += amp;
+        amp *= 0.5;
+      }
+      const k = Math.round(v / total * 255), i = (y * lado + x) * 4;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = k;
+      img.data[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return lienzo;
+  };
+  let motorGL = null;
+  const crearMotorGL = async () => {
+    if (!window.THREE) await cargarScript('../js/three.min.js');
+    if (!THREE.GLTFLoader) await cargarScript('../js/GLTFLoader.js');
+    const datos = await datosModelo;
+    const gltf = await new Promise((ok, mal) => new THREE.GLTFLoader().parse(datos, '', ok, mal));
+    const lienzo = document.createElement('canvas');
+    lienzo.className = 'chakana-gl';
+    const r = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    r.outputEncoding = THREE.sRGBEncoding;
+    r.toneMapping = THREE.ACESFilmicToneMapping;
+    r.toneMappingExposure = 1.15;
+    const escena = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(26, 1, 0.01, 60);
+    cam.position.set(0, 0, 3.2);
+    const luz = (tipo, color, fuerza, x, y, z) => { const l = new THREE[tipo](color, fuerza); l.position.set(x, y, z); escena.add(l); return l; };
+    escena.add(new THREE.HemisphereLight(0xdfe3ff, 0x1a1626, 0.4));
+    luz('DirectionalLight', 0xfff4e6, 2.2, -3, 2.4, 0.9);
+    luz('DirectionalLight', 0xbfc8ff, 0.35, 2.5, -1, 2.5);
+    const contra = luz('DirectionalLight', 0x8a5cff, 1.6, 1.5, 1, -3);
+    luz('PointLight', 0xe4fe44, 0.5, 1.8, -1.2, 1.4);
+    const grano = new THREE.CanvasTexture(granoPiedra(256, 8, 5));
+    grano.wrapS = grano.wrapT = THREE.RepeatWrapping;
+    grano.repeat.set(8, 8);
+    const lineal = hex => new THREE.Color(hex).convertSRGBToLinear();
+    const pigmento = new THREE.MeshStandardMaterial({ color: lineal(0x8c84a6), roughness: 0.92, metalness: 0, emissive: lineal(0x6940ae), emissiveIntensity: 1 });
+    const materiales = {
+      'Chakana piedra': new THREE.MeshStandardMaterial({ color: lineal(0x35383a), roughness: 0.74, metalness: 0, bumpMap: grano, bumpScale: 0.006 }),
+      'Chakana pulido': new THREE.MeshStandardMaterial({ color: lineal(0x26282a), roughness: 0.34, metalness: 0, bumpMap: grano, bumpScale: 0.002 }),
+      'Chakana pigmento': pigmento
+    };
+    const modelo = gltf.scene;
+    modelo.traverse(o => {
+      if (!o.isMesh) return;
+      const g = o.geometry;
+      g.computeBoundingBox();
+      const { min, max } = g.boundingBox, p = g.attributes.position, uv = new Float32Array(p.count * 2);
+      for (let i = 0; i < p.count; i++) { uv[i * 2] = (p.getX(i) - min.x) / (max.x - min.x); uv[i * 2 + 1] = (p.getZ(i) - min.z) / (max.z - min.z); }
+      g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      if (materiales[o.material.name]) o.material = materiales[o.material.name];
+    });
+    const limites = new THREE.Box3().setFromObject(modelo), centro = limites.getCenter(new THREE.Vector3()), tam = limites.getSize(new THREE.Vector3());
+    modelo.position.sub(centro);
+    const orientado = new THREE.Group();
+    orientado.add(modelo);
+    orientado.rotation.x = Math.PI / 2;
+    orientado.scale.setScalar(2 * 3.2 * Math.tan(13 * Math.PI / 180) * 0.52 / Math.max(tam.x, tam.z));
+    const pivote = new THREE.Group();
+    pivote.add(orientado);
+    escena.add(pivote);
+    const medir = () => { const w = Math.max(1, caja.clientWidth), h = Math.max(1, caja.clientHeight); r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
+    const dibujar = paso => {
+      avanzar(paso);
+      const p = est.desde == null ? 1 : limitar((est.t - est.desde) / 1.7), e = salida(p);
+      pivote.visible = p > 0;
+      pivote.scale.setScalar(mezclar(0.06, 1, e) * (1 + est.expl * 0.05));
+      pivote.position.z = mezclar(-7, 0, e);
+      pivote.rotation.set(-0.16 + est.inclY * 0.35, est.ry + est.inclX * 0.5 + est.scroll, 0);
+      const pulso = 0.5 + 0.5 * Math.sin(est.t * 1.7);
+      pigmento.emissiveIntensity = mezclar(3.6, 0.9 + 0.6 * pulso, e) * (1 + est.expl * 1.5);
+      contra.intensity = 1.6 + est.expl * 1.6;
+      r.render(escena, cam);
+    };
+    caja.append(lienzo);
+    caja.classList.add('gl');
+    medir();
+    new ResizeObserver(() => { medir(); if (quieto) dibujar(0); }).observe(caja);
+    return { dibujar };
+  };
+  const promesaGL = usar3d ? crearMotorGL().then(m => (motorGL = m)) : null;
+
   const bucle = t => {
     const dt = Math.min(0.5, Math.max(0, (t - ultimo) / 1000));
     ultimo = t;
-    if (chakana.lienzo() && (enCarga || heroeVisible) && !quieto) { chakana.dibujar(dt); requestAnimationFrame(bucle); }
+    const motor = motorGL || (chakana.lienzo() ? chakana : null);
+    if (motor && (enCarga || heroeVisible) && !quieto) { motor.dibujar(dt); requestAnimationFrame(bucle); }
     else corriendo = false;
   };
   const pedirCuadro = () => { if (!corriendo && !quieto) { corriendo = true; ultimo = ahora(); requestAnimationFrame(bucle); } };
+  const usarPixeles = () => {
+    caja.classList.remove('gl', 'flotando');
+    caja.style.left = caja.style.top = '';
+    chakana.asignar(lienzoHeroe);
+    if (quieto) chakana.dibujar(0); else { armar(0.2, 7.5); pedirCuadro(); }
+  };
 
   if (caja) {
-    lienzoHeroe.dataset.cursor = 'Girar';
+    caja.dataset.cursor = 'Girar';
     new IntersectionObserver(([en]) => { heroeVisible = en.isIntersecting; if (heroeVisible) pedirCuadro(); }).observe(caja);
     new ResizeObserver(() => { if (chakana.lienzo() === lienzoHeroe) { chakana.asignar(lienzoHeroe); if (quieto) chakana.dibujar(0); } }).observe(caja);
-    if (!tactil) addEventListener('pointermove', e => { chakana.est.objX = (e.clientX / innerWidth - 0.5) * 2; chakana.est.objY = (e.clientY / innerHeight - 0.5) * 2; }, { passive: true });
-    caja.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') chakana.est.objExpl = 1; });
-    caja.addEventListener('pointerleave', () => { chakana.est.objExpl = 0; });
+    if (!tactil) addEventListener('pointermove', e => { est.objX = (e.clientX / innerWidth - 0.5) * 2; est.objY = (e.clientY / innerHeight - 0.5) * 2; }, { passive: true });
+    caja.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') est.objExpl = 1; });
+    caja.addEventListener('pointerleave', () => { est.objExpl = 0; });
     let previo = null;
-    lienzoHeroe.addEventListener('pointerdown', e => {
-      if (e.button) return;
+    caja.addEventListener('pointerdown', e => {
+      if (e.button || html.classList.contains('cargando')) return;
       previo = { x: e.clientX, t: ahora(), w: 0 };
-      chakana.est.arrastre = true;
-      if (e.pointerType !== 'mouse') { chakana.est.objExpl = 1; }
-      lienzoHeroe.setPointerCapture(e.pointerId);
+      est.arrastre = true;
+      if (e.pointerType !== 'mouse') est.objExpl = 1;
+      caja.setPointerCapture(e.pointerId);
     });
-    lienzoHeroe.addEventListener('pointermove', e => {
+    caja.addEventListener('pointermove', e => {
       if (!previo) return;
       const t = ahora(), dx = e.clientX - previo.x;
-      chakana.est.ry += dx * 0.012;
+      est.ry += dx * 0.012;
       previo.w = mezclar(previo.w, dx * 0.012 / Math.max(0.008, (t - previo.t) / 1000), 0.5);
       previo.x = e.clientX; previo.t = t;
-      if (quieto) chakana.dibujar(0);
+      if (quieto) (motorGL || chakana).dibujar(0);
     });
     const soltar = e => {
       if (!previo) return;
-      chakana.est.w = limitar(previo.w, -14, 14);
-      chakana.est.arrastre = null;
+      est.w = limitar(previo.w, -14, 14);
+      est.arrastre = null;
       previo = null;
-      if (e.pointerType !== 'mouse') setTimeout(() => { chakana.est.objExpl = 0; }, 900);
+      if (e.pointerType !== 'mouse') setTimeout(() => { est.objExpl = 0; }, 900);
     };
-    lienzoHeroe.addEventListener('pointerup', soltar);
-    lienzoHeroe.addEventListener('pointercancel', soltar);
+    caja.addEventListener('pointerup', soltar);
+    caja.addEventListener('pointercancel', soltar);
   }
 
   const ajustarTitulo = () => {
@@ -400,7 +524,7 @@
     if (cabecera) cabecera.style.setProperty('--progreso', total > 0 ? (y / total).toFixed(4) : '0');
     if (actual !== seccionActual) { seccionActual = actual; moverLuz(); }
     enlacesIndice.forEach(a => a.classList.toggle('activo', a === enlaceActivo));
-    if (portada && !quieto) { portada.style.setProperty('--h', limitar(y / vh, 0, 1.2).toFixed(3)); chakana.est.scroll = y * 0.0032; }
+    if (portada && !quieto) { portada.style.setProperty('--h', limitar(y / vh, 0, 1.2).toFixed(3)); est.scroll = y * 0.0018; }
     if (quieto) return;
     bandas.forEach((x, i) => {
       const r = lecturasBanda[i];
@@ -466,19 +590,24 @@
     html.style.overflow = 'hidden';
     const grillaCarga = $('.grilla').cloneNode(true);
     carga.insertBefore(grillaCarga, $('.carga-paneles', carga));
-    const lienzoChakana = crear('canvas', 'carga-chakana');
-    lienzoChakana.setAttribute('aria-hidden', 'true');
-    carga.insertBefore(lienzoChakana, $('.carga-hud', carga));
+    const lienzoChakana = usar3d ? null : crear('canvas', 'carga-chakana');
+    if (lienzoChakana) {
+      lienzoChakana.setAttribute('aria-hidden', 'true');
+      carga.insertBefore(lienzoChakana, $('.carga-hud', carga));
+    }
     const fondo = $('[data-carga-lienzo]', carga), fctx = fondo.getContext('2d');
     const paneles = $$('[data-panel]', carga), marca = $('[data-carga-marca]', carga);
     const codigo = $('[data-carga-codigo]', carga), cuenta = $('[data-carga-cuenta]', carga), saltar = $('[data-carga-saltar]', carga);
     const escalaHeroe = () => caja.getBoundingClientRect().width * 0.56 / 10.4;
     const origen = () => ({ cx: innerWidth / 2, cy: innerHeight * 0.46 });
     let m = preparar(fondo);
-    chakana.asignar(lienzoChakana, { ...origen(), escala: escalaHeroe() });
-    chakana.armar(0.15);
+    if (usar3d) caja.classList.add('flotando');
+    else {
+      chakana.asignar(lienzoChakana, { ...origen(), escala: escalaHeroe() });
+      armar(0.15, 7.5);
+    }
     requestAnimationFrame(() => carga.classList.add('arranca'));
-    const recalcular = () => { if (!enCarga) return; m = preparar(fondo); if (vuelo == null) chakana.asignar(lienzoChakana, { ...origen(), escala: escalaHeroe() }); };
+    const recalcular = () => { if (!enCarga) return; m = preparar(fondo); if (vuelo == null && lienzoChakana) chakana.asignar(lienzoChakana, { ...origen(), escala: escalaHeroe() }); };
     addEventListener('resize', recalcular);
     if (document.fonts) document.fonts.ready.then(() => { ajustarTitulo(); recalcular(); });
 
@@ -498,7 +627,7 @@
     const saltarIntro = () => {
       if (salto || vuelo != null) return;
       salto = true;
-      chakana.completar();
+      completar();
       paneles.forEach(p => p.classList.add('fuera'));
       t0 = ahora() - T.salida * 1000;
     };
@@ -537,13 +666,19 @@
       removeEventListener('keydown', teclas);
       removeEventListener('resize', recalcular);
       clearInterval(tipeo);
-      chakana.asignar(lienzoHeroe);
-      chakana.dibujar(0);
+      if (usar3d) {
+        caja.classList.remove('flotando');
+        caja.style.left = caja.style.top = '';
+        if (falloGL) usarPixeles();
+      } else {
+        chakana.asignar(lienzoHeroe);
+        chakana.dibujar(0);
+      }
       html.classList.remove('cargando');
       html.classList.add('listo');
       html.style.overflow = '';
       if (!hecho.salida) contarBento();
-      lienzoChakana.remove();
+      if (lienzoChakana) lienzoChakana.remove();
       grillaCarga.remove();
       pedirCuadro();
       alDesplazar();
@@ -554,16 +689,18 @@
         const t = (ahora() - t0) / 1000;
         cuenta.textContent = String(Math.round(suave(limitar(t / 2.6)) * 100)).padStart(3, '0');
         T.panel.forEach((tp, i) => { if (t >= tp && !salto) una('p' + i, () => { paneles[i].classList.add('ver'); carga.dataset.tono = TONOS[i]; escribir(CODIGOS[i]); }); });
-        if (t >= T.fuera) una('fuera', () => { paneles.forEach(p => p.classList.add('fuera')); carga.dataset.tono = 'oscuro'; if (!salto) { marca.classList.add('ver'); escribir('Sistema de diseño listo'); } });
+        if (t >= T.fuera) una('fuera', () => { paneles.forEach(p => p.classList.add('fuera')); carga.dataset.tono = 'oscuro'; if (!salto) { marca.classList.add('ver'); escribir('Brandbook listo'); } });
         if (t >= T.salida) una('salida', () => {
           carga.classList.add('sale');
           ajustarTitulo();
+          if (usar3d) caja.classList.remove('flotando');
           const r = caja.getBoundingClientRect();
+          if (usar3d) caja.classList.add('flotando');
           destino = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
           escalaInicial = chakana.escala();
           escalaFinal = escalaHeroe();
           vuelo = t;
-          chakana.est.w = Math.max(chakana.est.w, 5);
+          est.w = Math.max(est.w, 5);
           setTimeout(() => { html.classList.add('listo'); contarBento(); }, 120);
         });
         fctx.setTransform(m.dpr, 0, 0, m.dpr, 0, 0);
@@ -575,7 +712,10 @@
         } else {
           dibujarBarrido(t - vuelo);
           const u = vaiven(limitar((t - vuelo) / T.vuelo)), o = origen();
-          chakana.mover(mezclar(o.cx, destino.x, u), mezclar(o.cy, destino.y, u), mezclar(escalaInicial, escalaFinal, u));
+          if (usar3d) {
+            caja.style.left = mezclar(o.cx, destino.x, u).toFixed(1) + 'px';
+            caja.style.top = mezclar(o.cy, destino.y, u).toFixed(1) + 'px';
+          } else chakana.mover(mezclar(o.cx, destino.x, u), mezclar(o.cy, destino.y, u), mezclar(escalaInicial, escalaFinal, u));
         }
         if (t < T.fin) requestAnimationFrame(paso); else terminar();
       } catch (err) { terminar(); }
@@ -593,15 +733,18 @@
   cuadro();
   if (document.fonts) document.fonts.ready.then(() => { ajustarTitulo(); ajustarPie(); medir(); alDesplazar(); });
 
+  let falloGL = false;
+  if (promesaGL) promesaGL.then(() => {
+    if (quieto) { motorGL.dibujar(0); return; }
+    armar(enCarga ? 0.05 : 0.1, 10);
+    pedirCuadro();
+  }, () => { falloGL = true; if (!enCarga) usarPixeles(); });
+
   if (enCarga) iniciarCarga();
   else {
     html.classList.remove('cargando');
     html.classList.add('listo');
-    if (caja) {
-      chakana.asignar(lienzoHeroe);
-      if (quieto) chakana.dibujar(0);
-      else { chakana.armar(0.25); pedirCuadro(); }
-    }
+    if (caja && !usar3d) usarPixeles();
     contarBento();
   }
   window.marcaViva = true;
