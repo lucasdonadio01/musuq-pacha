@@ -110,7 +110,7 @@ img{max-width:100%}
 .carga-panel{position:absolute;inset:0;display:grid;place-items:center;background:var(--c);color:var(--t);clip-path:inset(100% 0 0 0);transition:clip-path .32s var(--curva-fuerte)}
 .carga-panel.ver{clip-path:inset(0)}
 .carga-panel.fuera{clip-path:inset(0 0 100% 0)}
-.carga-panel span{font:700 clamp(96px,27vw,560px)/.8 var(--sg);letter-spacing:-.06em;text-transform:uppercase;translate:0 18%;transition:translate .6s var(--curva)}
+.carga-panel span{font:700 clamp(40px,min(27vw,calc(150vw / var(--l,5))),560px)/.8 var(--sg);letter-spacing:-.06em;text-transform:uppercase;translate:0 18%;transition:translate .6s var(--curva)}
 .carga-panel.ver span{translate:0 0}
 .carga-marca{position:absolute;z-index:3;left:0;right:0;bottom:clamp(56px,11vh,128px);text-align:center;font:700 clamp(52px,11.5vw,230px)/.85 var(--sg);letter-spacing:-.05em;white-space:nowrap;clip-path:inset(0 0 100% 0);transition:clip-path .5s var(--curva-fuerte)}
 .carga-marca.ver{clip-path:inset(-10% -5% -20% -5%)}

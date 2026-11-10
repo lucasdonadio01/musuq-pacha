@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex, nofollow">
   <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
   <link rel="stylesheet" href="fuentes/space-grotesk.css">
-  <link rel="stylesheet" href="marca.css?v=15">
+  <link rel="stylesheet" href="marca.css?v=16">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -17,9 +17,11 @@
   <div class="carga" data-carga>
     <canvas class="carga-lienzo" data-carga-lienzo aria-hidden="true"></canvas>
     <div class="carga-paneles" aria-hidden="true">
-      <div class="carga-panel" data-panel style="--c:var(--lima);--t:var(--placa)"><span>Píxel</span></div>
-      <div class="carga-panel" data-panel style="--c:var(--violeta);--t:var(--blanco)"><span>Color</span></div>
-      <div class="carga-panel" data-panel style="--c:var(--naranja);--t:var(--placa)"><span>Letra</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--lima);--t:var(--placa);--l:5"><span>Píxel</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--violeta);--t:var(--blanco);--l:6"><span>Paleta</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--naranja);--t:var(--placa);--l:10"><span>Tipografía</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--lila);--t:var(--placa);--l:11"><span>Iconografía</span></div>
+      <div class="carga-panel" data-panel style="--c:var(--blanco);--t:var(--placa);--l:10"><span>Señalética</span></div>
     </div>
     <p class="carga-marca" data-carga-marca aria-hidden="true"><span>Musuq Pacha</span></p>
     <p class="hud carga-hud ai" aria-hidden="true">Musuq Pacha</p>
@@ -561,6 +563,6 @@
   <div class="aviso" role="status" aria-live="polite" data-aviso></div>
   <script src="pictogramas.js?v=2"></script>
   <script src="marca.js?v=9"></script>
-  <script src="movimiento.js?v=7"></script>
+  <script src="movimiento.js?v=8"></script>
 </body>
 </html>

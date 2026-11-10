@@ -613,9 +613,9 @@
 
     const COLORES = ['#E4FE44', '#6940AE', '#F66227', '#FFFFFF'];
     const polvo = Array.from({ length: tactil ? 70 : 140 }, () => ({ a: Math.random() * Math.PI * 2, r: 0.35 + Math.random() * 0.45, tam: 2 + Math.random() * 5, col: COLORES[Math.random() * 4 | 0], ini: Math.random() * 0.6, dur: 0.8 + Math.random() * 0.6, giro: (Math.random() - 0.5) * 1.4 }));
-    const T = { panel: [1.45, 1.75, 2.05], fuera: 2.35, salida: 3.0, vuelo: 0.95, fin: 4.05 };
-    const TONOS = ['claro', 'oscuro', 'claro'];
-    const CODIGOS = ['#E4FE44 · RGB 228 254 68', '#6940AE · RGB 105 64 174', '#F66227 · RGB 246 98 39'];
+    const T = { panel: [1.45, 1.75, 2.05, 2.35, 2.65], fuera: 2.95, salida: 3.6, vuelo: 0.95, fin: 4.65 };
+    const TONOS = ['claro', 'oscuro', 'claro', 'claro', 'claro'];
+    const CODIGOS = ['#E4FE44 · RGB 228 254 68', '#6940AE · RGB 105 64 174', '#F66227 · RGB 246 98 39', '#C8ACFF · RGB 200 172 255', '#FFFFFF · RGB 255 255 255'];
     let t0 = null, salto = false, vuelo = null, destino = null, escalaInicial = 0, escalaFinal = 0, tipeo;
     const hecho = {};
     const una = (clave, fn) => { if (!hecho[clave]) { hecho[clave] = true; fn(); } };
@@ -687,7 +687,7 @@
       try {
         if (t0 == null) t0 = ahora();
         const t = (ahora() - t0) / 1000;
-        cuenta.textContent = String(Math.round(suave(limitar(t / 2.6)) * 100)).padStart(3, '0');
+        cuenta.textContent = String(Math.round(suave(limitar(t / 3.2)) * 100)).padStart(3, '0');
         T.panel.forEach((tp, i) => { if (t >= tp && !salto) una('p' + i, () => { paneles[i].classList.add('ver'); carga.dataset.tono = TONOS[i]; escribir(CODIGOS[i]); }); });
         if (t >= T.fuera) una('fuera', () => { paneles.forEach(p => p.classList.add('fuera')); carga.dataset.tono = 'oscuro'; if (!salto) { marca.classList.add('ver'); escribir('Brandbook listo'); } });
         if (t >= T.salida) una('salida', () => {
