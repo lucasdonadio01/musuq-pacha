@@ -125,7 +125,7 @@
 
   const glPosible = (() => { try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) { return false; } })();
   const usar3d = !!caja && glPosible && location.protocol !== 'file:';
-  const datosModelo = usar3d ? fetch('modelos/chakana.glb').then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error('modelo ' + r.status))) : null;
+  const datosModelo = usar3d ? fetch('modelos/chakana.glb?v=2').then(r => r.ok ? r.arrayBuffer() : Promise.reject(new Error('modelo ' + r.status))) : null;
   if (datosModelo) datosModelo.catch(() => {});
   const cargarScript = src => new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.append(s); });
   const granoPiedra = (lado, celdas, octavas) => {
