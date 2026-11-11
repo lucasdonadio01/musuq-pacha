@@ -42,7 +42,7 @@
     aviso.textContent = texto;
     aviso.classList.add('ver');
     clearTimeout(avisoTiempo);
-    avisoTiempo = setTimeout(() => aviso.classList.remove('ver'), 1800);
+    avisoTiempo = setTimeout(() => aviso.classList.remove('ver'), Math.max(1800, texto.length * 55));
   };
   const copiar = async texto => {
     try { await navigator.clipboard.writeText(texto); return true; }
@@ -55,7 +55,7 @@
   const abrirCarrusel = opciones => { if (window.Carrusel) window.Carrusel.abrir(opciones); };
   const diapoImagen = ({ src, alt, rotulo, titulo, texto, medida, foto }) => {
     const d = crear('article', 'carrusel-diapo');
-    d.innerHTML = `<div class="diapo-visual${foto ? ' foto' : ''}"><img alt=""></div>
+    d.innerHTML = `<div class="diapo-visual${foto ? ' foto' : ''}"><img alt="" decoding="async"></div>
       <div class="diapo-datos"><p class="diapo-rotulo"></p><h3></h3>${texto ? '<p class="diapo-texto"></p>' : ''}${medida ? '<p class="diapo-medida"></p>' : ''}</div>`;
     const img = $('img', d); img.src = src; img.alt = alt;
     $('.diapo-rotulo', d).textContent = rotulo;
@@ -126,30 +126,45 @@
   leyenda.dataset.aparece = '';
 
   const probador = $('[data-probador]');
+  const MINIMO = 3;
   const elegido = { texto: 'blanco', fondo: 'placa' };
+  const pareja = { texto: 'fondo', fondo: 'texto' };
   const muestra = $('[data-muestra]', probador);
   const resultado = $('[data-resultado]', probador);
+  const dato = id => PALETA.find(c => c.id === id);
+  const combina = (x, y) => x !== y && relacion(color(x), color(y)) >= MINIMO;
+  const mejorPareja = id => PALETA.filter(c => c.id !== id).sort((x, y) => relacion(color(id), y.hex) - relacion(color(id), x.hex))[0].id;
+  const chips = { texto: [], fondo: [] };
   const actualizar = () => {
     const t = color(elegido.texto), f = color(elegido.fondo);
     muestra.style.setProperty('--texto-p', t);
     muestra.style.setProperty('--fondo-p', f);
     const r = relacion(t, f);
     const pasa = (min, txt) => `<em class="${r >= min ? 'si' : 'no'}">${txt}</em>`;
-    resultado.innerHTML = elegido.texto === elegido.fondo
-      ? '<b>—</b> Elegí dos colores distintos.'
-      : `<b>${coma(r)} : 1</b>${pasa(4.5, 'Texto común AA')}${pasa(3, 'Texto grande AA')}${pasa(7, 'AAA')}`;
+    resultado.innerHTML = `<b>${coma(r)} : 1</b>${pasa(4.5, 'Texto común AA')}${pasa(3, 'Texto grande AA')}${pasa(7, 'AAA')}`;
+    Object.entries(chips).forEach(([tipo, lista]) => lista.forEach(({ b, id }) => {
+      const libre = combina(id, elegido[pareja[tipo]]);
+      b.setAttribute('aria-pressed', String(elegido[tipo] === id));
+      b.classList.toggle('tachado', !libre);
+      b.title = libre ? '' : `No contrasta con el ${pareja[tipo]} elegido`;
+    }));
   };
   $$('[data-elige]', probador).forEach(grupo => {
-    const tipo = grupo.dataset.elige;
+    const tipo = grupo.dataset.elige, par = pareja[tipo];
     PALETA.forEach(c => {
       const b = crear('button', '', `<i style="--c:${c.hex}"></i>${c.nombre}`);
       b.type = 'button';
-      b.setAttribute('aria-pressed', String(elegido[tipo] === c.id));
       b.addEventListener('click', () => {
+        const antes = elegido[par];
         elegido[tipo] = c.id;
-        $$('button', grupo).forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        if (!combina(c.id, antes)) {
+          elegido[par] = mejorPareja(c.id);
+          const texto = dato(tipo === 'texto' ? c.id : antes), fondo = dato(tipo === 'fondo' ? c.id : antes), cambio = `El ${par} pasó a ${dato(elegido[par]).nombre.toLowerCase()}.`;
+          avisar(antes === c.id ? `Texto y fondo iguales no se leen. ${cambio}` : `${texto.nombre} sobre ${fondo.nombre.toLowerCase()} no contrasta (${coma(relacion(texto.hex, fondo.hex))} a 1). ${cambio}`);
+        }
         actualizar();
       });
+      chips[tipo].push({ b, id: c.id });
       grupo.append(b);
     });
   });
@@ -170,7 +185,7 @@
       td.style.setProperty('--f', f.hex);
       td.style.setProperty('--t', t.hex);
       td.style.setProperty('--n', neutro(f.hex));
-      td.style.transitionDelay = `${i * 50 + j * 35}ms`;
+      td.style.transitionDelay = `${i * 30 + j * 22}ms`;
       if (f.id === t.id) { td.classList.add('igual'); td.innerHTML = '<span>—</span>'; td.setAttribute('aria-label', 'Mismo color'); }
       else {
         const r = relacion(f.hex, t.hex), n = nivel(r);
@@ -227,7 +242,11 @@
       botones.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
       ['.familia-aa', '.familia-alfabeto'].forEach(s => { $(s, fam).style.fontWeight = b.dataset.peso; });
     };
-    botones.forEach(b => b.addEventListener('click', () => aplicar(b)));
+    botones.forEach(b => {
+      b.addEventListener('click', () => aplicar(b));
+      b.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') aplicar(b); });
+      b.addEventListener('focus', () => aplicar(b));
+    });
     aplicar(botones.find(b => b.getAttribute('aria-pressed') === 'true'));
   });
 
@@ -255,7 +274,7 @@
       const m = $('.estilo-medida', fila);
       m.textContent = b.dataset.medida === 'pt' ? e.pt : e.med;
       m.classList.add('cambia');
-      setTimeout(() => m.classList.remove('cambia'), 500);
+      setTimeout(() => m.classList.remove('cambia'), 320);
     });
   }));
 
@@ -297,11 +316,11 @@
             const i = celdas[r * lado + cc];
             i.style.setProperty('--c', color(colorRacimo));
             i.style.setProperty('--o', o);
-            i.style.transitionDelay = `${(lado - 1 - r) * 40 + Math.abs(cc - medio) * 25}ms`;
+            i.style.transitionDelay = `${(lado - 1 - r) * 26 + Math.abs(cc - medio) * 16}ms`;
             i.classList.add('lleno');
           });
         }
-      }, quieto ? 0 : 300);
+      }, quieto ? 0 : 190);
     };
     const chips = $('[data-racimo-color]');
     ['lima', 'violeta', 'naranja'].forEach(id => {
@@ -319,7 +338,7 @@
   if (chakana) {
     ['...xxx...', '...xxx...', '.xxxxxxx.', 'xxx...xxx', 'xxx...xxx', 'xxx...xxx', '.xxxxxxx.', '...xxx...', '...xxx...'].forEach((fila, r) => [...fila].forEach((ch, c) => {
       const i = crear('i', ch === 'x' ? '' : 'vacio');
-      i.style.transitionDelay = `${(Math.abs(r - 4) + Math.abs(c - 4)) * 70}ms`;
+      i.style.transitionDelay = `${(Math.abs(r - 4) + Math.abs(c - 4)) * 44}ms`;
       chakana.append(i);
     }));
   }
@@ -409,7 +428,7 @@
         txt.textContent = c.texto;
         med.textContent = c.medida;
         if (img.complete) img.classList.remove('cambiando');
-      }, quieto ? 0 : 200);
+      }, quieto ? 0 : 130);
     };
     CARTELES.forEach((c, k) => {
       const b = crear('button', '', c.nombre);

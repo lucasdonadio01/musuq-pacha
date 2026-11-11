@@ -84,7 +84,7 @@
       const abre = 1 + est.expl * 0.3, fondo = 1 + est.expl * 1.6;
       const lista = [];
       for (const q of cubos) {
-        const p = est.desde == null ? 1 : limitar((est.t - est.desde - q.retraso) / 1.15);
+        const p = est.desde == null ? 1 : limitar((est.t - est.desde - q.retraso * 0.7) / 0.85);
         if (p <= 0) continue;
         const e = salida(p), falta = 1 - e;
         const x = q.x * abre + q.ox * falta, y = q.y * abre + q.oy * falta, z = q.z * fondo + q.oz * falta;
@@ -206,7 +206,7 @@
     const medir = () => { const w = Math.max(1, caja.clientWidth), h = Math.max(1, caja.clientHeight); r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); };
     const dibujar = paso => {
       avanzar(paso);
-      const p = est.desde == null ? 1 : limitar((est.t - est.desde) / 1.7), e = salida(p);
+      const p = est.desde == null ? 1 : limitar((est.t - est.desde) / 1.25), e = salida(p);
       pivote.visible = p > 0;
       pivote.scale.setScalar(mezclar(0.06, 1, e) * (1 + est.expl * 0.05));
       pivote.position.z = mezclar(-7, 0, e);
@@ -295,17 +295,16 @@
     const final = el.dataset.final || (el.dataset.final = el.textContent);
     const cuenta = 'contar' in el.dataset;
     const hex = final.trim().startsWith('#');
-    const inicio = ahora() + 180, dur = cuenta ? 1100 : 900;
-    let cuadro = 0;
+    const inicio = ahora() + 60, dur = cuenta ? 700 : 560;
     const paso = t => {
       const u = limitar((t - inicio) / dur);
       if (cuenta) el.textContent = final.replace(/\d+/g, n => String(Math.round(+n * salida(u))));
-      else if (cuadro++ % 2 === 0) el.textContent = [...final].map((ch, i) => ((hex ? /[0-9A-F]/i : /[0-9]/).test(ch) && u < 0.2 + 0.8 * (i + 1) / final.length) ? (hex ? HEX[Math.random() * 16 | 0] : String(Math.random() * 10 | 0)) : ch).join('');
+      else el.textContent =[...final].map((ch, i) => ((hex ? /[0-9A-F]/i : /[0-9]/).test(ch) && u < 0.2 + 0.8 * (i + 1) / final.length) ? (hex ? HEX[Math.random() * 16 | 0] : String(Math.random() * 10 | 0)) : ch).join('');
       if (u < 1) requestAnimationFrame(paso); else el.textContent = final;
     };
     requestAnimationFrame(paso);
   };
-  const contarBento = () => $$('[data-cuenta]').forEach((el, k) => setTimeout(() => { el.dataset.contar = ''; animarCodigo(el); }, 200 + k * 110));
+  const contarBento = () => $$('[data-cuenta]').forEach((el, k) => setTimeout(() => { el.dataset.contar = ''; animarCodigo(el); }, 120 + k * 70));
 
   const Carrusel = (() => {
     let raiz, pista, cuenta, puntos, titulo, anterior, siguiente, cerrarB, cierre;
@@ -336,7 +335,7 @@
         e.preventDefault();
         const t = ahora();
         if (t < bloqueo || Math.abs(e.deltaY) < 4) return;
-        bloqueo = t + 520;
+        bloqueo = t + 380;
         ir(actual + (e.deltaY > 0 ? 1 : -1));
       }, { passive: false });
       raiz.addEventListener('keydown', e => {
@@ -397,7 +396,8 @@
       raiz.classList.remove('ver');
       html.classList.remove('carrusel-abierto');
       html.style.overflow = '';
-      cierre = setTimeout(() => raiz.remove(), 380);
+      $$('[data-pixel=true]', raiz).forEach(b => { b.dataset.pixel = 'false'; });
+      cierre = setTimeout(() => raiz.remove(), 240);
       if (origen && origen.focus) origen.focus({ preventScroll: true });
     };
     return { abrir, cerrar, abierto: () => abierto };
@@ -425,13 +425,16 @@
   };
   const tipoVivo = $('[data-tipo-vivo]');
   if (tipoVivo) proximidad(tipoVivo, partir(tipoVivo, ''), 300, 700, true);
+  const enVista = new IntersectionObserver(ents => ents.forEach(en => en.target.classList.toggle('en-vista', en.isIntersecting)), { rootMargin: '10% 0px' });
+  $$('[data-tipo-vivo], .cinta').forEach(el => enVista.observe(el));
 
   const bandas = $$('[data-banda]').map(b => {
     const t = $('[data-banda-titulo]', b);
     const h2 = t.closest('h2');
     h2.setAttribute('aria-label', t.textContent.trim());
     t.setAttribute('aria-hidden', 'true');
-    proximidad(b, partir(t, 'letra-b'), 700, 300, false);
+    const letras = partir(t, 'letra-b');
+    if (!quieto && window.EFECTOS) window.EFECTOS.tecnico(t, { letras, zona: b, barrido: 'una' });
     return { b, t, entrada: 0, desborde: 0 };
   });
 
@@ -470,24 +473,79 @@
   });
   if (pastillas) pastillas.addEventListener('pointerleave', () => { encima = null; moverLuz(); });
 
-  const indice = $('[data-indice]'), abrirIndice = $('[data-indice-abrir]'), cerrarIndice = $('[data-indice-cerrar]');
+  const indice = $('[data-indice]'), abrirIndice = $('[data-indice-abrir]'), listaIndice = $('.indice-lista');
   const enlacesIndice = $$('.indice-lista a');
   const destinosIndice = enlacesIndice.map(a => ({ a, d: $(a.hash) })).filter(x => x.d);
-  const indiceAbierto = () => !!indice && indice.classList.contains('abierta');
+  const filasIndice = enlacesIndice.map(a => {
+    const rotulo = crear('span', 'ind-rotulo'), mascara = crear('span', 'ind-mascara');
+    rotulo.append(...a.childNodes);
+    mascara.append(rotulo);
+    a.append(crear('i', 'ind-linea'), mascara);
+    return { a, meta: 0, valor: 0, puesto: -1, foco: false };
+  });
+  const fueraIndice = [$('main'), $('.pie')].filter(Boolean);
+  let cajasIndice = [], cuadroIndice = 0, antesIndice = 0;
+  const indiceAbierto = () => html.classList.contains('indice-abierto');
+  const medirIndice = () => {
+    const base = listaIndice.getBoundingClientRect();
+    cajasIndice = filasIndice.map(f => {
+      const r = f.a.getBoundingClientRect(), c = f.a.closest('.indice-lista > li').getBoundingClientRect();
+      return { y: r.top + r.height / 2 - base.top, x1: c.left - base.left, x2: c.right - base.left };
+    });
+  };
+  const pasoIndice = t => {
+    const dt = Math.min((t - antesIndice) / 1000, 0.05), k = 1 - Math.exp(-dt / 0.09);
+    antesIndice = t;
+    let mueve = false;
+    filasIndice.forEach(f => {
+      const meta = Math.max(f.meta, f.foco || f.a.classList.contains('activo') ? 1 : 0), sig = f.valor + (meta - f.valor) * k, listo = Math.abs(meta - sig) < 0.0015;
+      f.valor = listo ? meta : sig;
+      if (f.valor !== f.puesto) { f.puesto = f.valor; f.a.style.setProperty('--e', f.valor.toFixed(4)); }
+      if (!listo) mueve = true;
+    });
+    cuadroIndice = mueve && indiceAbierto() ? requestAnimationFrame(pasoIndice) : 0;
+  };
+  const moverIndice = () => { if (!cuadroIndice) { antesIndice = ahora(); cuadroIndice = requestAnimationFrame(pasoIndice); } };
+  const entrarIndice = () => {
+    if (quieto) return;
+    const curva = 'cubic-bezier(.165,.84,.44,1)';
+    $$('.indice-lista > li', indice).forEach((li, k) => {
+      const base = 190 + k * 45;
+      $$('.ind-rotulo', li).forEach((r, j) => r.animate([{ translate: '0 140%', rotate: j ? '0deg' : '8deg' }, { translate: '0 0', rotate: '0deg' }], { duration: j ? 520 : 700, delay: base + (j ? 60 + j * 22 : 0), easing: curva, fill: 'backwards' }));
+      $$('.ind-linea', li).forEach((l, j) => l.animate([{ scale: '0 1' }, { scale: '1 1' }], { duration: 420, delay: base + j * 22, easing: curva, fill: 'backwards' }));
+    });
+  };
   const ponerIndice = (abrir, devolverFoco) => {
-    if (!indice) return;
-    indice.classList.toggle('abierta', abrir);
+    if (!indice || abrir === indiceAbierto()) return;
+    html.classList.toggle('indice-abierto', abrir);
     indice.inert = !abrir;
+    fueraIndice.forEach(el => { el.inert = abrir; });
     abrirIndice.setAttribute('aria-expanded', String(abrir));
+    abrirIndice.setAttribute('aria-label', abrir ? 'Cerrar el índice' : 'Abrir el índice');
     html.style.overflow = abrir ? 'hidden' : '';
-    $$('.indice-lista > li', indice).forEach((li, k) => { li.style.transitionDelay = abrir ? `${0.06 + k * 0.03}s` : '0s'; });
-    if (abrir) cerrarIndice.focus({ preventScroll: true });
-    else if (devolverFoco) abrirIndice.focus({ preventScroll: true });
+    if (abrir) {
+      indice.scrollTop = 0;
+      medirIndice();
+      entrarIndice();
+      moverIndice();
+    } else {
+      filasIndice.forEach(f => { f.meta = 0; f.foco = false; });
+      if (devolverFoco) abrirIndice.focus({ preventScroll: true });
+    }
   };
   if (indice) {
     abrirIndice.addEventListener('click', () => ponerIndice(!indiceAbierto(), true));
-    cerrarIndice.addEventListener('click', () => ponerIndice(false, true));
     enlacesIndice.forEach(a => a.addEventListener('click', () => ponerIndice(false, false)));
+    listaIndice.addEventListener('pointermove', e => {
+      if (e.pointerType === 'touch') return;
+      const base = listaIndice.getBoundingClientRect(), px = e.clientX - base.left, py = e.clientY - base.top;
+      filasIndice.forEach((f, i) => { const c = cajasIndice[i]; f.meta = c && px >= c.x1 && px <= c.x2 ? suave(limitar(1 - Math.abs(py - c.y) / 100)) : 0; });
+      moverIndice();
+    }, { passive: true });
+    listaIndice.addEventListener('pointerleave', () => { filasIndice.forEach(f => { f.meta = 0; }); moverIndice(); });
+    listaIndice.addEventListener('focusin', e => { filasIndice.forEach(f => { f.foco = f.a === e.target; }); moverIndice(); });
+    listaIndice.addEventListener('focusout', () => { filasIndice.forEach(f => { f.foco = false; }); moverIndice(); });
+    addEventListener('resize', () => { if (indiceAbierto()) medirIndice(); });
   }
 
   addEventListener('keydown', e => {
@@ -572,10 +630,12 @@
   const puntero = $('[data-puntero]');
   if (puntero && !tactil && !quieto) {
     const texto = $('[data-puntero-texto]', puntero);
-    let x = -100, y = -100, cx = -100, cy = -100, corre = false;
-    const seguir = () => {
-      cx += (x - cx) * 0.24;
-      cy += (y - cy) * 0.24;
+    let x = -100, y = -100, cx = -100, cy = -100, corre = false, antesPuntero = 0;
+    const seguir = t => {
+      const k = 1 - Math.exp(-Math.min(50, t - antesPuntero || 16) / 38);
+      antesPuntero = t;
+      cx += (x - cx) * k;
+      cy += (y - cy) * k;
       puntero.style.translate = `${cx.toFixed(1)}px ${cy.toFixed(1)}px`;
       if (Math.abs(x - cx) + Math.abs(y - cy) > 0.3) requestAnimationFrame(seguir); else corre = false;
     };
@@ -623,8 +683,8 @@
     if (document.fonts) document.fonts.ready.then(() => { ajustarTitulo(); recalcular(); });
 
     const COLORES = ['#E4FE44', '#6940AE', '#F66227', '#FFFFFF'];
-    const polvo = Array.from({ length: tactil ? 70 : 140 }, () => ({ a: Math.random() * Math.PI * 2, r: 0.35 + Math.random() * 0.45, tam: 2 + Math.random() * 5, col: COLORES[Math.random() * 4 | 0], ini: Math.random() * 0.6, dur: 0.8 + Math.random() * 0.6, giro: (Math.random() - 0.5) * 1.4 }));
-    const T = { panel: [1.45, 1.75, 2.05, 2.35, 2.65], fuera: 2.95, salida: 3.6, vuelo: 0.95, fin: 4.65 };
+    const polvo = Array.from({ length: tactil ? 70 : 140 }, () => ({ a: Math.random() * Math.PI * 2, r: 0.35 + Math.random() * 0.45, tam: 2 + Math.random() * 5, col: COLORES[Math.random() * 4 | 0], ini: Math.random() * 0.4, dur: 0.6 + Math.random() * 0.4, giro: (Math.random() - 0.5) * 1.4 }));
+    const T = { panel: [0.95, 1.2, 1.45, 1.7, 1.95], fuera: 2.2, salida: 2.7, vuelo: 0.72, fin: 3.5 };
     const TONOS = ['claro', 'oscuro', 'claro', 'claro', 'claro'];
     const CODIGOS = ['#E4FE44 · RGB 228 254 68', '#6940AE · RGB 105 64 174', '#F66227 · RGB 246 98 39', '#C8ACFF · RGB 200 172 255', '#FFFFFF · RGB 255 255 255'];
     let t0 = null, salto = false, vuelo = null, destino = null, escalaInicial = 0, escalaFinal = 0, tipeo;
@@ -698,7 +758,7 @@
       try {
         if (t0 == null) t0 = ahora();
         const t = (ahora() - t0) / 1000;
-        cuenta.textContent = String(Math.round(suave(limitar(t / 3.2)) * 100)).padStart(3, '0');
+        cuenta.textContent = String(Math.round(suave(limitar(t / 2.4)) * 100)).padStart(3, '0');
         T.panel.forEach((tp, i) => { if (t >= tp && !salto) una('p' + i, () => { paneles[i].classList.add('ver'); carga.dataset.tono = TONOS[i]; escribir(CODIGOS[i]); }); });
         if (t >= T.fuera) una('fuera', () => { paneles.forEach(p => p.classList.add('fuera')); carga.dataset.tono = 'oscuro'; if (!salto) { marca.classList.add('ver'); escribir('Brandbook listo'); } });
         if (t >= T.salida) una('salida', () => {

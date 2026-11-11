@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex, nofollow">
   <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
   <link rel="stylesheet" href="fuentes/space-grotesk.css">
-  <link rel="stylesheet" href="marca.css?v=17">
+  <link rel="stylesheet" href="marca.css?v=20">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -59,17 +59,18 @@
         <a href="#interfaz">Interfaz</a>
       </nav>
       <div class="cabecera-acciones">
-        <button class="boton-linea" type="button" data-indice-abrir aria-expanded="false" aria-controls="indice">Índice</button>
+        <button class="boton-linea" type="button" data-indice-abrir aria-expanded="false" aria-controls="indice" aria-label="Abrir el índice"><span class="rueda" aria-hidden="true"><span class="rueda-pista"><span>Índice</span><span>Cerrar</span><span>Índice</span><span>Cerrar</span></span></span><i class="mas" aria-hidden="true"></i></button>
         <a class="boton chico" href="#descargas">Descargas</a>
       </div>
     </div>
     <span class="cabecera-progreso" data-progreso aria-hidden="true"></span>
   </header>
 
+  <div class="indice-capas" aria-hidden="true"><i></i><i></i></div>
   <nav class="indice" id="indice" aria-label="Índice del manual" data-indice inert>
     <div class="indice-cabeza">
       <p class="hud">Índice · 10 secciones</p>
-      <button class="boton-linea" type="button" data-indice-cerrar>Cerrar</button>
+      <p class="hud">Musuq Pacha · Brandbook</p>
     </div>
     <ol class="indice-lista">
       <li><a href="#introduccion"><b>01</b><span>Introducción</span></a></li>
@@ -108,6 +109,7 @@
         <ol>
           <li><a href="#familias">Familias</a></li>
           <li><a href="#tipo-vivo">Letra en movimiento</a></li>
+          <li><a href="#anatomia">Anatomía de la letra</a></li>
           <li><a href="#jerarquia">Jerarquía y tamaños</a></li>
         </ol>
       </li>
@@ -156,13 +158,6 @@
         <h1 id="titulo-portada" aria-label="Brandbook"><span class="t-parte" aria-hidden="true"><span class="letra" style="--i:0">B</span><span class="letra" style="--i:1">r</span><span class="letra" style="--i:2">a</span><span class="letra" style="--i:3">n</span><span class="letra" style="--i:4">d</span></span><span class="t-parte" aria-hidden="true"><span class="letra" style="--i:5">b</span><span class="letra" style="--i:6">o</span><span class="letra" style="--i:7">o</span><span class="letra" style="--i:8">k</span></span></h1>
         <div class="chakana3d" data-chakana3d aria-hidden="true"><span class="chakana3d-luz"></span><canvas data-chakana-lienzo></canvas></div>
       </div>
-      <div class="portada-fila">
-        <p class="portada-bajada">El brandbook de la marca: del videojuego a la web, el informe y Yachay, la experiencia en el Palacio Libertad.</p>
-        <div class="portada-botones">
-          <a class="boton" href="#introduccion">Empezar</a>
-          <a class="boton-linea" href="#logo">Ver el logo</a>
-        </div>
-      </div>
       <div class="bento">
         <a class="bento-celda" href="#signo">
           <span class="bento-rotulo">Versiones del logo</span><span class="bento-indice">(01)</span>
@@ -205,7 +200,7 @@
         <article class="tarjeta" data-aparece data-enfasis>
           <span class="tarjeta-indice">(02)</span>
           <h3>Cómo se lee</h3>
-          <p>Cada sección tiene una introducción, el desarrollo y una conclusión. Los colores, los pictogramas y las fotos se abren en grande con un clic, los desplegables guardan el detalle y las herramientas se prueban en la misma página.</p>
+          <p>Cada sección abre con una introducción y sigue con el desarrollo. Los colores, los pictogramas y las fotos se abren en grande con un clic, los desplegables guardan el detalle y las herramientas se prueban en la misma página.</p>
         </article>
         <article class="tarjeta" data-aparece data-enfasis>
           <span class="tarjeta-indice">(03)</span>
@@ -213,7 +208,6 @@
           <p>La marca y su voz, el signo marcario con sus aplicaciones, color, tipografía, recursos gráficos, iconografía, señalética, interfaz y los archivos para descargar.</p>
         </article>
       </div>
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Cuando algo no esté en el manual, la regla es volver a la base: la placa oscura, un solo color de identidad por bloque y la tipografía de la marca.</p>
     </section>
 
     <section class="seccion" id="marca" data-logo="lima" aria-labelledby="titulo-marca">
@@ -505,8 +499,6 @@
           <li class="ejemplo-par" data-aparece><p class="e-si">Las comunidades kilmes siguen presentes en Tucumán y el conurbano.</p><p class="e-no">Los kilmes fueron una tribu que se extinguió.</p><p class="e-por">En presente y sin estereotipos de pasado detenido.</p></li>
         </ul>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> El nombre ya dice «mundo nuevo» y la promesa lo completa: ese mundo se crea en comunidad. Con una voz que invita, explica y nombra con respeto, cada pieza suena a Musuq Pacha antes de mostrar un solo color.</p>
     </section>
 
     <section class="seccion" id="signo" data-logo="naranja" aria-labelledby="titulo-signo">
@@ -648,15 +640,15 @@
             <figcaption><b>Logotipo solo</b><span>Sólo cuando el isotipo ya está en la misma pieza.</span></figcaption>
           </figure>
           <figure class="secundario" data-aparece data-enfasis>
-            <div class="secundario-pieza"><img src="signo/sello-publicado-por.svg" alt="Sello Publicado por Musuq Pacha" width="256" height="130" loading="lazy"></div>
+            <div class="secundario-pieza"><img src="signo/sello-publicado-por.svg" alt="Sello Publicado por Musuq Pacha" width="256" height="130" loading="lazy" decoding="async"></div>
             <figcaption><b>Sello «Publicado por»</b><span>Créditos de los juegos, libros y obras que acompaña la marca.</span></figcaption>
           </figure>
           <figure class="secundario ancho" data-aparece data-enfasis>
-            <div class="secundario-pieza"><img src="signo/lockup-yachay-horizontal.svg" alt="Lockup horizontal de Yachay: la experiencia de Musuq Pacha" width="436" height="112" loading="lazy"></div>
+            <div class="secundario-pieza"><img src="signo/lockup-yachay-horizontal.svg" alt="Lockup horizontal de Yachay: la experiencia de Musuq Pacha" width="436" height="112" loading="lazy" decoding="async"></div>
             <figcaption><b>Lockup de Yachay · horizontal</b><span>Yachay manda y Musuq Pacha firma: el nombre del evento va grande y la marca, en la bajada y en el isotipo.</span></figcaption>
           </figure>
           <figure class="secundario ancho" data-aparece data-enfasis>
-            <div class="secundario-pieza"><img src="signo/lockup-yachay-vertical.svg" alt="Lockup vertical de Yachay: la experiencia de Musuq Pacha" width="224" height="158" loading="lazy"></div>
+            <div class="secundario-pieza"><img src="signo/lockup-yachay-vertical.svg" alt="Lockup vertical de Yachay: la experiencia de Musuq Pacha" width="224" height="158" loading="lazy" decoding="async"></div>
             <figcaption><b>Lockup de Yachay · vertical</b><span>Para formatos angostos: credenciales, stories y remeras.</span></figcaption>
           </figure>
         </div>
@@ -761,7 +753,7 @@
                 </ul>
               </div>
               <div class="laminas" data-galeria="Papelería" data-texto="Set en plano, con medidas y márgenes: hoja A4, carpeta con solapa, sobre DL y tarjeta de frente y dorso.">
-                <figure><img src="aplicaciones/papeleria.png" alt="Set de papelería" width="1480" height="720" loading="lazy"><figcaption>Set en plano, con medidas y márgenes de 20 mm.</figcaption></figure>
+                <figure><img src="aplicaciones/papeleria.png" alt="Set de papelería" width="1480" height="720" loading="lazy" decoding="async"><figcaption>Set en plano, con medidas y márgenes de 20 mm.</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -779,7 +771,7 @@
                 </ul>
               </div>
               <div class="laminas" data-galeria="Firma de mail" data-texto="Logo de 120 px, nombre, rol y un solo enlace. Abajo, el banner opcional de Yachay.">
-                <figure><img src="aplicaciones/firma.png" alt="Firma de mail" width="1280" height="402" loading="lazy"><figcaption>Firma con el banner de Yachay.</figcaption></figure>
+                <figure><img src="aplicaciones/firma.png" alt="Firma de mail" width="1280" height="402" loading="lazy" decoding="async"><figcaption>Firma con el banner de Yachay.</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -841,7 +833,7 @@
                 </ul>
               </div>
               <div class="laminas" data-galeria="Presentaciones" data-texto="Las seis diapositivas tipo: portada, divisor, contenido, imagen completa, datos y cierre.">
-                <figure><img src="aplicaciones/presentaciones.jpg" alt="Plantilla de presentaciones" width="1480" height="683" loading="lazy"><figcaption>Portada, divisor, contenido, imagen completa, datos y cierre.</figcaption></figure>
+                <figure><img src="aplicaciones/presentaciones.jpg" alt="Plantilla de presentaciones" width="1480" height="683" loading="lazy" decoding="async"><figcaption>Portada, divisor, contenido, imagen completa, datos y cierre.</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -858,8 +850,8 @@
                 </ul>
               </div>
               <div class="laminas dos" data-galeria="Redes sociales" data-texto="Piezas de la campaña de Yachay para Instagram.">
-                <figure><img src="aplicaciones/post.png" alt="Post 4:5 · Sacá tu entrada" width="952" height="1188" loading="lazy"><figcaption>Post 4:5 · 1080 × 1350</figcaption></figure>
-                <figure><img src="aplicaciones/story.png" alt="Story · ¿Qué piso visitás primero?" width="952" height="1692" loading="lazy"><figcaption>Story · 1080 × 1920</figcaption></figure>
+                <figure><img src="aplicaciones/post.png" alt="Post 4:5 · Sacá tu entrada" width="952" height="1188" loading="lazy" decoding="async"><figcaption>Post 4:5 · 1080 × 1350</figcaption></figure>
+                <figure><img src="aplicaciones/story.png" alt="Story · ¿Qué piso visitás primero?" width="952" height="1692" loading="lazy" decoding="async"><figcaption>Story · 1080 × 1920</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -877,7 +869,7 @@
                 </ul>
               </div>
               <div class="laminas angosta" data-galeria="Newsletter" data-texto="Mail de muestra: el envío de entradas, con un solo botón.">
-                <figure><img src="aplicaciones/newsletter.jpg" alt="Mail de muestra · envío de entradas" width="964" height="1190" loading="lazy"><figcaption>Mail de muestra · envío de entradas.</figcaption></figure>
+                <figure><img src="aplicaciones/newsletter.jpg" alt="Mail de muestra · envío de entradas" width="964" height="1190" loading="lazy" decoding="async"><figcaption>Mail de muestra · envío de entradas.</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -893,14 +885,14 @@
                 </ul>
               </div>
               <div class="laminas via" data-galeria="Vía pública" data-texto="Piezas de vía pública de Yachay y su mockup en contexto.">
-                <figure class="ancha"><img src="aplicaciones/via-caja-de-luz.jpg" alt="Caja de luz · 3 × 1,5 m" width="1200" height="600" loading="lazy"><figcaption>Caja de luz · 3 × 1,5 m</figcaption></figure>
-                <figure class="ancha"><img src="aplicaciones/via-cartel-de-ruta.jpg" alt="Cartel de ruta · 12 × 4 m" width="1650" height="550" loading="lazy"><figcaption>Cartel de ruta · 12 × 4 m</figcaption></figure>
-                <figure><img src="aplicaciones/via-afiche-pasillo.jpg" alt="Afiche A2 · Pasillo" width="615" height="900" loading="lazy"><figcaption>Afiche A2 · Pasillo</figcaption></figure>
-                <figure><img src="aplicaciones/via-afiche-parada-dia.jpg" alt="Afiche A2 · Parada de día" width="615" height="900" loading="lazy"><figcaption>Afiche A2 · Parada de día</figcaption></figure>
-                <figure><img src="aplicaciones/via-afiche-parada-noche.jpg" alt="Afiche A2 · Parada de noche" width="615" height="900" loading="lazy"><figcaption>Afiche A2 · Parada de noche</figcaption></figure>
-                <figure><img src="aplicaciones/via-mockup-anden.jpg" alt="En contexto · Andén del subte" width="1080" height="720" loading="lazy"><figcaption>En contexto · Andén del subte</figcaption></figure>
-                <figure><img src="aplicaciones/via-mockup-parada.jpg" alt="En contexto · Parada de colectivo" width="1080" height="720" loading="lazy"><figcaption>En contexto · Parada de colectivo</figcaption></figure>
-                <figure><img src="aplicaciones/via-mockup-autopista.jpg" alt="En contexto · Autopista 25 de Mayo" width="1080" height="720" loading="lazy"><figcaption>En contexto · Autopista 25 de Mayo</figcaption></figure>
+                <figure class="ancha"><img src="aplicaciones/via-caja-de-luz.jpg" alt="Caja de luz · 3 × 1,5 m" width="1200" height="600" loading="lazy" decoding="async"><figcaption>Caja de luz · 3 × 1,5 m</figcaption></figure>
+                <figure class="ancha"><img src="aplicaciones/via-cartel-de-ruta.jpg" alt="Cartel de ruta · 12 × 4 m" width="1650" height="550" loading="lazy" decoding="async"><figcaption>Cartel de ruta · 12 × 4 m</figcaption></figure>
+                <figure><img src="aplicaciones/via-afiche-pasillo.jpg" alt="Afiche A2 · Pasillo" width="615" height="900" loading="lazy" decoding="async"><figcaption>Afiche A2 · Pasillo</figcaption></figure>
+                <figure><img src="aplicaciones/via-afiche-parada-dia.jpg" alt="Afiche A2 · Parada de día" width="615" height="900" loading="lazy" decoding="async"><figcaption>Afiche A2 · Parada de día</figcaption></figure>
+                <figure><img src="aplicaciones/via-afiche-parada-noche.jpg" alt="Afiche A2 · Parada de noche" width="615" height="900" loading="lazy" decoding="async"><figcaption>Afiche A2 · Parada de noche</figcaption></figure>
+                <figure><img src="aplicaciones/via-mockup-anden.jpg" alt="En contexto · Andén del subte" width="1080" height="720" loading="lazy" decoding="async"><figcaption>En contexto · Andén del subte</figcaption></figure>
+                <figure><img src="aplicaciones/via-mockup-parada.jpg" alt="En contexto · Parada de colectivo" width="1080" height="720" loading="lazy" decoding="async"><figcaption>En contexto · Parada de colectivo</figcaption></figure>
+                <figure><img src="aplicaciones/via-mockup-autopista.jpg" alt="En contexto · Autopista 25 de Mayo" width="1080" height="720" loading="lazy" decoding="async"><figcaption>En contexto · Autopista 25 de Mayo</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -918,8 +910,8 @@
                 </ul>
               </div>
               <div class="laminas" data-galeria="Entradas y credenciales" data-texto="Cada entrada lleva su color de identidad; las credenciales, la franja del color de cada rol.">
-                <figure><img src="aplicaciones/entradas.png" alt="Entradas: general, especial y pase de 4 días" width="2592" height="375" loading="lazy"><figcaption>Entradas: general, especial y pase de 4 días.</figcaption></figure>
-                <figure><img src="aplicaciones/credenciales.png" alt="Credenciales y pulseras" width="2472" height="393" loading="lazy"><figcaption>Credenciales de prensa, staff, creadores e invitados, y pulseras.</figcaption></figure>
+                <figure><img src="aplicaciones/entradas.png" alt="Entradas: general, especial y pase de 4 días" width="2592" height="375" loading="lazy" decoding="async"><figcaption>Entradas: general, especial y pase de 4 días.</figcaption></figure>
+                <figure><img src="aplicaciones/credenciales.png" alt="Credenciales y pulseras" width="2472" height="393" loading="lazy" decoding="async"><figcaption>Credenciales de prensa, staff, creadores e invitados, y pulseras.</figcaption></figure>
               </div>
             </div></div>
           </details>
@@ -937,14 +929,12 @@
                 </ul>
               </div>
               <div class="laminas" data-galeria="Merchandising" data-texto="Los objetos en plano, con su medida y su técnica de impresión.">
-                <figure><img src="aplicaciones/merch.png" alt="Merchandising" width="1480" height="891" loading="lazy"><figcaption>Remera, tote bag, stickers y pin, llavero, cuaderno y taza.</figcaption></figure>
+                <figure><img src="aplicaciones/merch.png" alt="Merchandising" width="1480" height="891" loading="lazy" decoding="async"><figcaption>Remera, tote bag, stickers y pin, llavero, cuaderno y taza.</figcaption></figure>
               </div>
             </div></div>
           </details>
         </div>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> El signo es la firma de todo el sistema: tiene que leerse igual de bien en un favicon de 16 px y en un cartel de 12 metros. Como se construye con el mismo módulo de píxel que la grilla, los íconos y las tramas, queda emparentado con todo lo demás. Las aplicaciones son la prueba final: si se reconocen como Musuq Pacha sin leer el nombre, el sistema funciona.</p>
     </section>
 
     <section class="seccion" id="color" data-logo="lima" aria-labelledby="titulo-color">
@@ -1012,6 +1002,7 @@
             <p class="probador-rotulo">Fondo</p>
             <div class="chips" data-elige="fondo"></div>
             <p class="probador-resultado" data-resultado aria-live="polite"></p>
+            <p class="nota">Los colores tachados no contrastan con el de la otra fila. Si elegís uno, la otra fila pasa sola al color que mejor se lee.</p>
           </div>
         </div>
         <div class="matriz-contenedor" data-aparece>
@@ -1032,14 +1023,12 @@
           </figure>
         </div>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Con cinco colores y uno de apoyo alcanza para todo el sistema: la placa da la base y el contraste, el lima orienta, el violeta crea ambiente y el naranja marca lo importante. Las combinaciones de la tabla aseguran que todo lo que se lee cumpla, como mínimo, la norma AA.</p>
     </section>
 
     <section class="seccion" id="tipografia" data-logo="naranja" aria-labelledby="titulo-tipografia">
       <header class="banda" data-banda style="--banda:var(--blanco);--tinta:var(--placa)">
         <div class="banda-hud"><span>05 / 10</span><span data-descifrar>#FFFFFF</span></div>
-        <p class="seccion-numero">05 · Familias, movimiento y jerarquía</p>
+        <p class="seccion-numero">05 · Familias, movimiento, anatomía y jerarquía</p>
         <h2 id="titulo-tipografia" class="banda-titulo"><span data-banda-titulo>Tipografía</span></h2>
       </header>
       <p class="copete" data-aparece>Dos familias libres, con licencia OFL de Google Fonts. Space Grotesk, geométrica y con algo de píxel, lleva la voz de la marca. Archivo, neutra y muy legible, es para leer.</p>
@@ -1083,6 +1072,29 @@
         </div>
       </div>
 
+      <div class="bloque" id="anatomia">
+        <h3 class="bloque-titulo" data-aparece>Anatomía de la letra</h3>
+        <p class="bloque-texto" data-aparece>Los títulos de este manual se pueden tocar: pasá el cursor para ver el contorno y la medida de cada letra, arrastrala para moverla y hacé clic para que salte. Acá se ve además dónde apoya cada una: la línea de base, la altura de x, las mayúsculas y las descendentes.</p>
+        <div class="tec" data-aparece>
+          <div class="tec-barra">
+            <label class="campo-texto">
+              <span>Probá con tu texto</span>
+              <input type="text" data-tec-texto placeholder="Musuq Pacha" maxlength="14">
+            </label>
+            <div class="pestanas" role="group" aria-label="Volver a armar el texto" data-tec-intro>
+              <button type="button" data-valor="armar">Armar con píxeles</button>
+              <button type="button" data-valor="escribir">Escribir</button>
+              <button type="button" data-valor="medir">Medir</button>
+            </div>
+            <div class="capas" role="group" aria-label="Qué se ve">
+              <button type="button" data-tec-opcion="guias" aria-pressed="true">Guías</button>
+              <button type="button" data-tec-opcion="zona" aria-pressed="false">Contorno por zona</button>
+            </div>
+          </div>
+          <div class="tec-escena" data-tec role="img" aria-label="Musuq Pacha, con el contorno y la medida de cada letra"></div>
+        </div>
+      </div>
+
       <div class="bloque" id="jerarquia">
         <h3 class="bloque-titulo" data-aparece>Jerarquía y tamaños</h3>
         <p class="bloque-texto" data-aparece>Una escala para pantalla, en píxeles, y otra para impresos, en puntos. En pantalla ningún texto baja de 12 px. En los carteles, el número ocupa el 80 % del alto de la placa y el nombre de la zona, el 30 %.</p>
@@ -1098,8 +1110,6 @@
         </div>
         <div class="escala" data-escala></div>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Dos familias y nueve estilos cubren desde un cartel de tres metros hasta una nota al pie. Space Grotesk le da carácter a lo que se ve de lejos y Archivo hace cómodo lo que se lee de cerca.</p>
     </section>
 
     <section class="seccion" id="recursos" data-logo="violeta" aria-labelledby="titulo-recursos">
@@ -1192,16 +1202,16 @@
         <h3 class="bloque-titulo" data-aparece>Ilustración</h3>
         <p class="bloque-texto" data-aparece>Las ilustraciones tienen una identidad marcada: pintura digital de libro ilustrado, formas redondeadas y paleta terrosa. Todas salen de una misma receta, que se replica en cada pieza. En el evento se imprimen en cartón y se arman como siluetas cruzadas en X. Tocá una para verla en grande.</p>
         <div class="ilustraciones" data-desfase data-galeria="Ilustraciones" data-texto="Pintura digital de libro ilustrado: pinceladas suaves, contornos limpios, paleta terrosa y luz desde arriba a la izquierda.">
-          <figure data-aparece data-enfasis><img src="ilustraciones/ceibo.png" alt="Ceibo" width="560" height="560" loading="lazy"><figcaption>Ceibo</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/ombu.png" alt="Ombú" width="560" height="560" loading="lazy"><figcaption>Ombú</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/calden.png" alt="Caldén" width="560" height="560" loading="lazy"><figcaption>Caldén</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/carda.png" alt="Carda" width="560" height="560" loading="lazy"><figcaption>Carda</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/sauce-criollo.png" alt="Sauce criollo" width="560" height="560" loading="lazy"><figcaption>Sauce criollo</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/puma.png" alt="Puma" width="560" height="560" loading="lazy"><figcaption>Puma</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/loica-pampeana.png" alt="Loica pampeana" width="560" height="560" loading="lazy"><figcaption>Loica pampeana</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/nandu.png" alt="Ñandú" width="560" height="560" loading="lazy"><figcaption>Ñandú</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/escuerzo.png" alt="Escuerzo" width="560" height="560" loading="lazy"><figcaption>Escuerzo</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="ilustraciones/anciana-querandi.png" alt="Anciana querandí" width="560" height="560" loading="lazy"><figcaption>Anciana querandí</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/ceibo.png" alt="Ceibo" width="560" height="560" loading="lazy" decoding="async"><figcaption>Ceibo</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/ombu.png" alt="Ombú" width="560" height="560" loading="lazy" decoding="async"><figcaption>Ombú</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/calden.png" alt="Caldén" width="560" height="560" loading="lazy" decoding="async"><figcaption>Caldén</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/carda.png" alt="Carda" width="560" height="560" loading="lazy" decoding="async"><figcaption>Carda</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/sauce-criollo.png" alt="Sauce criollo" width="560" height="560" loading="lazy" decoding="async"><figcaption>Sauce criollo</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/puma.png" alt="Puma" width="560" height="560" loading="lazy" decoding="async"><figcaption>Puma</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/loica-pampeana.png" alt="Loica pampeana" width="560" height="560" loading="lazy" decoding="async"><figcaption>Loica pampeana</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/nandu.png" alt="Ñandú" width="560" height="560" loading="lazy" decoding="async"><figcaption>Ñandú</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/escuerzo.png" alt="Escuerzo" width="560" height="560" loading="lazy" decoding="async"><figcaption>Escuerzo</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="ilustraciones/anciana-querandi.png" alt="Anciana querandí" width="560" height="560" loading="lazy" decoding="async"><figcaption>Anciana querandí</figcaption></figure>
         </div>
         <dl class="filas" data-aparece>
           <div><dt>Identidad marcada</dt><dd>Libro ilustrado pintado a mano: pinceladas suaves, contornos limpios y volumen simple. Es la misma imagen que se imprime en cartón en Yachay.</dd></div>
@@ -1232,9 +1242,9 @@
                 </div>
                 <p class="probador-rotulo">Imágenes de referencia · se adjuntan siempre las tres</p>
                 <div class="referencias" data-galeria="Imágenes de referencia" data-texto="Una de las tres imágenes que se adjuntan siempre junto al prompt para fijar el estilo.">
-                  <figure><img src="ilustraciones/tala.png" alt="Tala" width="560" height="560" loading="lazy"><figcaption>Tala</figcaption></figure>
-                  <figure><img src="ilustraciones/venado.png" alt="Venado" width="560" height="560" loading="lazy"><figcaption>Venado</figcaption></figure>
-                  <figure><img src="ilustraciones/tero.png" alt="Tero" width="560" height="560" loading="lazy"><figcaption>Tero</figcaption></figure>
+                  <figure><img src="ilustraciones/tala.png" alt="Tala" width="560" height="560" loading="lazy" decoding="async"><figcaption>Tala</figcaption></figure>
+                  <figure><img src="ilustraciones/venado.png" alt="Venado" width="560" height="560" loading="lazy" decoding="async"><figcaption>Venado</figcaption></figure>
+                  <figure><img src="ilustraciones/tero.png" alt="Tero" width="560" height="560" loading="lazy" decoding="async"><figcaption>Tero</figcaption></figure>
                 </div>
                 <p class="nota">Ejemplo de sujeto, para el ombú: <span lang="en">«a mature ombú tree (Phytolacca dioica) with a broad crown of foliage clustered in dense masses, a massively swollen trunk and large roots flaring into a pedestal-like base»</span>. El resto del prompt queda igual: así cada especie nueva se suma con la misma identidad.</p>
               </div>
@@ -1247,12 +1257,12 @@
         <h3 class="bloque-titulo" data-aparece>Fotografía</h3>
         <p class="bloque-texto" data-aparece>Las fotos muestran a personas que juegan, crean y recorren Yachay hoy. Cuando aparecen comunidades originarias, es con su nombre, su consentimiento y su voz. Estos son renders de Yachay: tocá uno para pasarlos en grande.</p>
         <div class="fotos" data-galeria="Renders de Yachay">
-          <figure data-aparece data-enfasis><img src="fotos/vr-meta-quest.jpg" alt="Personas jugando con los visores Meta Quest sobre las alfombras de la zona VR" loading="lazy"><figcaption>Zona VR · Jugando con los Meta Quest.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/simbolo-pantalla.jpg" alt="Dos personas crean su símbolo en la pantalla de una pata de la Ballena" loading="lazy"><figcaption>Plaza Seca · Su símbolo en la pantalla.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/mapa-mesa.jpg" alt="Visitantes alrededor de la mesa del mapa interactivo" loading="lazy"><figcaption>Plaza Seca · El mapa interactivo.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/vr-teles.jpg" alt="Las teles de 70 pulgadas de la zona VR, con los coordinadores" loading="lazy"><figcaption>Zona VR · Las teles y los coordinadores.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/ballena-pantallas.jpg" alt="La Ballena Azul iluminada sobre la Plaza Seca, con las pantallas de Musuq Pacha" loading="lazy"><figcaption>Plaza Seca · La Ballena y las pantallas.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/pista-led.jpg" alt="Público sobre la pista LED de la Plaza Seca" loading="lazy"><figcaption>Plaza Seca · Sobre la pista LED.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/vr-meta-quest.jpg" alt="Personas jugando con los visores Meta Quest sobre las alfombras de la zona VR" loading="lazy" decoding="async"><figcaption>Zona VR · Jugando con los Meta Quest.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/simbolo-pantalla.jpg" alt="Dos personas crean su símbolo en la pantalla de una pata de la Ballena" loading="lazy" decoding="async"><figcaption>Plaza Seca · Su símbolo en la pantalla.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/mapa-mesa.jpg" alt="Visitantes alrededor de la mesa del mapa interactivo" loading="lazy" decoding="async"><figcaption>Plaza Seca · El mapa interactivo.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/vr-teles.jpg" alt="Las teles de 70 pulgadas de la zona VR, con los coordinadores" loading="lazy" decoding="async"><figcaption>Zona VR · Las teles y los coordinadores.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/ballena-pantallas.jpg" alt="La Ballena Azul iluminada sobre la Plaza Seca, con las pantallas de Musuq Pacha" loading="lazy" decoding="async"><figcaption>Plaza Seca · La Ballena y las pantallas.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/pista-led.jpg" alt="Público sobre la pista LED de la Plaza Seca" loading="lazy" decoding="async"><figcaption>Plaza Seca · Sobre la pista LED.</figcaption></figure>
         </div>
         <div class="columnas dos">
           <div data-aparece>
@@ -1280,15 +1290,15 @@
         <h3 class="bloque-titulo" data-aparece>Materiales y espacio</h3>
         <p class="bloque-texto" data-aparece>En Yachay, el mundo ilustrado del juego se vuelve arquitectura: árboles y plantas de cartón, toldos y malokas, la cueva de la entrada, cristales violetas, antorchas y asientos de roca. Pasá por cada material para ver dónde se usa.</p>
         <div class="materiales" data-desfase>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/carton.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Cartón corrugado estructural</b><span><em>Túnel de entrada, asientos, bases de árboles y plantas, chakana grande y agarres de antorchas.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/acrilico.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Acrílico transparente y opaco</b><span><em>Cristales de la cueva, fuego de las antorchas, señales y cubos del museo.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/acero.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Acero estructural</b><span><em>Cuerpo de las tolderías, sector de merch y estructura del mapa.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/melamina.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Melamina</b><span><em>Stands, barras, mesas y banquetas.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/luces-led.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Luces LED</b><span><em>Túnel, escaleras, stands y arcos, y adentro de cristales, antorchas y algunas señales.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/alfombras.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Alfombras</b><span><em>Como pasto en las tolderías, la zona VR y el sector de merch.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/vinilos.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Ploteos en vinilo autoadhesivo</b><span><em>Decoración de árboles y plantas.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/pantallas-led.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Pantallas LED</b><span><em>Círculo del piso con el símbolo creado, colgadas alrededor y en las columnas.</em></span></figcaption></figure>
-          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/lonas.jpg" alt="" width="471" height="425" loading="lazy"><figcaption><b>Lonas</b><span><em>Carteles colgantes.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/carton.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Cartón corrugado estructural</b><span><em>Túnel de entrada, asientos, bases de árboles y plantas, chakana grande y agarres de antorchas.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/acrilico.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Acrílico transparente y opaco</b><span><em>Cristales de la cueva, fuego de las antorchas, señales y cubos del museo.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/acero.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Acero estructural</b><span><em>Cuerpo de las tolderías, sector de merch y estructura del mapa.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/melamina.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Melamina</b><span><em>Stands, barras, mesas y banquetas.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/luces-led.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Luces LED</b><span><em>Túnel, escaleras, stands y arcos, y adentro de cristales, antorchas y algunas señales.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/alfombras.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Alfombras</b><span><em>Como pasto en las tolderías, la zona VR y el sector de merch.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/vinilos.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Ploteos en vinilo autoadhesivo</b><span><em>Decoración de árboles y plantas.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/pantallas-led.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Pantallas LED</b><span><em>Círculo del piso con el símbolo creado, colgadas alrededor y en las columnas.</em></span></figcaption></figure>
+          <figure class="material" data-aparece data-enfasis tabindex="0"><img src="materiales/lonas.jpg" alt="" width="471" height="425" loading="lazy" decoding="async"><figcaption><b>Lonas</b><span><em>Carteles colgantes.</em></span></figcaption></figure>
         </div>
         <dl class="filas" data-aparece>
           <div><dt>Cartón</dt><dd>Árboles y plantas ilustrados, y estructuras de cartón facetado, intervenidas por Miqui Lilintal sobre las estructuras de Osvaldo Decastelli.</dd></div>
@@ -1297,8 +1307,6 @@
           <div><dt>Descanso</dt><dd>Zonas con almohadones y asientos de roca para frenar entre actividades.</dd></div>
         </dl>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> El píxel es la unidad mínima del mundo Musuq Pacha: arma el logo, las tramas, los patrones y hasta el espacio de Yachay. Si una pieza nueva se arma con píxeles cuadrados, respeta la simetría en espejo y usa un color de identidad, ya pertenece a la marca. Las ilustraciones y las fotos le suman personas que juegan, crean y habitan el presente.</p>
     </section>
 
     <section class="seccion" id="iconografia" data-logo="lima" aria-labelledby="titulo-iconografia">
@@ -1376,8 +1384,6 @@
         </div>
         <p class="nota" data-aparece>Los logos de tiendas (PlayStation, Xbox, Steam, Apple, Google Play y Epic) son SVG de marca y solo van en los botones de plataforma.</p>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Un mismo dibujo para el cartel, la web y el mapa: quien visita aprende un pictograma una vez y lo reconoce en todo el recorrido. Los íconos guían sin hablar: mismo trazo, misma grilla y siempre del color del texto.</p>
     </section>
 
     <section class="seccion" id="senaletica" data-logo="naranja" aria-labelledby="titulo-senaletica">
@@ -1419,15 +1425,13 @@
         <h3 class="bloque-titulo" data-aparece>En uso</h3>
         <p class="bloque-texto" data-aparece>Así se ven los carteles en el Palacio Libertad durante el evento. Tocá una foto para pasarlas en grande.</p>
         <div class="fotos" data-galeria="En uso">
-          <figure data-aparece data-enfasis><img src="fotos/nucleos-racimo.jpg" alt="Hall de los ascensores con los dos núcleos, su racimo de píxeles y la Plaza Seca al fondo" loading="lazy"><figcaption>Los dos núcleos del hall con su racimo y el número de piso.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/directorio.jpg" alt="Una persona lee el directorio junto a las puertas del ascensor" loading="lazy"><figcaption>El directorio junto a las puertas del ascensor.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/llegada-piso-2.jpg" alt="Llegada al piso 2 por las escaleras mecánicas, frente a la señalética del núcleo" loading="lazy"><figcaption>Llegando al piso 2 por las escaleras mecánicas.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/lona-vestibulo.jpg" alt="La lona de Yachay sobre las puertas giratorias del vestíbulo" loading="lazy"><figcaption>La lona de Yachay sobre las puertas giratorias.</figcaption></figure>
-          <figure data-aparece data-enfasis><img src="fotos/totem-mapa.jpg" alt="Una familia usa el mapa interactivo del tótem" loading="lazy"><figcaption>El tótem del mapa interactivo con su puntual.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/nucleos-racimo.jpg" alt="Hall de los ascensores con los dos núcleos, su racimo de píxeles y la Plaza Seca al fondo" loading="lazy" decoding="async"><figcaption>Los dos núcleos del hall con su racimo y el número de piso.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/directorio.jpg" alt="Una persona lee el directorio junto a las puertas del ascensor" loading="lazy" decoding="async"><figcaption>El directorio junto a las puertas del ascensor.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/llegada-piso-2.jpg" alt="Llegada al piso 2 por las escaleras mecánicas, frente a la señalética del núcleo" loading="lazy" decoding="async"><figcaption>Llegando al piso 2 por las escaleras mecánicas.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/lona-vestibulo.jpg" alt="La lona de Yachay sobre las puertas giratorias del vestíbulo" loading="lazy" decoding="async"><figcaption>La lona de Yachay sobre las puertas giratorias.</figcaption></figure>
+          <figure data-aparece data-enfasis><img src="fotos/totem-mapa.jpg" alt="Una familia usa el mapa interactivo del tótem" loading="lazy" decoding="async"><figcaption>El tótem del mapa interactivo con su puntual.</figcaption></figure>
         </div>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Siete átomos alcanzan para resolver todos los carteles del Palacio. La placa oscura y el cuadro de color hacen que se reconozcan de lejos, y el pictograma y el número se leen antes que el texto.</p>
     </section>
 
     <section class="seccion" id="interfaz" data-logo="violeta" aria-labelledby="titulo-interfaz">
@@ -1440,7 +1444,7 @@
 
       <div class="bloque" id="grilla">
         <h3 class="bloque-titulo" data-aparece>Grilla</h3>
-        <p class="bloque-texto" data-aparece>La web se arma sobre 8 columnas. El margen y la separación cambian según el ancho de la pantalla, y en celular la grilla baja a 4 columnas. Abrila para verla moverse con cada resolución.</p>
+        <p class="bloque-texto" data-aparece>La web se arma sobre 8 columnas. El margen y la separación cambian según el ancho de la pantalla, y en celular la grilla baja a 4 columnas. Abrila para verla moverse con cada resolución. El fondo de este manual también es una grilla: hacé clic en cualquier zona y se encienden sus módulos.</p>
         <div class="desplegables" data-aparece>
           <details class="desplegable" data-rejilla-desplegable>
             <summary><b class="d-num">8 → 4</b><span class="d-titulo">Abrir la grilla</span><span class="d-bajada">Cinco pantallas y la tuya, en vivo</span><i class="d-signo" aria-hidden="true"></i></summary>
@@ -1560,8 +1564,6 @@
         </div>
         <p class="nota" data-aparece>Caso del TP4: una visitante con la pierna enyesada se fija antes de ir que haya ascensores y lugares para sentarse. Esa información tiene que estar a un clic.</p>
       </div>
-
-      <p class="conclusion" data-aparece><b>Conclusión.</b> Los mismos componentes, con los mismos estados, en la web, en el juego y en las pantallas del evento. Las esquinas rectas, el anillo de foco lima y el mosaico de píxeles del hover repiten la gráfica de la marca dentro de la interfaz.</p>
     </section>
 
     <section class="seccion" id="descargas" data-logo="lima" aria-labelledby="titulo-descargas">
@@ -1630,8 +1632,9 @@
   <div class="aviso" role="status" aria-live="polite" data-aviso></div>
   <script src="pictogramas.js?v=2"></script>
   <script src="iconos.js?v=1"></script>
-  <script src="marca.js?v=10"></script>
-  <script src="secciones.js?v=1"></script>
-  <script src="movimiento.js?v=9"></script>
+  <script src="marca.js?v=13"></script>
+  <script src="efectos.js?v=3"></script>
+  <script src="secciones.js?v=3"></script>
+  <script src="movimiento.js?v=12"></script>
 </body>
 </html>

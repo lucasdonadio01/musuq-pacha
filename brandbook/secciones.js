@@ -40,7 +40,7 @@
       };
       if (quieto || !cuerpo || !cuerpo.animate) { fin(); return; }
       const alto = cuerpo.scrollHeight;
-      anim = cuerpo.animate([{ height: (v ? 0 : alto) + 'px' }, { height: (v ? alto : 0) + 'px' }], { duration: Math.min(720, 280 + alto * 0.45), easing: 'cubic-bezier(.2,.7,.2,1)' });
+      anim = cuerpo.animate([{ height: (v ? 0 : alto) + 'px' }, { height: (v ? alto : 0) + 'px' }], { duration: Math.min(460, 190 + alto * 0.28), easing: 'cubic-bezier(.2,.7,.2,1)' });
       anim.onfinish = fin;
     };
     d.ponerDesplegable = poner;
@@ -224,7 +224,7 @@
     const puntos = colores => colores.map(c => `<i style="--c:${c}"></i>`).join('');
     const diapo = (d, k) => {
       const a = crear('article', 'carrusel-diapo');
-      a.innerHTML = `<div class="diapo-visual diapo-patron"><img src="${d.img}" alt=""></div>
+      a.innerHTML = `<div class="diapo-visual diapo-patron"><img src="${d.img}" alt="" decoding="async"></div>
         <div class="diapo-datos">
           <p class="diapo-rotulo">Patrón ${k + 1} de ${MUESTRAS.length}</p>
           <h3>${d.nombre}</h3>
@@ -236,7 +236,7 @@
       return a;
     };
     MUESTRAS.forEach((d, k) => {
-      const b = crear('button', 'muestra-patron', `<span class="mp-imagen"><img src="${d.img}" alt="" width="480" height="480" loading="lazy"></span>
+      const b = crear('button', 'muestra-patron', `<span class="mp-imagen"><img src="${d.img}" alt="" width="480" height="480" loading="lazy" decoding="async"></span>
         <span class="mp-datos"><b>${d.nombre}</b><span>${d.textil}</span><span>${d.lugar}</span><span class="mp-colores">${puntos(d.colores)}</span></span>`);
       b.type = 'button';
       b.dataset.aparece = '';
@@ -301,7 +301,7 @@
       if (d.textContent === v) return;
       d.textContent = v;
       d.classList.add('cambia');
-      setTimeout(() => d.classList.remove('cambia'), 600);
+      setTimeout(() => d.classList.remove('cambia'), 400);
     };
     const pintar = () => {
       const { w, h } = medida(PANTALLAS[actual]), [margen, canal, cols] = regla(w);
@@ -345,7 +345,7 @@
         if (actual >= PANTALLAS.length - 1) { parar(); return; }
         actual++;
         pintar();
-      }, 1700);
+      }, 1200);
     };
     const cajon = rejilla.closest('details');
     if (cajon) cajon.addEventListener('desplegado', e => { if (e.detail) arrancar(); else parar(); });
@@ -378,33 +378,7 @@
     addEventListener('keydown', e => { if (e.key === 'Escape' && html.classList.contains('con-grilla')) poner(false); });
   }
 
-  const mosaico = el => {
-    const capa = crear('span', 'ui-mosaico');
-    capa.setAttribute('aria-hidden', 'true');
-    el.append(capa);
-    let firma = '';
-    const armar = () => {
-      const w = el.clientWidth, h = el.clientHeight;
-      if (!w || !h || firma === `${w}/${h}`) return;
-      firma = `${w}/${h}`;
-      const paso = h / 3, cols = Math.ceil(w / paso), total = cols * 3;
-      const orden = Array.from({ length: total }, (_, i) => i);
-      let semilla = total * 37 + 11;
-      for (let i = total - 1; i > 0; i--) {
-        semilla = (semilla * 1664525 + 1013904223) >>> 0;
-        const j = semilla % (i + 1);
-        [orden[i], orden[j]] = [orden[j], orden[i]];
-      }
-      capa.replaceChildren(...orden.map((o, i) => {
-        const c = crear('i');
-        c.style.cssText = `left:${i % cols * paso}px;top:${Math.floor(i / cols) * paso}px;width:${paso + 1}px;height:${paso + 1}px;--o:${o / Math.max(total - 1, 1)}`;
-        return c;
-      }));
-    };
-    armar();
-    new ResizeObserver(armar).observe(el);
-    return v => { el.dataset.activo = String(!!v); };
-  };
+  const mosaico = window.EFECTOS.mosaico;
   $$('[data-mosaico]').forEach(b => {
     const activar = mosaico(b);
     let sobre = false;
