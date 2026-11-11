@@ -1134,20 +1134,22 @@ html:has(dialog.ficha[open]){overflow:hidden}
   .alternativa-codigos{grid-template-columns:1fr}
 }
 
-.collage{position:relative;height:200vh;margin:0 calc(50% - 50vw) clamp(48px,6vw,88px)}
-.collage-escena{position:sticky;top:0;height:100vh;height:100svh;display:grid;align-content:center;padding-top:var(--alto-cabecera);overflow:hidden}
-.collage .banda{margin:0}
-.collage-fotos{position:absolute;inset:var(--alto-cabecera) 0 0;z-index:2;pointer-events:none}
-.collage-fotos img{--s:clamp(0,calc((var(--q,0) - var(--t)) * 3.4),1);--e:calc(var(--s) * (2 - var(--s)));position:absolute;left:50%;top:50%;display:block;width:calc(var(--w) * var(--k,1) * 1vw);max-width:none;height:auto;transform:translate(-50%,-50%) translate(calc(var(--x) * var(--e) * 1vw),calc(var(--y) * var(--ky,1) * var(--e) * 1vh)) scale(calc(.18 + .82 * var(--e)));opacity:clamp(0,calc(var(--s) * 5),1);will-change:transform,opacity}
+.collage{position:relative;height:250vh;margin:0 calc(50% - 50vw) clamp(48px,6vw,88px)}
+.collage-escena{position:sticky;top:0;height:100vh;height:100svh;padding-top:var(--alto-cabecera);overflow:hidden}
+.collage .banda{margin:0;height:100%;display:flex;flex-direction:column}
+.collage .banda .seccion-numero{margin-top:auto}
+.collage .banda-titulo{margin-bottom:auto}
+.collage .banda-hud,.collage .banda .seccion-numero{position:relative;z-index:25}
+.collage .banda-titulo>span{z-index:25}
+.collage-fotos{position:absolute;inset:0;pointer-events:none}
+.collage-fotos img{position:absolute;left:0;top:0;display:block;max-width:none;height:auto;opacity:0;transform-origin:50% 50%;will-change:transform,opacity;backface-visibility:hidden}
 @media (max-width:700px){
-  .collage{height:180vh}
-  .collage-fotos img{--k:2.2;--ky:.8}
+  .collage{height:220vh}
   .collage-fotos .solo-compu{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .collage{height:auto}
-  .collage-escena{position:relative;height:auto;min-height:100vh}
-  .collage-fotos{--q:1}
+  .collage-escena{position:relative}
 }
 @media (max-width:700px){
   .conv-socia-pie{flex-wrap:wrap;row-gap:6px;max-width:140px;white-space:normal;letter-spacing:.06em}

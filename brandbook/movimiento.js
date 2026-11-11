@@ -278,7 +278,8 @@
     const h1 = $('h1', titular), partes = $$('.t-parte', h1);
     titular.style.setProperty('--titulo', '100px');
     const movil = matchMedia('(max-width: 700px)').matches;
-    const ancho = movil ? Math.max(...partes.map(anchoTexto)) : anchoTexto(h1);
+    const cajas = partes.map(p => { const r = document.createRange(); r.selectNodeContents(p); return r.getBoundingClientRect(); });
+    const ancho = movil ? Math.max(...cajas.map(c => c.width)) : Math.max(...cajas.map(c => c.right)) - Math.min(...cajas.map(c => c.left));
     const tam = limitar(100 * titular.clientWidth / ancho * 0.995, 40, movil ? 260 : 440);
     titular.style.setProperty('--titulo', tam.toFixed(1) + 'px');
   };
@@ -437,6 +438,12 @@
   const enVista = new IntersectionObserver(ents => ents.forEach(en => en.target.classList.toggle('en-vista', en.isIntersecting)), { rootMargin: '10% 0px' });
   $$('[data-tipo-vivo], .cinta').forEach(el => enVista.observe(el));
 
+  const ORBITA = [
+    [1, -.03, .115, 0], [.85, .12, .1, .1], [.95, -.13, .085, -.08], [.75, .02, .09, .05],
+    [1.05, -.09, .07, -.05], [.8, .15, .08, .12], [.9, .06, .105, -.1], [1, -.16, .08, .06],
+    [.7, -.05, .085, -.04], [.95, .1, .09, .08], [.85, -.11, .075, -.12], [1.05, .04, .07, .04],
+    [.75, .17, .065, -.06], [.95, -.02, .075, .09], [.8, -.17, .07, -.02], [1, .14, .08, .07]
+  ];
   const bandas = $$('[data-banda]').map(b => {
     const t = $('[data-banda-titulo]', b);
     const h2 = t.closest('h2');
@@ -445,8 +452,48 @@
     const letras = partir(t, 'letra-b');
     if (!quieto && window.EFECTOS) window.EFECTOS.tecnico(t, { letras, zona: b, barrido: 'una', presion: true });
     const c = b.closest('[data-collage]');
-    return { b, t, c, fotos: c && $('[data-collage-fotos]', c), entrada: 0, desborde: 0 };
+    const fotos = c ? $$('[data-collage-fotos] img', c).map((el, i) => ({ el, d: ORBITA[i % ORBITA.length], op: '', zi: '' })) : null;
+    return { b, t, c, h2, fotos, orbita: null, entrada: 0, desborde: 0 };
   });
+
+  const medirOrbita = x => {
+    const W = x.b.clientWidth, H = x.b.clientHeight, movil = W < 700;
+    const lista = x.fotos.filter(f => getComputedStyle(f.el).display !== 'none');
+    const n = lista.length, salto = n % 7 ? 7 : 5;
+    const R = W * (movil ? 0.34 : 0.2);
+    lista.forEach((f, j) => {
+      const [radio, alto, ancho, desvio] = f.d;
+      f.w = W * ancho * (movil ? 2.2 : 1.25);
+      f.h = f.w * f.el.getAttribute('height') / f.el.getAttribute('width');
+      f.el.style.width = f.w.toFixed(1) + 'px';
+      f.fi = VUELTA * ((j * salto) % n) / n + desvio;
+      f.r = radio;
+      f.y = alto;
+      f.nace = -0.28 + 0.4 * j / Math.max(1, n - 1);
+      f.muere = 0.78 + 0.3 * j / Math.max(1, n - 1);
+    });
+    x.orbita = { cx: W / 2, cy: x.h2.offsetTop + x.h2.offsetHeight / 2, R, P: R * 2, H, lista };
+  };
+
+  const orbitar = (x, v) => {
+    const o = x.orbita;
+    if (!o) return;
+    const giro = VUELTA * 0.7 * v;
+    for (const f of o.lista) {
+      const g = salida(limitar((v - f.nace) / 0.3)) * salida(limitar((f.muere - v) / 0.3));
+      const a = f.fi - giro;
+      const zo = o.R * f.r * Math.cos(a);
+      const z = zo - (1 - g) * o.R * 9;
+      const k = o.P / (o.P - z);
+      const X = o.cx + o.R * f.r * Math.sin(a) * k;
+      const Y = o.cy + (f.y * o.H + zo * 0.04) * k;
+      f.el.style.transform = `translate3d(${(X - f.w / 2).toFixed(1)}px,${(Y - f.h / 2).toFixed(1)}px,0) scale(${k.toFixed(4)})`;
+      const op = limitar(g * 5).toFixed(2);
+      if (op !== f.op) { f.op = op; f.el.style.opacity = op; }
+      const zi = String(z >= 0 ? 26 + Math.min(20, Math.round(z / o.R * 20)) : Math.max(1, 24 - Math.round(-z / o.R * 12)));
+      if (zi !== f.zi) { f.zi = zi; f.el.style.zIndex = zi; }
+    }
+  };
 
   const cabecera = $('[data-cabecera]');
   const pastillas = $('[data-pastillas]');
@@ -575,6 +622,10 @@
       const ancho = x.t.offsetWidth;
       x.desborde = ancho > util ? ancho - util + 24 : 0;
       x.entrada = Math.min(vw * 0.2, 320);
+      if (x.fotos) {
+        medirOrbita(x);
+        if (quieto) orbitar(x, 0.45);
+      }
     });
     desfases.forEach(g => {
       const hijos = [...g.children];
@@ -607,11 +658,7 @@
       if (r.bottom < -80 || r.top > vh + 80) return;
       const rc = lecturasCollage[i];
       const p = rc ? limitar((vh - rc.top) / (vh + rc.height)) : limitar((vh - r.top) / (vh + r.height));
-      if (rc && x.fotos) {
-        const u = limitar(-rc.top / Math.max(1, rc.height - vh));
-        const q = Math.min(1, u / 0.75);
-        x.fotos.style.setProperty('--q', q.toFixed(3));
-      }
+      if (rc && x.orbita) orbitar(x, -rc.top / Math.max(1, rc.height - vh));
       x.b.style.setProperty('--r', salida(limitar((vh - r.top) / (vh * 0.5))).toFixed(3));
       x.t.style.transform = `translate3d(${mezclar(x.entrada, -x.desborde, p).toFixed(1)}px,0,0)`;
     });
