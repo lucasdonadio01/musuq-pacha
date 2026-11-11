@@ -73,11 +73,11 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) apagar(); });
 
   const ROTULO = '500 12px "Space Grotesk", Arial, sans-serif';
-  const RESORTE = 320, CAIDA = 0.62, ESPERA = 0.15, ESCALONES = 8;
+  const RESORTE = 320, CAIDA = 0.62, ESPERA = 0.15, ESCALONES = 8, VIDA_ONDA = 1.3;
   const LINEAS = ['línea de base', 'altura de x', 'mayúsculas', 'ascendente', 'descendente'];
 
   const tecnico = (caja, inicial = {}) => {
-    const s = Object.assign({ texto: '', peso: 700, tam: 150, espaciado: -0.05, color: '', acento: '', contorno: 'letra', alcance: 200, suavidad: 0.7, guion: 4, hueco: 2, trazo: 1.5, motas: 15, marco: true, rotulos: true, arrastrar: true, rebote: 0.4, barrido: '', velocidad: 1, patada: true, intro: '', duracion: 2, guias: false, letras: null, zona: null }, inicial);
+    const s = Object.assign({ texto: '', peso: 700, tam: 150, espaciado: -0.05, color: '', acento: '', contorno: 'letra', alcance: 200, suavidad: 0.7, guion: 4, hueco: 2, trazo: 1.5, motas: 15, marco: true, rotulos: true, arrastrar: true, rebote: 0.4, barrido: '', velocidad: 1, patada: true, intro: '', duracion: 2, guias: false, presion: false, pesoMin: 300, letras: null, zona: null }, inicial);
     const zona = s.zona || caja, anclado = !!s.letras;
     const lienzo = crear('canvas', 'tec-lienzo'), ctx = lienzo.getContext('2d');
     const borrador = document.createElement('canvas'), bctx = borrador.getContext('2d');
@@ -89,7 +89,9 @@
 
     let ancho = 1, alto = 1, dpr = 1, margen = 0, cuadro = 0, antes = performance.now(), visible = false, clave = '', sucio = true, pedida = '', palabra = null, glifos = [], tintaActual = '#FFFFFF';
     let presencia = 0, reloj = 0, pulso = 0, puesto = false, arrastre = -1, cursor = '', relojIntro = 0, tipoIntro = '', entrando = false, fuentes = !document.fonts, guia = 0, pase = null, barrido = false, pintado = false;
-    const patadas = [];
+    let fuerza = 0, fam = 'sans-serif';
+    const patadas = [], ondas = [];
+    const prensa = { x: 0, y: 0 };
     const toque = { x: 0, y: 0, t: 0, i: -1 };
     const puntero = { x: 0, y: 0, cx: 0, cy: 0, dentro: false };
     const agarre = { x: 0, y: 0 }, lente = { x: 0, y: 0 };
@@ -135,6 +137,7 @@
       if (k === clave && palabra) return palabra;
       clave = k;
       tintaActual = tinta;
+      fam = familia();
       const pide = fuente(64);
       if (document.fonts && pide !== pedida) { pedida = pide; document.fonts.load(pide, anclado ? caja.textContent : s.texto).then(refrescar, refrescar); }
       const m = bctx;
@@ -176,7 +179,7 @@
         const cg = { x1: x - d.actualBoundingBoxLeft, y1: base - d.actualBoundingBoxAscent, x2: x + d.actualBoundingBoxRight, y2: base + d.actualBoundingBoxDescent };
         izq = Math.min(izq, cg.x1); der = Math.max(der, cg.x2); arriba = Math.min(arriba, cg.y1); abajo = Math.max(abajo, cg.y2);
         const p = previos[glifos.length], igual = !!p && p.ch === ch && p.indice === i;
-        glifos.push({ ch, x, indice: i, caja: cg, mov: igual ? p.mov : { x: 0, y: 0 }, vel: igual ? p.vel : { x: 0, y: 0 }, contorno: igual ? p.contorno : 0, visto: igual ? p.visto : 1, celdas: null, armado: 0, relleno: null, guiones: null });
+        glifos.push({ ch, x, indice: i, caja: cg, centro: x + d.width / 2, peso: 700, mov: igual ? p.mov : { x: 0, y: 0 }, vel: igual ? p.vel : { x: 0, y: 0 }, contorno: igual ? p.contorno : 0, visto: igual ? p.visto : 1, celdas: null, armado: 0, relleno: null, guiones: null });
       });
       if (!glifos.length) { izq = der = ancho / 2; arriba = abajo = base; }
       const tope = Math.min(arriba, mayus) - 2, piso = Math.max(abajo, base) + 2;
@@ -208,6 +211,15 @@
       return g;
     };
     const calcar = (c, a, dx, dy, ox, oy) => c.drawImage(a.img, Math.round((a.izq + dx) * dpr - ox), Math.round((a.arriba + dy) * dpr - oy));
+    const escribir = (g, tinta, v) => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.font = `${g.peso} ${v.tam}px ${fam}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = tinta;
+      ctx.fillText(g.ch, g.centro + g.mov.x, v.base + g.mov.y);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    };
 
     const dibujarZona = () => {
       const radio = s.alcance * dpr, cx = lente.x * dpr, cy = lente.y * dpr;
@@ -550,6 +562,28 @@
       }
       marco.a = acercar(marco.a, foco >= 0 && s.marco ? 1 : 0, dt, 0.1);
 
+      while (ondas.length && pulso - ondas[0].en > VIDA_ONDA) ondas.shift();
+      const apretando = puntero.dentro || arrastre >= 0;
+      const metaFuerza = s.presion && !entrando && (apretando || ondas.length > 0) ? 1 : 0;
+      if (metaFuerza && fuerza < 0.001) { prensa.x = puntero.x; prensa.y = puntero.y; }
+      if (metaFuerza && apretando) { prensa.x = acercar(prensa.x, puntero.x, dt, 0.12); prensa.y = acercar(prensa.y, puntero.y, dt, 0.12); }
+      fuerza = acercar(fuerza, metaFuerza, dt, 0.16);
+      if (Math.abs(fuerza - metaFuerza) < 0.002) fuerza = metaFuerza;
+      if (fuerza > 0) {
+        const largo = v.der - v.izq, lejosMax = Math.max(1, Math.min(largo / 2, v.tam * 2.6)), tope = Number(s.peso) || 700, banda = Math.max(largo * 0.14, 32);
+        glifos.forEach((g, i) => {
+          const cx = g.centro + g.mov.x, cy = (g.caja.y1 + g.caja.y2) / 2 + g.mov.y;
+          let p = i === foco ? 1 : unidad(1 - Math.hypot(cx - prensa.x, cy - prensa.y) / lejosMax);
+          for (const o of ondas) {
+            const edad = pulso - o.en, fuera = (Math.hypot(cx - o.x, cy - o.y) - edad * largo * 1.25) / banda;
+            if (edad <= 0 || fuera <= -1 || fuera >= 1) continue;
+            const resto = 1 - edad / VIDA_ONDA;
+            p = 1 - (1 - p) * (1 - (1 - fuera * fuera) ** 2 * resto * resto * Math.min(1, edad / 0.06));
+          }
+          g.peso = Math.round((tope - (tope - s.pesoMin) * (1 - p) * fuerza) / 5) * 5;
+        });
+      }
+
       glifos.forEach((g, i) => {
         const meta = entrando ? (tipoIntro === 'escribir' && (i === tecla || (tecla >= 0 && i > tecla)) ? 1 : 0) : s.contorno === 'letra' && i === foco && i !== arrastre ? 1 : 0;
         if (entrando && g.visto === 0) g.contorno = meta;
@@ -584,7 +618,10 @@
           if (avance < 0.72 + 0.28 * adelanto) { dibujarLlenado(g, adelanto, avance, v); return; }
         }
         if (g.visto < 0.001) return;
-        if (g.contorno < 0.999) { ctx.globalAlpha = (1 - g.contorno) * g.visto; calcar(ctx, arte(g, false), g.mov.x, g.mov.y, 0, 0); }
+        if (g.contorno < 0.999) {
+          ctx.globalAlpha = (1 - g.contorno) * g.visto;
+          if (fuerza > 0) escribir(g, tinta, v); else calcar(ctx, arte(g, false), g.mov.x, g.mov.y, 0, 0);
+        }
         if (g.contorno > 0.001) { ctx.globalAlpha = g.contorno * g.visto; calcar(ctx, arte(g, true), g.mov.x, g.mov.y, 0, 0); }
         ctx.globalAlpha = 1;
       });
@@ -593,7 +630,8 @@
       if (!pintado && glifos.length) { pintado = true; caja.classList.add('tec-vivo'); }
 
       const lejos = activo && Math.abs(lente.x - objX) + Math.abs(lente.y - objY) > 0.5;
-      const asienta = mueve || entrando || lejos || patadas.length > 0 || Math.abs(guia - metaGuia) > 0.005 || Math.abs(presencia - metaPresencia) > 0.002 || (marco.a > 0.01 && marco.a < 0.99);
+      const prensando = fuerza !== metaFuerza || ondas.length > 0 || (metaFuerza > 0 && apretando && Math.abs(prensa.x - puntero.x) + Math.abs(prensa.y - puntero.y) > 0.5);
+      const asienta = mueve || entrando || lejos || prensando || patadas.length > 0 || Math.abs(guia - metaGuia) > 0.005 || Math.abs(presencia - metaPresencia) > 0.002 || (marco.a > 0.01 && marco.a < 0.99);
       const sigue = barriendo || arrastre >= 0 || foco >= 0 || (s.contorno === 'zona' && puntero.dentro);
       if ((sigue || asienta) && visible) cuadro = requestAnimationFrame(paso);
     };
@@ -610,6 +648,10 @@
       toque.y = puntero.y;
       toque.t = performance.now();
       toque.i = i;
+      if (s.presion && principal && !quieto && !entrando) {
+        ondas.push({ x: puntero.x, y: puntero.y, en: pulso });
+        if (ondas.length > 6) ondas.shift();
+      }
       if (s.arrastrar && i >= 0) {
         arrastre = i;
         agarre.x = puntero.x - glifos[i].mov.x;
@@ -650,6 +692,8 @@
       clave = '';
       arrastre = -1;
       puntero.dentro = false;
+      fuerza = 0;
+      ondas.length = 0;
       if (pintado) { pintado = false; caja.classList.remove('tec-vivo'); }
     };
     new ResizeObserver(() => { sucio = true; clave = ''; despertar(); }).observe(caja);
@@ -676,7 +720,7 @@
     const base = innerWidth >= 760 ? 'Musuq Pacha' : 'Yachay';
     const campo = $('[data-tec-texto]');
     const nombrar = t => escena.setAttribute('aria-label', `${t}, con el contorno y la medida de cada letra`);
-    const t = tecnico(escena, { texto: base, tam: 340, espaciado: -0.04, color: '#FFFFFF', acento: '#E4FE44', barrido: 'siempre', velocidad: 2.4, guias: true, intro: 'armar', duracion: 1.5 });
+    const t = tecnico(escena, { texto: base, tam: 340, espaciado: -0.04, color: '#FFFFFF', acento: '#E4FE44', barrido: 'siempre', velocidad: 2.4, guias: true, presion: true, intro: 'armar', duracion: 1.5 });
     nombrar(base);
     if (t) {
       if (campo) {
@@ -687,7 +731,7 @@
       $$('[data-tec-opcion]').forEach(b => b.addEventListener('click', () => {
         const si = b.getAttribute('aria-pressed') !== 'true';
         b.setAttribute('aria-pressed', String(si));
-        t.poner(b.dataset.tecOpcion === 'guias' ? { guias: si } : { contorno: si ? 'zona' : 'letra' });
+        t.poner(b.dataset.tecOpcion === 'guias' ? { guias: si } : b.dataset.tecOpcion === 'presion' ? { presion: si } : { contorno: si ? 'zona' : 'letra' });
       }));
     }
   }

@@ -434,7 +434,7 @@
     h2.setAttribute('aria-label', t.textContent.trim());
     t.setAttribute('aria-hidden', 'true');
     const letras = partir(t, 'letra-b');
-    if (!quieto && window.EFECTOS) window.EFECTOS.tecnico(t, { letras, zona: b, barrido: 'una' });
+    if (!quieto && window.EFECTOS) window.EFECTOS.tecnico(t, { letras, zona: b, barrido: 'una', presion: true });
     return { b, t, entrada: 0, desborde: 0 };
   });
 
