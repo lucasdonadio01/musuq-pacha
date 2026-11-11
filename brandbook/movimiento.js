@@ -563,9 +563,6 @@
     else if (indiceAbierto()) ponerIndice(false, true);
   });
 
-  const enfasis = new Set();
-  const obsEnfasis = new IntersectionObserver(ents => ents.forEach(en => { if (en.isIntersecting) enfasis.add(en.target); else enfasis.delete(en.target); }), { rootMargin: '15% 0px' });
-  if (!quieto) $$('[data-enfasis]').forEach(el => obsEnfasis.observe(el));
   const desfases = quieto ? [] : $$('[data-desfase]');
   const portada = $('.portada');
 
@@ -595,7 +592,6 @@
     let enlaceActivo = null;
     for (const x of destinosIndice) if (x.d.getBoundingClientRect().top <= vh * 0.3) enlaceActivo = x.a;
     const lecturasBanda = bandas.map(x => x.b.getBoundingClientRect());
-    const lecturasEnfasis = [...enfasis].map(el => [el, el.getBoundingClientRect()]);
     const lecturasDesfase = desfases.map(g => g.getBoundingClientRect());
 
     html.classList.toggle('bajado', y > 60);
@@ -610,10 +606,6 @@
       const p = limitar((vh - r.top) / (vh + r.height));
       x.b.style.setProperty('--r', salida(limitar((vh - r.top) / (vh * 0.5))).toFixed(3));
       x.t.style.transform = `translate3d(${mezclar(x.entrada, -x.desborde, p).toFixed(1)}px,0,0)`;
-    });
-    lecturasEnfasis.forEach(([el, r]) => {
-      const d = Math.abs(r.top + r.height / 2 - vh / 2) / (vh * 0.62);
-      el.style.setProperty('--e', suave(1 - limitar(d)).toFixed(3));
     });
     desfases.forEach((g, i) => {
       const r = lecturasDesfase[i];

@@ -72,7 +72,7 @@
   addEventListener('blur', apagar);
   document.addEventListener('visibilitychange', () => { if (document.hidden) apagar(); });
 
-  const ROTULO = '500 12px "Space Grotesk", Arial, sans-serif';
+  const ROTULO = '500 12px "Space Grotesk", sans-serif';
   const RESORTE = 320, CAIDA = 0.62, ESPERA = 0.15, ESCALONES = 8, VIDA_ONDA = 1.3;
   const LINEAS = ['línea de base', 'altura de x', 'mayúsculas', 'ascendente', 'descendente'];
 

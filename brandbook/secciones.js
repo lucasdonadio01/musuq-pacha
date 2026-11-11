@@ -73,7 +73,7 @@
   const svgLogo = v => {
     const cruz = $('#lg-cruz').getAttribute('d');
     const letras = $$('#lg-letras path').map(p => `<path d="${p.getAttribute('d')}" fill="${v.nombre}"/>`).join('');
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="1194" height="400" viewBox="0 0 1194 400"><rect width="400" height="400" fill="${v.cuadro}"/><path d="${cruz}" fill="${v.cruz}"/>${letras}</svg>`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="1288" height="408" viewBox="0 -4 1288 408"><rect width="400" height="400" fill="${v.cuadro}"/><path d="${cruz}" fill="${v.cruz}"/>${letras}</svg>`;
   };
 
   const taller = $('[data-logo-taller]');
@@ -97,7 +97,7 @@
 
   const plano = $('[data-plano]');
   if (plano) {
-    const m = 400 / 7, W = 21 * m, H = 400;
+    const m = 400 / 7, W = 1288, H = 400, COLS = Math.ceil(W / m);
     const linea = (g, x1, y1, x2, y2, clase, i) => { const l = trazo('line', { x1, y1, x2, y2, class: clase }, g); if (i != null) l.style.setProperty('--i', i); return l; };
     const texto = (g, t, x, y, ancla, clase) => { const e = trazo('text', { x, y, 'text-anchor': ancla || 'middle' }, g); if (clase) e.setAttribute('class', clase); e.textContent = t; return e; };
     const cota = (g, x1, x2, y, t, abajo) => {
@@ -107,26 +107,37 @@
       texto(g, t, (x1 + x2) / 2, abajo ? y + 34 : y - 16);
     };
 
-    const s = trazo('svg', { viewBox: `-100 -80 ${W + 220} ${H + 190}`, role: 'img', 'aria-label': 'El logo sobre una grilla de 21 por 7 módulos' });
+    const s = trazo('svg', { viewBox: `-100 -80 ${W + 240} ${H + 190}`, role: 'img', 'aria-label': 'El logo sobre una grilla de 22 y medio por 7 módulos: cada renglón del nombre ocupa 3 módulos de alto' });
     s.dataset.lg = 'naranja';
     plano.append(s);
-    trazo('use', { href: '#sim-logo', width: 1194, height: 400 }, s);
+    trazo('use', { href: '#sim-logo', width: W, height: H }, s);
     const grilla = trazo('g', { class: 'capa-grilla' }, s), guias = trazo('g', { class: 'capa-guias' }, s), cotas = trazo('g', { class: 'capa-cotas' }, s);
-    for (let i = 1; i < 21; i++) linea(grilla, i * m, 0, i * m, H, 'pl-linea', i);
-    for (let j = 1; j < 7; j++) linea(grilla, 0, j * m, W, j * m, 'pl-linea', 21 + j);
+    for (let i = 1; i < COLS; i++) linea(grilla, i * m, 0, i * m, H, 'pl-linea', i);
+    for (let j = 1; j < 7; j++) linea(grilla, 0, j * m, W, j * m, 'pl-linea', COLS + j);
     trazo('rect', { x: 0, y: 0, width: W, height: H, class: 'pl-borde' }, grilla);
     trazo('rect', { x: 7 * m, y: 0, width: m, height: m, class: 'pl-modulo' }, grilla);
     texto(grilla, 'x', 7.5 * m, m / 2 + 8, 'middle', 'equis');
     const activo = trazo('rect', { x: 0, y: 0, width: m, height: m, class: 'pl-activo' }, s);
     cota(cotas, 0, 7 * m, -26, '7x');
     cota(cotas, 7 * m, 8 * m, -26, '1x');
-    cota(cotas, 8 * m, W, -26, '13x');
-    cota(cotas, 0, W, H + 34, '21x · PROPORCIÓN 3 : 1', true);
+    cota(cotas, 8 * m, W, -26, '14½x');
+    cota(cotas, 0, W, H + 34, '22½x · PROPORCIÓN 3,2 : 1', true);
     linea(cotas, -34, 0, -34, H, 'pl-cota');
     linea(cotas, -43, 0, -25, 0, 'pl-cota');
     linea(cotas, -43, H, -25, H, 'pl-cota');
     texto(cotas, '7x', -50, H / 2 + 8, 'end');
-    [15, 385].forEach(y => { linea(guias, 7 * m, y, W + 26, y, 'pl-guia'); texto(guias, '¼x', W + 36, y + 8, 'start', 'guia'); });
+    [[0, 3, '3x'], [3, 4, '1x'], [4, 7, '3x']].forEach(([a, b, t]) => {
+      linea(cotas, W + 40, a * m, W + 40, b * m, 'pl-cota');
+      linea(cotas, W + 31, a * m, W + 49, a * m, 'pl-cota');
+      linea(cotas, W + 31, b * m, W + 49, b * m, 'pl-cota');
+      texto(cotas, t, W + 60, (a + b) / 2 * m + 8, 'start');
+    });
+    [3, 4].forEach(j => linea(guias, 8 * m, j * m, W + 26, j * m, 'pl-guia'));
+    trazo('rect', { x: 27, y: 27, width: 346, height: 346, class: 'pl-guia pl-caja' }, guias);
+    linea(guias, 0, 56, 27, 56, 'pl-cota oscura');
+    linea(guias, 0, 47, 0, 65, 'pl-cota oscura');
+    linea(guias, 27, 47, 27, 65, 'pl-cota oscura');
+    texto(guias, '½x', 36, 64, 'start', 'oscura');
 
     const si = trazo('svg', { viewBox: '-70 -70 560 560', class: 'plano-iso', role: 'img', 'aria-label': 'Detalle del isotipo: la cruz ocupa 6 por 6 módulos' });
     si.dataset.lg = 'naranja';
@@ -152,7 +163,7 @@
     s.addEventListener('pointermove', e => {
       const punto = new DOMPoint(e.clientX, e.clientY).matrixTransform(s.getScreenCTM().inverse());
       const col = Math.floor(punto.x / m), fila = Math.floor(punto.y / m);
-      const dentro = col >= 0 && col < 21 && fila >= 0 && fila < 7;
+      const dentro = col >= 0 && col < COLS && fila >= 0 && fila < 7;
       s.classList.toggle('con-activo', dentro);
       if (dentro) { activo.setAttribute('x', col * m); activo.setAttribute('y', fila * m); }
       if (lectura) lectura.textContent = dentro ? `Columna ${col + 1} · fila ${fila + 1} · ${zona(col)}` : base;
@@ -171,7 +182,7 @@
     const rotulos = $$('i', zona);
     const pintar = () => {
       const w = +rango.value, completo = w >= 100;
-      const x = (completo ? w * 400 / 1194 : w) / 7, aire = completo ? 2 * x : x;
+      const x = (completo ? w * 400 / 1288 : w) / 7, aire = completo ? 2 * x : x;
       zona.classList.toggle('solo-iso', !completo);
       zona.classList.toggle('chico', aire < 15);
       zona.style.setProperty('--w', w + 'px');
@@ -185,7 +196,7 @@
     const ajustar = () => {
       const libre = escena.clientWidth - 48;
       if (libre <= 0) return;
-      const max = Math.max(120, Math.min(400, Math.floor(libre / (1 + 4 * 400 / 1194 / 7) / 4) * 4));
+      const max = Math.max(120, Math.min(400, Math.floor(libre / (1 + 4 * 400 / 1288 / 7) / 4) * 4));
       rango.max = max;
       if (+rango.value > max) rango.value = max;
       pintar();
@@ -290,10 +301,28 @@
       { w: 820, h: 1180, nombre: 'Tablet' },
       { w: 393, h: 852, nombre: 'Celular' },
       { w: 360, h: 800, nombre: 'Celular chico' },
-      { tuya: true, nombre: 'Tu pantalla' }
+      { tuya: true, nombre: 'Testeá tu dispositivo' }
     ];
     const escena = $('[data-rejilla-escena]', rejilla), pantalla = $('[data-rejilla-pantalla]', rejilla), columnas = $$('[data-rejilla-columnas] i', rejilla), lista = $('[data-rejilla-pantallas]', rejilla);
     const datos = Object.fromEntries($$('[data-dato]', rejilla).map(d => [d.dataset.dato, d]));
+    const cotas = $('[data-rejilla-cotas]', rejilla);
+    const [cotaIzq, cotaSep, cotaDer] = ['.izq', '.sep', '.der'].map(c => $(c, cotas));
+    const comaDecimal = v => String(Math.round(v * 10) / 10).replace('.', ',');
+    const contar = (el, valor) => {
+      if (el.meta === valor) return;
+      el.meta = valor;
+      const desde = el.mostrado ?? valor;
+      if (quieto || desde === valor) { el.mostrado = valor; el.textContent = comaDecimal(valor); return; }
+      const t0 = performance.now();
+      const paso = ahora => {
+        if (el.meta !== valor) return;
+        const p = Math.min(1, (ahora - t0) / 430), e = 1 - Math.pow(1 - p, 3);
+        el.mostrado = desde + (valor - desde) * e;
+        el.textContent = comaDecimal(el.mostrado);
+        if (p < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    };
     let actual = 0, gira = null;
     const medida = d => d.tuya ? { w: innerWidth, h: innerHeight } : d;
     const decir = (k, v) => {
@@ -315,12 +344,23 @@
       pantalla.style.setProperty('--pm', (margen * k).toFixed(2) + 'px');
       pantalla.style.setProperty('--pc', (canal * k).toFixed(2) + 'px');
       pantalla.style.setProperty('--pb', Math.max(4, (w > 700 ? 78 : 58) * k).toFixed(1) + 'px');
-      columnas.forEach((c, i) => c.classList.toggle('fuera', i >= cols));
+      const anchoCol = (w - 2 * margen - (cols - 1) * canal) / cols;
+      pantalla.classList.toggle('angosta', anchoCol * k < 34);
+      columnas.forEach((c, i) => { c.classList.toggle('fuera', i >= cols); if (i < cols) contar($('b', c), anchoCol); });
+      cotaIzq.style.left = '0px';
+      cotaIzq.style.width = (margen * k).toFixed(2) + 'px';
+      cotaSep.style.left = ((margen + anchoCol) * k).toFixed(2) + 'px';
+      cotaSep.style.width = (canal * k).toFixed(2) + 'px';
+      cotaDer.style.left = ((w - margen) * k).toFixed(2) + 'px';
+      cotaDer.style.width = (margen * k).toFixed(2) + 'px';
+      contar($('b', cotaIzq), margen);
+      contar($('b', cotaSep), canal);
+      contar($('b', cotaDer), margen);
       decir('pantalla', `${w} × ${h}`);
       decir('margen', `${margen} px`);
       decir('canal', `${canal} px`);
       decir('columnas', String(cols));
-      decir('ancho', `${String(Math.round((w - 2 * margen - (cols - 1) * canal) / cols * 10) / 10).replace('.', ',')} px`);
+      decir('ancho', `${comaDecimal(anchoCol)} px`);
       $$('button', lista).forEach((b, i) => {
         b.setAttribute('aria-pressed', String(i === actual));
         if (PANTALLAS[i].tuya) $('b', b).textContent = `${innerWidth} × ${innerHeight}`;
@@ -419,5 +459,32 @@
       lista.append(b);
     });
     poner(0);
+  }
+
+  const ficha = $('[data-ficha-dialogo]');
+  if (ficha && ficha.showModal) {
+    const cuerpo = $('[data-ficha-cuerpo]', ficha), user = $('[data-ficha-user]', ficha), cuenta = $('[data-ficha-cuenta]', ficha);
+    const fichas = $$('template[data-ficha-contenido]');
+    let actual = 0, origen = null;
+    const mostrar = i => {
+      actual = (i + fichas.length) % fichas.length;
+      cuerpo.replaceChildren(fichas[actual].content.cloneNode(true));
+      user.textContent = `User ${actual + 1}`;
+      cuenta.textContent = `${actual + 1} / ${fichas.length}`;
+      cuerpo.scrollTop = 0;
+    };
+    $$('[data-ficha]').forEach(b => b.addEventListener('click', () => {
+      origen = b;
+      mostrar(+b.dataset.ficha - 1);
+      ficha.showModal();
+    }));
+    $$('[data-ficha-paso]', ficha).forEach(b => b.addEventListener('click', () => mostrar(actual + +b.dataset.fichaPaso)));
+    $('[data-ficha-cerrar]', ficha).addEventListener('click', () => ficha.close());
+    ficha.addEventListener('click', e => { if (e.target === ficha) ficha.close(); });
+    ficha.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') mostrar(actual + 1);
+      else if (e.key === 'ArrowLeft') mostrar(actual - 1);
+    });
+    ficha.addEventListener('close', () => { if (origen) origen.focus(); });
   }
 })();

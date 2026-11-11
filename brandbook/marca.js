@@ -1,13 +1,13 @@
 (() => {
   const PALETA = [
-    { id: 'lima', nombre: 'Lima', hex: '#E4FE44', rgb: '228 · 254 · 68', cmyk: '10 · 0 · 73 · 0', grupo: 'Identidad', rol: 'Orienta y llama a la acción: direccionales, botones y la entrada general.' },
-    { id: 'violeta', nombre: 'Violeta', hex: '#6940AE', rgb: '105 · 64 · 174', cmyk: '40 · 63 · 0 · 32', rol: 'Identidad y ambiente: tramas, fondos, la cueva y la entrada especial.' },
-    { id: 'naranja', nombre: 'Naranja', hex: '#F66227', rgb: '246 · 98 · 39', cmyk: '0 · 60 · 84 · 4', rol: 'Énfasis y energía: destacados, avisos y el pase de 4 días.' },
+    { id: 'lima', nombre: 'Lima', hex: '#E4FE44', rgb: '228 · 254 · 68', cmyk: '10 · 0 · 73 · 0', grupo: 'Identidad', poema: 'Un color que evoca el optimismo y el juego, dejando de lado la historia real y cruda de la conquista.', rol: 'Orienta y llama a la acción: direccionales, botones y la entrada general.' },
+    { id: 'violeta', nombre: 'Violeta', hex: '#6940AE', rgb: '105 · 64 · 174', cmyk: '40 · 63 · 0 · 32', poema: 'Un color que evoca la magia, el misterio y lo oculto, temáticas centrales del videojuego.', rol: 'Identidad y ambiente: tramas, fondos, la cueva y la entrada especial.' },
+    { id: 'naranja', nombre: 'Naranja', hex: '#F66227', rgb: '246 · 98 · 39', cmyk: '0 · 60 · 84 · 4', poema: 'Un color que evoca la energía, la creatividad y la transformación, ejes centrales del videojuego.', rol: 'Énfasis y energía: destacados, avisos y el pase de 4 días.' },
     { id: 'placa', nombre: 'Placa', hex: '#232323', rgb: '35 · 35 · 35', cmyk: '0 · 0 · 0 · 86', grupo: 'Base', rol: 'La base de todo: fondos, carteles y pantallas.' },
-    { id: 'blanco', nombre: 'Blanco', hex: '#FFFFFF', rgb: '255 · 255 · 255', cmyk: '0 · 0 · 0 · 0', rol: 'Lectura: textos, pictogramas y números sobre la placa.' },
-    { id: 'lila', nombre: 'Lila', hex: '#C8ACFF', rgb: '200 · 172 · 255', cmyk: '22 · 33 · 0 · 0', grupo: 'Apoyo', rol: 'El violeta para leer sobre oscuro y el código de los pisos 6 y 7.' }
+    { id: 'blanco', nombre: 'Blanco', hex: '#FFFFFF', rgb: '255 · 255 · 255', cmyk: '0 · 0 · 0 · 0', rol: 'Lectura: textos, pictogramas y números sobre la placa.' }
   ];
-  const PROPORCION = [['placa', 55], ['blanco', 20], ['lima', 12], ['violeta', 8], ['naranja', 5]];
+  const ROLES = [['Dominante', 55], ['Secundario', 20], ['Acentos', 25]];
+  const COMBINACIONES = [['placa', 'blanco', 'lima'], ['naranja', 'placa', 'blanco'], ['violeta', 'blanco', 'lima'], ['lima', 'placa', 'violeta'], ['blanco', 'placa', 'naranja']];
   const ESCALA = [
     { n: 'Display', m: 'Musuq Pacha', f: 'sg', w: 700, px: 96, lh: 1, ls: -0.02, fam: 'Space Grotesk Bold', med: '96 px · 100 % · −2 %', pt: '60 pt' },
     { n: 'Título 1', m: 'Un mundo nuevo', f: 'sg', w: 700, px: 64, lh: 1.05, ls: -0.015, fam: 'Space Grotesk Bold', med: '64 px · 105 % · −1,5 %', pt: '40 pt' },
@@ -85,6 +85,7 @@
       <div class="diapo-datos">
         <p class="diapo-rotulo">Color ${k + 1} de ${PALETA.length}</p>
         <h3>${c.nombre}</h3>
+        ${c.poema ? `<p>${c.poema}</p>` : ''}
         <p>${c.rol}</p>
         <div class="diapo-codigos">${codigos.map(([n, v]) => `<div class="diapo-codigo"><b>${n}</b><span data-descifrar>${v}</span><button type="button" data-copiar="${v}" aria-label="Copiar ${n} ${v}">Copiar</button></div>`).join('')}</div>
         <p class="nota">Texto con más contraste encima: ${mejor.t.nombre.toLowerCase()}, ${coma(mejor.r)} a 1.</p>
@@ -98,10 +99,10 @@
     const b = crear('button', 'muestra');
     b.type = 'button';
     b.dataset.aparece = '';
-    b.dataset.enfasis = '';
     b.innerHTML = `<span class="muestra-grupo">${c.grupo || ''}</span>
       <span class="muestra-color${c.id === 'placa' ? ' borde' : ''}" style="--c:${c.hex}"><span class="muestra-pix">${'<i></i>'.repeat(9)}</span></span>
       <span class="muestra-nombre">${c.nombre}</span>
+      ${c.poema ? `<span class="muestra-poema">${c.poema}</span>` : ''}
       <span class="muestra-rol">${c.rol}</span>
       <span class="muestra-codigos"><b>HEX</b> <span data-descifrar>${c.hex}</span><br><b>RGB</b> <span data-contar>${c.rgb}</span><br><b>CMYK</b> <span data-contar>${c.cmyk}</span></span>`;
     ampliable(b, `${c.nombre}, ${c.hex}. Ver en grande y copiar sus códigos`, () => abrirCarrusel({ titulo: 'Paleta principal', inicio: k, origen: b, diapos: PALETA.map(diapoColor) }));
@@ -112,18 +113,42 @@
     [1, 3, 5, 7].forEach(k => pix[k].style.visibility = 'hidden');
   });
 
-  const barra = $('[data-proporcion]');
-  const leyenda = crear('ul', 'proporcion-leyenda');
-  PROPORCION.forEach(([id, p]) => {
-    const d = crear('div', id === 'placa' ? 'borde' : '');
-    d.style.setProperty('--c', color(id));
-    d.style.setProperty('--p', p + '%');
-    d.title = `${PALETA.find(c => c.id === id).nombre} · ${p} %`;
-    barra.append(d);
-    leyenda.append(crear('li', '', `<i style="--c:${color(id)}"${id === 'placa' ? ' class="borde"' : ''}></i><b data-contar>${p} %</b>${PALETA.find(c => c.id === id).nombre}`));
-  });
-  barra.after(leyenda);
-  leyenda.dataset.aparece = '';
+  const bloqueProporcion = $('[data-proporcion]');
+  if (bloqueProporcion) {
+    const barra = $('[data-proporcion-barra]', bloqueProporcion), ejemplos = $('[data-proporcion-ejemplos]', bloqueProporcion);
+    const nombre = id => PALETA.find(c => c.id === id).nombre;
+    const partes = ROLES.map(([rol, p]) => {
+      const d = crear('div', '', `<span>${rol}</span><strong><b>${p} %</b><small></small></strong>`);
+      d.style.setProperty('--p', p + '%');
+      barra.append(d);
+      return d;
+    });
+    let actual = 0, gira = null, elegida = false;
+    const parar = () => { clearInterval(gira); gira = null; };
+    const poner = i => {
+      actual = i;
+      COMBINACIONES[i].forEach((id, k) => {
+        const d = partes[k], c = color(id);
+        d.style.setProperty('--c', c);
+        d.style.setProperty('--n', neutro(c));
+        d.classList.toggle('borde', id === 'placa');
+        $('small', d).textContent = nombre(id);
+        d.title = `${ROLES[k][0]} · ${ROLES[k][1]} % · ${nombre(id)}`;
+      });
+      $$('button', ejemplos).forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+    };
+    COMBINACIONES.forEach((combo, i) => {
+      const b = crear('button', '', `<i style="--c:${color(combo[0])}"></i>${nombre(combo[0])} al 55 %`);
+      b.type = 'button';
+      b.addEventListener('click', () => { elegida = true; parar(); poner(i); });
+      ejemplos.append(b);
+    });
+    poner(0);
+    if (!quieto) new IntersectionObserver(ents => ents.forEach(en => {
+      if (en.isIntersecting && !gira && !elegida) gira = setInterval(() => poner((actual + 1) % COMBINACIONES.length), 2600);
+      else if (!en.isIntersecting) parar();
+    }), { threshold: 0.3 }).observe(bloqueProporcion);
+  }
 
   const probador = $('[data-probador]');
   const MINIMO = 3;
@@ -254,7 +279,6 @@
   const filas = ESCALA.map(e => {
     const fila = crear('div', 'estilo');
     fila.dataset.aparece = '';
-    fila.dataset.enfasis = '';
     const tam = e.px > 30 ? `min(${e.px}px, calc(100vw * ${(e.px / 96 * 0.085).toFixed(4)}))` : `${e.px}px`;
     fila.innerHTML = `<span class="estilo-nombre">${e.n}</span>
       <span class="estilo-muestra" style="font-family:var(--${e.f});font-weight:${e.w};font-size:${tam};line-height:${e.lh};letter-spacing:${e.ls}em;${e.may ? 'text-transform:uppercase;' : ''}">${e.m}</span>
@@ -375,7 +399,6 @@
     lista.forEach(([slug, nombre], k) => {
       const b = crear('button', 'picto', `${limpiarSvg(PICTOS[slug])}<span>${nombre}</span>`);
       b.type = 'button';
-      b.dataset.enfasis = '';
       ampliable(b, `${nombre}: ver en grande y bajar en SVG`, () => abrirCarrusel({ titulo: 'Pictogramas', inicio: k, origen: b, diapos: lista.map(diapoPicto) }));
       pictos.append(b);
     });
@@ -401,8 +424,8 @@
     { nombre: 'Puntual del directorio', img: 'senaletica/puntual-directorio.png', texto: 'Cuadro violeta, número, píxeles, pictograma, zona y bajada. Una placa por piso o zona.', medida: 'Placas de 1,50 × 0,25 m, entre 0,70 y 2,80 m de altura.' },
     { nombre: 'Puntual de lugar', img: 'senaletica/puntual-lugar.png', texto: 'Placa cuadrada, pictograma y esquinas lima. Sobre cada ascensor, en los tótems del mapa y en la entrada del auditorio.', medida: '0,40 × 0,40 m.' },
     { nombre: 'Indicativa de piso', img: 'senaletica/indicativa-pb.png', texto: 'El número de piso, el racimo de píxeles y el directorio, en la cara del núcleo que da al hall. Va en planta baja y en los pisos 2, 4, 6 y 9.', medida: 'Ocupa toda la cara del núcleo, con el número a escala del edificio.' },
-    { nombre: 'Cubo del mapa interactivo', img: 'senaletica/cubo-mapa.png', texto: 'Cubos retroiluminados junto a la mesa del mapa, con el ícono y «mapa interactivo» en sus caras.', medida: '1,08 m de lado; tres cubos apilados llegan a 3,28 m.' },
-    { nombre: 'Pendón de recepción', img: 'senaletica/pendon.png', texto: 'Detrás de los mostradores, a los dos lados del hall: chakana, Yachay y «Recepción · entradas · informes».', medida: '0,85 × 2 m.' },
+    { nombre: 'Cubo del mapa interactivo', img: 'senaletica/cubo-mapa.png', texto: 'Cubos retroiluminados junto a la mesa del mapa, con el ícono y “mapa interactivo” en sus caras.', medida: '1,08 m de lado; tres cubos apilados llegan a 3,28 m.' },
+    { nombre: 'Pendón de recepción', img: 'senaletica/pendon.png', texto: 'Detrás de los mostradores, a los dos lados del hall: chakana, Yachay y “Recepción · entradas · informes”.', medida: '0,85 × 2 m.' },
     { nombre: 'Lona del hall', img: 'senaletica/lona.jpg', texto: 'La gráfica de Yachay sobre las tres puertas giratorias, mirando a la entrada por Sarmiento.', medida: '19 × 3,36 m.' }
   ];
   const pestanas = $('[data-pestanas]');

@@ -6,12 +6,12 @@
     "naranja": { "hex": "#F66227", "rgb": [246, 98, 39], "cmyk": [0, 60, 84, 4], "rol": "Énfasis y energía" },
     "placa": { "hex": "#232323", "rgb": [35, 35, 35], "cmyk": [0, 0, 0, 86], "rol": "Base" },
     "blanco": { "hex": "#FFFFFF", "rgb": [255, 255, 255], "cmyk": [0, 0, 0, 0], "rol": "Lectura" },
-    "lila": { "hex": "#C8ACFF", "rgb": [200, 172, 255], "cmyk": [22, 33, 0, 0], "rol": "Violeta para leer sobre oscuro" }
+    "lila": { "hex": "#C8ACFF", "rgb": [200, 172, 255], "cmyk": [22, 33, 0, 0], "rol": "Alternativa del violeta cuando hace falta más contraste" }
   },
-  "proporcion": { "placa": 55, "blanco": 20, "lima": 12, "violeta": 8, "naranja": 5 },
+  "proporcion": { "dominante": 55, "secundario": 20, "acentos": 25 },
   "tipografia": {
-    "principal": { "familia": "Space Grotesk", "pesos": [400, 500, 700], "reemplazo": "Arial" },
-    "lectura": { "familia": "Archivo", "pesos": [300, 400, 500], "reemplazo": "Arial" },
+    "principal": { "familia": "Space Grotesk", "pesos": [400, 500, 700], "descarga": "https://fonts.google.com/specimen/Space+Grotesk" },
+    "lectura": { "familia": "Archivo", "pesos": [300, 400, 500], "descarga": "https://fonts.google.com/specimen/Archivo" },
     "escala": [
       { "estilo": "Display", "familia": "Space Grotesk", "peso": 700, "px": 96, "interlineado": 1.0, "espaciado": -0.02, "pt": 60 },
       { "estilo": "Título 1", "familia": "Space Grotesk", "peso": 700, "px": 64, "interlineado": 1.05, "espaciado": -0.015, "pt": 40 },
