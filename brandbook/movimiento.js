@@ -459,6 +459,19 @@
     const fotos = c ? $$('[data-collage-fotos] img', c).map((el, i) => ({ el, d: ORBITA[i % ORBITA.length], op: '', zi: '' })) : null;
     return { b, t, c, h2, fotos, orbita: null, entrada: 0, desborde: 0 };
   });
+  const precargar = x => {
+    if (x.cerca && x.orbita) x.orbita.lista.forEach(f => { f.el.loading = 'eager'; });
+  };
+  bandas.forEach(x => {
+    if (!x.fotos) return;
+    const vigia = new IntersectionObserver(ents => {
+      if (!ents.some(e => e.isIntersecting)) return;
+      x.cerca = true;
+      precargar(x);
+      vigia.disconnect();
+    }, { rootMargin: '150% 0px' });
+    vigia.observe(x.c);
+  });
 
   const medirOrbita = x => {
     const W = x.b.clientWidth, H = x.b.clientHeight, movil = W < 700;
@@ -488,6 +501,7 @@
     }
     for (let i = 1; i <= 128; i++) tabla[i] /= tabla[128];
     x.orbita = { cx: x.t.offsetLeft + frase / 2, cy: x.h2.offsetTop + x.h2.offsetHeight / 2, R, L, P: R * 2, H, lista, tabla };
+    precargar(x);
   };
 
   const anguloEn = (tabla, s) => {
