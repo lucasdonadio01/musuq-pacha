@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
   <link rel="stylesheet" href="fuentes/space-grotesk.css">
-  <link rel="stylesheet" href="marca.css?v=23">
+  <link rel="stylesheet" href="marca.css?v=24">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -1132,17 +1132,40 @@
     </section>
 
     <section class="seccion" id="recursos" data-logo="violeta" aria-labelledby="titulo-recursos">
-      <header class="banda" data-banda style="--banda:var(--violeta);--tinta:var(--blanco)">
-        <div class="banda-hud"><span>06 / 10</span><span data-descifrar>#6940AE</span></div>
-        <p class="seccion-numero">06 · Píxel, patrones, ilustración, fotografía y materiales</p>
-        <h2 id="titulo-recursos" class="banda-titulo"><span data-banda-titulo>Recursos gráficos</span></h2>
-      </header>
-      <p class="copete" data-aparece>Todo el sistema sale de un módulo: el píxel del juego. Con él se arman los paneles, los racimos, las tramas, la chakana y los patrones que crea el público. Lo acompañan las ilustraciones, las fotos y los materiales del evento.</p>
+      <div class="collage" data-collage>
+        <div class="collage-escena">
+          <header class="banda" data-banda style="--banda:var(--violeta);--tinta:var(--blanco)">
+            <div class="banda-hud"><span>06 / 10</span><span data-descifrar>#6940AE</span></div>
+            <p class="seccion-numero">06 · Píxel, patrones, ilustración, fotografía y materiales</p>
+            <h2 id="titulo-recursos" class="banda-titulo"><span data-banda-titulo>Recursos gráficos</span></h2>
+          </header>
+          <div class="collage-fotos" data-collage-fotos aria-hidden="true">
+            <img src="textiles/textil-055.webp" alt="" width="420" height="335" loading="lazy" decoding="async" style="--x:-4;--y:-24;--w:13;--t:0.00">
+            <img src="textiles/textil-035.webp" alt="" width="420" height="336" loading="lazy" decoding="async" style="--x:8;--y:22;--w:12;--t:0.04">
+            <img src="textiles/textil-098.webp" alt="" width="335" height="420" loading="lazy" decoding="async" style="--x:-8;--y:26;--w:9.5;--t:0.08">
+            <img src="textiles/textil-129.webp" alt="" width="420" height="420" loading="lazy" decoding="async" style="--x:20;--y:-22;--w:9;--t:0.12">
+            <img class="solo-compu" src="textiles/textil-015.webp" alt="" width="337" height="420" loading="lazy" decoding="async" style="--x:9;--y:-31;--w:6;--t:0.16">
+            <img src="textiles/textil-118.webp" alt="" width="315" height="420" loading="lazy" decoding="async" style="--x:22;--y:30;--w:7.5;--t:0.20">
+            <img src="textiles/textil-034.webp" alt="" width="335" height="420" loading="lazy" decoding="async" style="--x:-24;--y:-27;--w:10;--t:0.25">
+            <img src="textiles/textil-068.webp" alt="" width="335" height="420" loading="lazy" decoding="async" style="--x:-25;--y:27;--w:9;--t:0.29">
+            <img src="textiles/textil-046.webp" alt="" width="335" height="420" loading="lazy" decoding="async" style="--x:34;--y:-29;--w:8;--t:0.34">
+            <img src="textiles/textil-127.webp" alt="" width="337" height="420" loading="lazy" decoding="async" style="--x:35;--y:24;--w:8.5;--t:0.38">
+            <img src="textiles/textil-049.webp" alt="" width="420" height="420" loading="lazy" decoding="async" style="--x:-36;--y:-20;--w:5.5;--t:0.43">
+            <img class="solo-compu" src="textiles/textil-047.webp" alt="" width="420" height="420" loading="lazy" decoding="async" style="--x:-38;--y:21;--w:6;--t:0.47">
+            <img class="solo-compu" src="textiles/textil-104.webp" alt="" width="420" height="418" loading="lazy" decoding="async" style="--x:44;--y:-26;--w:5;--t:0.53">
+            <img class="solo-compu" src="textiles/textil-001.webp" alt="" width="315" height="420" loading="lazy" decoding="async" style="--x:46;--y:31;--w:6;--t:0.57">
+            <img class="solo-compu" src="textiles/textil-016.webp" alt="" width="315" height="420" loading="lazy" decoding="async" style="--x:-43;--y:-30;--w:6.5;--t:0.63">
+            <img class="solo-compu" src="textiles/textil-064.webp" alt="" width="420" height="334" loading="lazy" decoding="async" style="--x:-44;--y:33;--w:7;--t:0.68">
+          </div>
+        </div>
+      </div>
+      <p class="copete" data-aparece>Todo el sistema sale de un módulo: el píxel, que sacamos de los patrones textiles de las culturas originarias. Con él se arman los paneles, los racimos, las tramas, la chakana y los patrones que crea el público. Lo acompañan las ilustraciones, las fotos y los materiales del evento.</p>
 
       <div class="bloque" id="pixel">
         <h3 class="bloque-titulo" data-aparece>El píxel</h3>
         <div class="columnas dos centradas">
           <div data-aparece>
+            <p class="bloque-texto">El píxel lo sacamos de los patrones textiles de las culturas originarias: en fajas, matras, chuspas y mantas, el dibujo se teje punto por punto, como una grilla. Los textiles que rodean el título son de La Argentina textil, del Fondo Nacional de las Artes.</p>
             <p class="bloque-texto">En el juego, bloques de 49 o 98 px arman y desarman los paneles. En el evento, los mismos cuadrados arman placas, cubos y tótems de ángulos rectos, y el piso LED muestra los símbolos que arma el público con el generador.</p>
             <ul class="lista-reglas">
               <li>Siempre cuadrado y con esquinas rectas: nada de bordes redondeados.</li>
@@ -1654,6 +1677,6 @@
   <script src="marca.js?v=14"></script>
   <script src="efectos.js?v=6"></script>
   <script src="secciones.js?v=4"></script>
-  <script src="movimiento.js?v=15"></script>
+  <script src="movimiento.js?v=16"></script>
 </body>
 </html>

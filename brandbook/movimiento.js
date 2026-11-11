@@ -444,7 +444,8 @@
     t.setAttribute('aria-hidden', 'true');
     const letras = partir(t, 'letra-b');
     if (!quieto && window.EFECTOS) window.EFECTOS.tecnico(t, { letras, zona: b, barrido: 'una', presion: true });
-    return { b, t, entrada: 0, desborde: 0 };
+    const c = b.closest('[data-collage]');
+    return { b, t, c, fotos: c && $('[data-collage-fotos]', c), entrada: 0, desborde: 0 };
   });
 
   const cabecera = $('[data-cabecera]');
@@ -592,6 +593,7 @@
     let enlaceActivo = null;
     for (const x of destinosIndice) if (x.d.getBoundingClientRect().top <= vh * 0.3) enlaceActivo = x.a;
     const lecturasBanda = bandas.map(x => x.b.getBoundingClientRect());
+    const lecturasCollage = bandas.map(x => x.c ? x.c.getBoundingClientRect() : null);
     const lecturasDesfase = desfases.map(g => g.getBoundingClientRect());
 
     html.classList.toggle('bajado', y > 60);
@@ -603,7 +605,13 @@
     bandas.forEach((x, i) => {
       const r = lecturasBanda[i];
       if (r.bottom < -80 || r.top > vh + 80) return;
-      const p = limitar((vh - r.top) / (vh + r.height));
+      const rc = lecturasCollage[i];
+      const p = rc ? limitar((vh - rc.top) / (vh + rc.height)) : limitar((vh - r.top) / (vh + r.height));
+      if (rc && x.fotos) {
+        const u = limitar(-rc.top / Math.max(1, rc.height - vh));
+        const q = Math.min(1, u / 0.75);
+        x.fotos.style.setProperty('--q', q.toFixed(3));
+      }
       x.b.style.setProperty('--r', salida(limitar((vh - r.top) / (vh * 0.5))).toFixed(3));
       x.t.style.transform = `translate3d(${mezclar(x.entrada, -x.desborde, p).toFixed(1)}px,0,0)`;
     });
