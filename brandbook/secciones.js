@@ -216,6 +216,41 @@
   if (conv) {
     const lockup = $('[data-conv-lockup]', conv), modo = $('[data-conv-modo]', conv);
     $$('button', modo).forEach(b => b.addEventListener('click', () => { elegir(modo, b); lockup.dataset.modo = b.dataset.valor; }));
+    const socias = $('[data-socias]', conv);
+    if (socias) {
+      const logos = $$('img', socias), puntos = $$('[data-socias-puntos] i', conv), nombre = $('[data-socias-nombre]', conv);
+      let actual = -1, gira = null, aLaVista = false, frenada = false;
+      const mostrar = i => {
+        const antes = logos[actual];
+        actual = (i + logos.length) % logos.length;
+        const ahora = logos[actual];
+        if (antes && antes !== ahora) {
+          antes.classList.remove('activa');
+          antes.classList.add('sale');
+          setTimeout(() => antes.classList.remove('sale'), 420);
+        }
+        ahora.classList.remove('sale');
+        ahora.classList.add('activa');
+        puntos.forEach((p, k) => p.classList.toggle('activo', k === actual));
+        nombre.textContent = ahora.alt;
+        nombre.classList.remove('socia-entra');
+        void nombre.offsetWidth;
+        nombre.classList.add('socia-entra');
+        socias.setAttribute('aria-label', `Marca socia: ${ahora.alt}. Tocá para ver la siguiente`);
+      };
+      const parar = () => { clearInterval(gira); gira = null; };
+      const girar = () => {
+        parar();
+        if (!quieto && aLaVista && !frenada) gira = setInterval(() => mostrar(actual + 1), 2600);
+      };
+      socias.addEventListener('click', () => { mostrar(actual + 1); girar(); });
+      socias.addEventListener('pointerenter', () => { frenada = true; parar(); });
+      socias.addEventListener('pointerleave', () => { frenada = false; girar(); });
+      socias.addEventListener('focus', () => { frenada = true; parar(); });
+      socias.addEventListener('blur', () => { frenada = false; girar(); });
+      new IntersectionObserver(ents => ents.forEach(en => { aLaVista = en.isIntersecting; girar(); }), { threshold: 0.4 }).observe(socias);
+      mostrar(0);
+    }
   }
   const franja = $('[data-franja]'), franjaFondo = $('[data-franja-fondo]');
   if (franja && franjaFondo) $$('button', franjaFondo).forEach(b => b.addEventListener('click', () => {
