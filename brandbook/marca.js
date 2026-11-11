@@ -187,7 +187,7 @@
   ['lima', 'violeta', 'naranja', 'blanco'].forEach(id => {
     const fila = crear('div', 'escala-fila');
     fila.append(crear('h4', '', PALETA.find(c => c.id === id).nombre));
-    [100, 80, 60, 40, 20].forEach(o => {
+    [100, 80, 60, 40].forEach(o => {
       const fig = crear('figure', '', `<i style="--c:${color(id)};--o:${o / 100}"></i><figcaption>${o} %</figcaption>`);
       fila.append(fig);
     });
@@ -197,14 +197,14 @@
   const trama = $('[data-trama]');
   if (trama) {
     const azar = semilla(11);
-    const pasos = [0.2, 0.4, 0.6, 0.8, 1];
+    const pasos = [0.4, 0.6, 0.8, 1];
     const pix = Array.from({ length: 11 }, () => Array(15).fill(null));
     for (let r = 0; r < 11; r++) for (let c = 0; c <= 7; c++) {
       const base = Math.pow(r / 10, 1.3);
       if (azar() > base + 0.08) continue;
       const q = azar();
       const id = q < 0.72 ? 'violeta' : q < 0.9 ? 'lima' : 'naranja';
-      const o = pasos[Math.min(4, Math.floor(base * 4 + azar() * 1.5))];
+      const o = pasos[Math.min(3, Math.floor(base * 3 + azar() * 1.5))];
       pix[r][c] = pix[r][14 - c] = { id, o };
     }
     const vivas = [];
@@ -437,7 +437,7 @@
   $$('[data-galeria]').forEach(galeria => {
     const figuras = $$('figure', galeria);
     const foto = galeria.classList.contains('fotos');
-    const datos = figuras.map((f, k) => ({ src: $('img', f).getAttribute('src'), alt: $('img', f).alt, rotulo: `${galeria.dataset.galeria} · ${k + 1} de ${figuras.length}`, titulo: foto ? $('figcaption', f).textContent : $('img', f).alt, texto: foto ? '' : 'Silueta impresa en cartón y armada en X, con las formas del juego simplificadas.', foto }));
+    const datos = figuras.map((f, k) => ({ src: $('img', f).getAttribute('src'), alt: $('img', f).alt, rotulo: `${galeria.dataset.galeria} · ${k + 1} de ${figuras.length}`, titulo: foto ? $('figcaption', f).textContent : $('img', f).alt, texto: foto ? '' : (f.dataset.texto || galeria.dataset.texto || ''), foto }));
     figuras.forEach((f, k) => ampliable(f, `Ver en grande: ${$('img', f).alt}`, () => abrirCarrusel({ titulo: galeria.dataset.galeria, inicio: k, origen: f, diapos: datos.map(diapoImagen) })));
   });
 

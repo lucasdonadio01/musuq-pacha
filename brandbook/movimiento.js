@@ -441,6 +441,17 @@
   const enlacesPastilla = pastillas ? $$('a', pastillas) : [];
   const secciones = $$('main > section[id]');
   let seccionActual = null, encima = null;
+  const logoCabecera = $('[data-logo-cabecera]');
+  const ponerLogo = () => {
+    if (!logoCabecera) return;
+    const color = (seccionActual && seccionActual.dataset.logo) || 'naranja';
+    if (logoCabecera.dataset.lg === color) return;
+    logoCabecera.dataset.lg = color;
+    if (quieto) return;
+    logoCabecera.classList.remove('salta');
+    logoCabecera.getBoundingClientRect();
+    logoCabecera.classList.add('salta');
+  };
   const moverLuz = () => {
     if (!luz) return;
     const destino = encima || enlacesPastilla.find(a => seccionActual && a.hash === '#' + seccionActual.id);
@@ -522,7 +533,7 @@
 
     html.classList.toggle('bajado', y > 60);
     if (cabecera) cabecera.style.setProperty('--progreso', total > 0 ? (y / total).toFixed(4) : '0');
-    if (actual !== seccionActual) { seccionActual = actual; moverLuz(); }
+    if (actual !== seccionActual) { seccionActual = actual; moverLuz(); ponerLogo(); }
     enlacesIndice.forEach(a => a.classList.toggle('activo', a === enlaceActivo));
     if (portada && !quieto) { portada.style.setProperty('--h', limitar(y / vh, 0, 1.2).toFixed(3)); est.scroll = y * 0.0018; }
     if (quieto) return;
