@@ -77,14 +77,14 @@
   const LINEAS = ['línea de base', 'altura de x', 'mayúsculas', 'ascendente', 'descendente'];
 
   const tecnico = (caja, inicial = {}) => {
-    const s = Object.assign({ texto: '', peso: 700, tam: 150, espaciado: -0.05, color: '', acento: '', contorno: 'letra', alcance: 200, suavidad: 0.7, guion: 4, hueco: 2, trazo: 1.5, motas: 15, marco: true, rotulos: true, arrastrar: true, rebote: 0.4, barrido: '', velocidad: 1, patada: true, intro: '', duracion: 2, guias: false, presion: false, pesoMin: 300, letras: null, zona: null }, inicial);
+    const s = Object.assign({ texto: '', peso: 700, tam: 150, espaciado: -0.05, color: '', acento: '', contorno: 'letra', alcance: 200, suavidad: 0.7, guion: 4, hueco: 2, trazo: 1.5, motas: 15, marco: true, rotulos: true, arrastrar: true, rebote: 0.4, barrido: '', velocidad: 1, patada: true, intro: '', duracion: 2, guias: false, presion: false, pesoMin: 300, letras: null, zona: null, ignorar: '', aire: 0.42 }, inicial);
     const zona = s.zona || caja, anclado = !!s.letras;
     const lienzo = crear('canvas', 'tec-lienzo'), ctx = lienzo.getContext('2d');
     const borrador = document.createElement('canvas'), bctx = borrador.getContext('2d');
     if (!ctx || !bctx) return null;
     lienzo.setAttribute('aria-hidden', 'true');
     const sonda = anclado ? crear('i', 'tec-sonda') : null;
-    if (sonda) caja.append(sonda);
+    if (sonda) (s.letras[s.letras.length - 1].parentElement || caja).append(sonda);
     caja.append(lienzo);
 
     let ancho = 1, alto = 1, dpr = 1, margen = 0, cuadro = 0, antes = performance.now(), visible = false, clave = '', sucio = true, pedida = '', palabra = null, glifos = [], tintaActual = '#FFFFFF';
@@ -118,14 +118,14 @@
         c.lineWidth = s.trazo * 2;
         c.strokeStyle = tintaActual;
         c.setLineDash([Math.max(1, s.guion), Math.max(1, s.hueco)]);
-        c.strokeText(g.ch, g.x, palabra.base);
+        c.strokeText(g.ch, g.x, g.base);
         c.setLineDash([]);
         c.globalCompositeOperation = 'destination-out';
         c.fillStyle = '#000000';
-        c.fillText(g.ch, g.x, palabra.base);
+        c.fillText(g.ch, g.x, g.base);
       } else {
         c.fillStyle = tintaActual;
-        c.fillText(g.ch, g.x, palabra.base);
+        c.fillText(g.ch, g.x, g.base);
       }
       return { img, izq, arriba };
     };
@@ -141,12 +141,14 @@
       const pide = fuente(64);
       if (document.fonts && pide !== pedida) { pedida = pide; document.fonts.load(pide, anclado ? caja.textContent : s.texto).then(refrescar, refrescar); }
       const m = bctx;
-      let tam, base, letras, xs;
+      let tam, base, letras, xs, bases;
       if (anclado) {
         tam = parseFloat(getComputedStyle(caja).fontSize) || 100;
-        base = sonda.offsetTop + margen;
+        const desfase = sonda.offsetTop - s.letras[s.letras.length - 1].offsetTop;
         letras = s.letras.map(l => l.textContent);
         xs = s.letras.map(l => l.offsetLeft + margen);
+        bases = s.letras.map(l => l.offsetTop + desfase + margen);
+        base = bases[0];
       } else {
         letras = Array.from(s.texto);
         const tender = t => {
@@ -166,6 +168,7 @@
         r = tender(tam);
         xs = r.pos.map(p => (util - (r.der - r.izq)) / 2 + p - r.izq);
         base = (alto - (r.sube + r.baja)) / 2 + r.sube;
+        bases = letras.map(() => base);
       }
       preparar(m, tam);
       const alturaX = base - m.measureText('x').actualBoundingBoxAscent, mayus = base - m.measureText('H').actualBoundingBoxAscent;
@@ -175,13 +178,21 @@
       let izq = Infinity, der = -Infinity, arriba = Infinity, abajo = -Infinity;
       letras.forEach((ch, i) => {
         if (!ch.trim()) return;
-        const d = m.measureText(ch), x = xs[i];
-        const cg = { x1: x - d.actualBoundingBoxLeft, y1: base - d.actualBoundingBoxAscent, x2: x + d.actualBoundingBoxRight, y2: base + d.actualBoundingBoxDescent };
+        const d = m.measureText(ch), x = xs[i], by = bases[i];
+        const cg = { x1: x - d.actualBoundingBoxLeft, y1: by - d.actualBoundingBoxAscent, x2: x + d.actualBoundingBoxRight, y2: by + d.actualBoundingBoxDescent };
         izq = Math.min(izq, cg.x1); der = Math.max(der, cg.x2); arriba = Math.min(arriba, cg.y1); abajo = Math.max(abajo, cg.y2);
         const p = previos[glifos.length], igual = !!p && p.ch === ch && p.indice === i;
-        glifos.push({ ch, x, indice: i, caja: cg, centro: x + d.width / 2, peso: 700, mov: igual ? p.mov : { x: 0, y: 0 }, vel: igual ? p.vel : { x: 0, y: 0 }, contorno: igual ? p.contorno : 0, visto: igual ? p.visto : 1, celdas: null, armado: 0, relleno: null, guiones: null });
+        glifos.push({ ch, x, base: by, linea: null, indice: i, caja: cg, centro: x + d.width / 2, peso: 700, mov: igual ? p.mov : { x: 0, y: 0 }, vel: igual ? p.vel : { x: 0, y: 0 }, contorno: igual ? p.contorno : 0, visto: igual ? p.visto : 1, celdas: null, armado: 0, relleno: null, guiones: null });
       });
       if (!glifos.length) { izq = der = ancho / 2; arriba = abajo = base; }
+      const renglones = new Map();
+      glifos.forEach(g => {
+        const k = Math.round(g.base), r = renglones.get(k) || { arriba: Infinity, abajo: -Infinity };
+        r.arriba = Math.min(r.arriba, g.caja.y1);
+        r.abajo = Math.max(r.abajo, g.caja.y2);
+        renglones.set(k, r);
+        g.linea = r;
+      });
       const tope = Math.min(arriba, mayus) - 2, piso = Math.max(abajo, base) + 2;
       palabra = {
         tam, base, izq, der, arriba, abajo,
@@ -194,13 +205,16 @@
     };
 
     const glifoEn = (x, y) => {
-      if (!palabra || y < palabra.arriba - 24 || y > palabra.abajo + 24) return -1;
-      let mejor = -1, dist = Infinity;
+      if (!palabra) return -1;
+      let mejor = -1, puntos = Infinity;
       glifos.forEach((g, i) => {
+        if (y < g.linea.arriba - 24 || y > g.linea.abajo + 24) return;
         const x1 = g.caja.x1 + g.mov.x, x2 = g.caja.x2 + g.mov.x, d = x < x1 ? x1 - x : x > x2 ? x - x2 : 0;
-        if (d < dist) { dist = d; mejor = i; }
+        if (d >= 28) return;
+        const p = d + Math.abs(y - (g.linea.arriba + g.linea.abajo) / 2) * 0.25;
+        if (p < puntos) { puntos = p; mejor = i; }
       });
-      return dist < 28 ? mejor : -1;
+      return mejor;
     };
 
     const degradado = (c, cx, cy, radio, fuerza) => {
@@ -217,7 +231,7 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = tinta;
-      ctx.fillText(g.ch, g.centro + g.mov.x, v.base + g.mov.y);
+      ctx.fillText(g.ch, g.centro + g.mov.x, g.base + g.mov.y);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
     };
 
@@ -373,7 +387,7 @@
       c.setTransform(fino / lado, 0, 0, fino / lado, -gx * fino / lado, -gy * fino / lado);
       preparar(c, v.tam);
       c.fillStyle = '#000000';
-      c.fillText(g.ch, g.x, v.base);
+      c.fillText(g.ch, g.x, g.base);
       const datos = c.getImageData(0, 0, mapa.width, mapa.height).data;
       for (let py = 0; py < mapa.height; py++) for (let px = 0; px < mapa.width; px++) {
         if (datos[(py * mapa.width + px) * 4 + 3] < 20) continue;
@@ -465,7 +479,7 @@
       if (sucio) {
         sucio = false;
         if (anclado) {
-          margen = Math.round(Math.max(48, (parseFloat(getComputedStyle(caja).fontSize) || 100) * 0.42));
+          margen = Math.round(Math.max(48, (parseFloat(getComputedStyle(caja).fontSize) || 100) * s.aire));
           lienzo.style.cssText = `left:${-margen}px;top:${-margen}px;width:calc(100% + ${2 * margen}px);height:calc(100% + ${2 * margen}px)`;
         }
         ancho = Math.max(1, caja.clientWidth + 2 * margen);
@@ -527,8 +541,8 @@
       let mueve = false;
       glifos.forEach((g, i) => {
         if (i === arrastre) {
-          g.mov.x = acercar(g.mov.x, puntero.x - agarre.x, dt, 0.03);
-          g.mov.y = acercar(g.mov.y, puntero.y - agarre.y, dt, 0.03);
+          g.mov.x = acercar(g.mov.x, Math.min(ancho - g.caja.x2 - 10, Math.max(10 - g.caja.x1, puntero.x - agarre.x)), dt, 0.03);
+          g.mov.y = acercar(g.mov.y, Math.min(alto - g.caja.y2 - 10, Math.max(10 - g.caja.y1, puntero.y - agarre.y)), dt, 0.03);
           g.vel.x = g.vel.y = 0;
           mueve = true;
           return;
@@ -636,9 +650,18 @@
       if ((sigue || asienta) && visible) cuadro = requestAnimationFrame(paso);
     };
 
-    const alMover = e => { puntero.cx = e.clientX; puntero.cy = e.clientY; ubicar(); puntero.dentro = true; despertar(); };
+    const ajeno = e => !!s.ignorar && !!e.target && !!e.target.closest && !!e.target.closest(s.ignorar);
     const alSalir = () => { if (arrastre >= 0) return; puntero.dentro = false; despertar(); };
+    const alMover = e => {
+      if (arrastre < 0 && ajeno(e)) { alSalir(); return; }
+      puntero.cx = e.clientX;
+      puntero.cy = e.clientY;
+      ubicar();
+      puntero.dentro = true;
+      despertar();
+    };
     const alBajar = e => {
+      if (ajeno(e)) return;
       puntero.cx = e.clientX;
       puntero.cy = e.clientY;
       ubicar();

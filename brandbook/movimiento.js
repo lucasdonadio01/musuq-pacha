@@ -282,6 +282,15 @@
     const tam = limitar(100 * titular.clientWidth / ancho * 0.995, 40, movil ? 260 : 440);
     titular.style.setProperty('--titulo', tam.toFixed(1) + 'px');
   };
+  let titularVivo = false;
+  const animarTitular = () => {
+    if (titularVivo || !titular || quieto || !window.EFECTOS) return;
+    titularVivo = true;
+    setTimeout(() => {
+      const h1 = $('h1', titular);
+      window.EFECTOS.tecnico(h1, { letras: $$('.letra', h1), zona: titular, ignorar: '[data-chakana3d]', presion: true, aire: 0.9 });
+    }, 1300);
+  };
   const pieMarca = $('.pie-marca');
   const ajustarPie = () => {
     if (!pieMarca) return;
@@ -748,6 +757,7 @@
       html.classList.remove('cargando');
       html.classList.add('listo');
       html.style.overflow = '';
+      animarTitular();
       if (!hecho.salida) contarBento();
       if (lienzoChakana) lienzoChakana.remove();
       grillaCarga.remove();
@@ -772,7 +782,7 @@
           escalaFinal = escalaHeroe();
           vuelo = t;
           est.w = Math.max(est.w, 5);
-          setTimeout(() => { html.classList.add('listo'); contarBento(); }, 120);
+          setTimeout(() => { html.classList.add('listo'); contarBento(); animarTitular(); }, 120);
         });
         fctx.setTransform(m.dpr, 0, 0, m.dpr, 0, 0);
         fctx.clearRect(0, 0, m.w, m.h);
@@ -817,6 +827,7 @@
     html.classList.add('listo');
     if (caja && !usar3d) usarPixeles();
     contarBento();
+    animarTitular();
   }
   window.marcaViva = true;
 })();

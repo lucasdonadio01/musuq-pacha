@@ -9,7 +9,7 @@
   <meta name="robots" content="noindex, nofollow">
   <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
   <link rel="stylesheet" href="fuentes/space-grotesk.css">
-  <link rel="stylesheet" href="marca.css?v=21">
+  <link rel="stylesheet" href="marca.css?v=22">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -21,6 +21,10 @@
     <symbol id="sim-logo" viewBox="0 0 1194 400"><rect class="lg-cuadro" width="400" height="400"/><use class="lg-cruz" href="#lg-cruz"/><use class="lg-nombre" href="#lg-letras"/></symbol>
     <symbol id="sim-iso" viewBox="0 0 400 400"><rect class="lg-cuadro" width="400" height="400"/><use class="lg-cruz" href="#lg-cruz"/></symbol>
     <symbol id="sim-nombre" viewBox="466 15 728 370"><use class="lg-nombre" href="#lg-letras"/></symbol>
+    <symbol id="ic-menu" viewBox="0 -960 960 960"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></symbol>
+    <symbol id="ic-cerrar" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></symbol>
+    <symbol id="ic-descargar" viewBox="0 -960 960 960"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></symbol>
+    <symbol id="ic-salir" viewBox="0 -960 960 960"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/></symbol>
   </svg>
 
   <div class="carga" data-carga>
@@ -59,8 +63,8 @@
         <a href="#interfaz">Interfaz</a>
       </nav>
       <div class="cabecera-acciones">
-        <button class="boton-linea" type="button" data-indice-abrir aria-expanded="false" aria-controls="indice" aria-label="Abrir el índice"><span class="rueda" aria-hidden="true"><span class="rueda-pista"><span>Índice</span><span>Cerrar</span><span>Índice</span><span>Cerrar</span></span></span><i class="mas" aria-hidden="true"></i></button>
-        <a class="boton chico" href="#descargas">Descargas</a>
+        <button class="boton-linea" type="button" data-indice-abrir aria-expanded="false" aria-controls="indice" aria-label="Abrir el índice"><span class="rueda" aria-hidden="true"><span class="rueda-pista"><span>Índice</span><span>Cerrar</span><span>Índice</span><span>Cerrar</span></span></span><span class="cambia" aria-hidden="true"><svg class="ic" focusable="false"><use href="#ic-menu"/></svg><svg class="ic" focusable="false"><use href="#ic-cerrar"/></svg></span></button>
+        <a class="boton chico con-icono" href="#descargas">Descargas<svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></a>
       </div>
     </div>
     <span class="cabecera-progreso" data-progreso aria-hidden="true"></span>
@@ -81,7 +85,7 @@
           <li><a href="#claim">Claim y bajadas</a></li>
           <li><a href="#proposito">Propósito, misión y visión</a></li>
           <li><a href="#valores">Valores y personalidad</a></li>
-          <li><a href="#publico">Público</a></li>
+          <li><a href="#publico">Público objetivo</a></li>
           <li><a href="#voz">Voz y tono</a></li>
         </ol>
       </li>
@@ -336,12 +340,6 @@
             <p class="tarjeta-grande">Ser la referencia latinoamericana de mundos de ficción con raíz originaria: un mundo nuevo construido entre jugadores, artistas, comunidades e instituciones.</p>
           </article>
         </div>
-        <h4 class="subtitulo" data-aparece>Por qué existimos · datos de la investigación</h4>
-        <div class="cifras" data-desfase>
-          <div class="cifra" data-aparece><b data-contar>95 · 87 · 84 %</b><p>Mapuche, guaraní y tehuelche son los pueblos que más se reconocen. El resto, la mitad o menos.</p></div>
-          <div class="cifra" data-aparece><b data-contar>0 de 631</b><p>comentarios del tráiler de Electro Andes nombran a los pueblos originarios.</p></div>
-          <div class="cifra" data-aparece><b data-contar>17,3 %</b><p>de las fuentes citadas por la prensa online sobre el tema son originarias.</p></div>
-        </div>
       </div>
 
       <div class="bloque" id="valores">
@@ -358,30 +356,34 @@
       </div>
 
       <div class="bloque" id="publico">
-        <h3 class="bloque-titulo" data-aparece>Público</h3>
-        <p class="bloque-texto" data-aparece>El público de la marca son jóvenes jugadores y creadores argentinos. En eventos como Yachay se suman familias con chicos, por la escala del predio. Cuatro perfiles guían las decisiones de diseño.</p>
+        <h3 class="bloque-titulo" data-aparece>Público objetivo</h3>
+        <p class="bloque-texto" data-aparece>El público objetivo de la marca son jóvenes jugadores y creadores argentinos. En eventos como Yachay se suman familias con chicos, por la escala del predio. Cuatro user persona, armadas con la investigación, guían las decisiones de diseño.</p>
         <div class="tarjetas cuatro" data-desfase>
           <article class="tarjeta perfil" data-aparece data-enfasis>
-            <span class="tarjeta-rotulo">Estudiante universitaria</span>
-            <h3>María</h3>
+            <img class="perfil-foto" src="personas/maria.jpg" alt="María Novick en la puerta de un cine, con muletas" width="960" height="600" loading="lazy" decoding="async">
+            <span class="tarjeta-rotulo">Estudiante · 18 años</span>
+            <h3>María Novick</h3>
             <p>Combina la formación académica con un consumo cultural activo. Le interesa cómo se representan las identidades originarias en los medios y va al cine cada vez que se estrena una película nacional.</p>
             <p class="perfil-busca"><b>Busca</b>contenido con fuentes y debate.</p>
           </article>
           <article class="tarjeta perfil" data-aparece data-enfasis>
-            <span class="tarjeta-rotulo">Profesora</span>
-            <h3>Marta</h3>
+            <img class="perfil-foto" src="personas/marta.jpg" alt="Marta Gimenez en una calle de la ciudad, con libros en la mano" width="960" height="600" loading="lazy" decoding="async">
+            <span class="tarjeta-rotulo">Profesora · 68 años</span>
+            <h3>Marta Gimenez</h3>
             <p>Integra materiales culturales en sus clases para pensar identidad y memoria. Lee ficción y fantasía, pero siente que lo originario aparece como algo pintoresco o simplificado.</p>
             <p class="perfil-busca"><b>Busca</b>recursos auténticos para el aula.</p>
           </article>
           <article class="tarjeta perfil" data-aparece data-enfasis>
-            <span class="tarjeta-rotulo">Gamer</span>
-            <h3>Tomás</h3>
+            <img class="perfil-foto" src="personas/tomas.jpg" alt="Tomás Rivas con mochila, frente a un lago de montaña" width="960" height="600" loading="lazy" decoding="async">
+            <span class="tarjeta-rotulo">Gamer · 27 años</span>
+            <h3>Tomás Rivas</h3>
             <p>Tiene conocimientos de informática y una gran pasión por los videojuegos y la ficción. Interactúa con comunidades digitales y busca historias épicas.</p>
             <p class="perfil-busca"><b>Busca</b>ficción auténtica sobre su propia cultura.</p>
           </article>
           <article class="tarjeta perfil" data-aparece data-enfasis>
-            <span class="tarjeta-rotulo">Realizador audiovisual</span>
-            <h3>Lautaro</h3>
+            <img class="perfil-foto" src="personas/lautaro.jpg" alt="Lautaro Fernández en un rodaje al aire libre" width="960" height="600" loading="lazy" decoding="async">
+            <span class="tarjeta-rotulo">Realizador audiovisual · 42 años</span>
+            <h3>Lautaro Fernández</h3>
             <p>Combina proyectos independientes con ficción para plataformas. Mira con ojo crítico cómo se representan las identidades originarias.</p>
             <p class="perfil-busca"><b>Busca</b>resignificar lo originario sin convertirlo en un cliché.</p>
           </article>
@@ -1579,43 +1581,43 @@
           <span class="tarjeta-indice">(01)</span>
           <h3>Logo</h3>
           <p>Las seis versiones del logo, el isotipo y el logotipo, en SVG.</p>
-          <span class="descarga-formato">ZIP</span>
+          <span class="descarga-pie"><span class="descarga-formato">ZIP</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="descargas/musuq-pacha-paleta.ase" download data-aparece>
           <span class="tarjeta-indice">(02)</span>
           <h3>Paleta para Adobe</h3>
           <p>Muestras .ase para Illustrator, Photoshop e InDesign.</p>
-          <span class="descarga-formato">ASE</span>
+          <span class="descarga-pie"><span class="descarga-formato">ASE</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="descargas/musuq-pacha-paleta.css" download data-aparece>
           <span class="tarjeta-indice">(03)</span>
           <h3>Paleta para la web</h3>
           <p>Variables CSS con los seis colores de la marca.</p>
-          <span class="descarga-formato">CSS</span>
+          <span class="descarga-pie"><span class="descarga-formato">CSS</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="descargas/musuq-pacha-marca.json" download data-aparece>
           <span class="tarjeta-indice">(04)</span>
           <h3>Colores y letras en datos</h3>
           <p>Colores, familias y escala tipográfica en un archivo JSON.</p>
-          <span class="descarga-formato">JSON</span>
+          <span class="descarga-pie"><span class="descarga-formato">JSON</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="descargas/musuq-pacha-pictogramas.zip" download data-aparece>
           <span class="tarjeta-indice">(05)</span>
           <h3>Pictogramas</h3>
           <p>Los trece pictogramas en SVG, en versión oscura y clara.</p>
-          <span class="descarga-formato">ZIP</span>
+          <span class="descarga-pie"><span class="descarga-formato">ZIP</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-descargar"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="https://fonts.google.com/specimen/Space+Grotesk" target="_blank" rel="noopener" data-aparece>
           <span class="tarjeta-indice">(06)</span>
           <h3>Space Grotesk</h3>
           <p>La familia principal, en Google Fonts.</p>
-          <span class="descarga-formato">Fuente</span>
+          <span class="descarga-pie"><span class="descarga-formato">Fuente</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-salir"/></svg></span>
         </a>
         <a class="tarjeta descarga" href="https://fonts.google.com/specimen/Archivo" target="_blank" rel="noopener" data-aparece>
           <span class="tarjeta-indice">(07)</span>
           <h3>Archivo</h3>
           <p>La familia de lectura, en Google Fonts.</p>
-          <span class="descarga-formato">Fuente</span>
+          <span class="descarga-pie"><span class="descarga-formato">Fuente</span><svg class="ic" aria-hidden="true" focusable="false"><use href="#ic-salir"/></svg></span>
         </a>
       </div>
     </section>
@@ -1634,8 +1636,8 @@
   <script src="pictogramas.js?v=2"></script>
   <script src="iconos.js?v=1"></script>
   <script src="marca.js?v=13"></script>
-  <script src="efectos.js?v=4"></script>
+  <script src="efectos.js?v=5"></script>
   <script src="secciones.js?v=3"></script>
-  <script src="movimiento.js?v=13"></script>
+  <script src="movimiento.js?v=14"></script>
 </body>
 </html>
