@@ -439,10 +439,14 @@
   $$('[data-tipo-vivo], .cinta').forEach(el => enVista.observe(el));
 
   const ORBITA = [
-    [1, -.03, .115, 0], [.85, .12, .1, .1], [.95, -.13, .085, -.08], [.75, .02, .09, .05],
-    [1.05, -.09, .07, -.05], [.8, .15, .08, .12], [.9, .06, .105, -.1], [1, -.16, .08, .06],
-    [.7, -.05, .085, -.04], [.95, .1, .09, .08], [.85, -.11, .075, -.12], [1.05, .04, .07, .04],
-    [.75, .17, .065, -.06], [.95, -.02, .075, .09], [.8, -.17, .07, -.02], [1, .14, .08, .07]
+    [1, -.03, .115, 0], [.9, .08, .09, -.07], [.85, .12, .1, .1], [1, -.12, .08, .11],
+    [.95, -.13, .085, -.08], [.8, .16, .075, .03], [.75, .02, .09, .05], [1.05, -.06, .095, -.09],
+    [1.05, -.09, .07, -.05], [.75, -.15, .07, .06], [.8, .15, .08, .12], [.95, .03, .1, -.03],
+    [.9, .06, .105, -.1], [.85, .13, .08, .1], [1, -.16, .08, .06], [1, -.01, .085, -.11],
+    [.7, -.05, .085, -.04], [.7, .1, .075, .02], [.95, .1, .09, .08], [.9, -.14, .09, -.06],
+    [.85, -.11, .075, -.12], [1.05, .07, .07, .08], [1.05, .04, .07, .04], [.8, -.08, .1, -.1],
+    [.75, .17, .065, -.06], [.95, .16, .065, .05], [.95, -.02, .075, .09], [.85, -.04, .08, -.02],
+    [.8, -.17, .07, -.02], [1, .11, .075, .09], [1, .14, .08, .07], [.75, -.1, .085, -.05]
   ];
   const bandas = $$('[data-banda]').map(b => {
     const t = $('[data-banda-titulo]', b);
@@ -461,31 +465,53 @@
     const lista = x.fotos.filter(f => getComputedStyle(f.el).display !== 'none');
     const n = lista.length, salto = n % 7 ? 7 : 5;
     const R = W * (movil ? 0.34 : 0.2);
+    const frase = x.t.offsetWidth;
     lista.forEach((f, j) => {
-      const [radio, alto, ancho, desvio] = f.d;
-      f.w = W * ancho * (movil ? 2.2 : 1.25);
+      const [radio, alto, tam, desvio] = f.d;
+      f.w = W * tam * (movil ? 1.7 : 1);
       f.h = f.w * f.el.getAttribute('height') / f.el.getAttribute('width');
       f.el.style.width = f.w.toFixed(1) + 'px';
-      f.fi = VUELTA * ((j * salto) % n) / n + desvio;
+      f.s = ((j * salto) % n) / n + desvio * 0.15;
       f.r = radio;
       f.y = alto;
       f.nace = -0.28 + 0.4 * j / Math.max(1, n - 1);
       f.muere = 0.78 + 0.3 * j / Math.max(1, n - 1);
     });
-    x.orbita = { cx: W / 2, cy: x.h2.offsetTop + x.h2.offsetHeight / 2, R, P: R * 2, H, lista };
+    const L = Math.max(R, frase / 2);
+    const tabla = new Float32Array(129);
+    let ax = 0, az = R;
+    for (let i = 1; i <= 128; i++) {
+      const a = VUELTA * i / 128, bx = L * Math.sin(a), bz = R * Math.cos(a);
+      tabla[i] = tabla[i - 1] + Math.hypot(bx - ax, bz - az);
+      ax = bx;
+      az = bz;
+    }
+    for (let i = 1; i <= 128; i++) tabla[i] /= tabla[128];
+    x.orbita = { cx: x.t.offsetLeft + frase / 2, cy: x.h2.offsetTop + x.h2.offsetHeight / 2, R, L, P: R * 2, H, lista, tabla };
   };
 
-  const orbitar = (x, v) => {
+  const anguloEn = (tabla, s) => {
+    s -= Math.floor(s);
+    let lo = 0, hi = tabla.length - 1;
+    while (hi - lo > 1) {
+      const m = (lo + hi) >> 1;
+      if (tabla[m] < s) lo = m;
+      else hi = m;
+    }
+    return VUELTA * (lo + (s - tabla[lo]) / Math.max(1e-6, tabla[hi] - tabla[lo])) / (tabla.length - 1);
+  };
+
+  const orbitar = (x, v, corrido = 0) => {
     const o = x.orbita;
     if (!o) return;
-    const giro = VUELTA * 0.7 * v;
+    const avance = 0.26 * v, cx = o.cx + corrido;
     for (const f of o.lista) {
       const g = salida(limitar((v - f.nace) / 0.3)) * salida(limitar((f.muere - v) / 0.3));
-      const a = f.fi - giro;
-      const zo = o.R * f.r * Math.cos(a);
+      const a = anguloEn(o.tabla, f.s - avance);
+      const px = o.L * Math.sin(a), zo = o.R * f.r * Math.cos(a);
       const z = zo - (1 - g) * o.R * 9;
       const k = o.P / (o.P - z);
-      const X = o.cx + o.R * f.r * Math.sin(a) * k;
+      const X = cx + px * (1 + (k - 1) * 0.3);
       const Y = o.cy + (f.y * o.H + zo * 0.04) * k;
       f.el.style.transform = `translate3d(${(X - f.w / 2).toFixed(1)}px,${(Y - f.h / 2).toFixed(1)}px,0) scale(${k.toFixed(4)})`;
       const op = limitar(g * 5).toFixed(2);
@@ -658,9 +684,10 @@
       if (r.bottom < -80 || r.top > vh + 80) return;
       const rc = lecturasCollage[i];
       const p = rc ? limitar((vh - rc.top) / (vh + rc.height)) : limitar((vh - r.top) / (vh + r.height));
-      if (rc && x.orbita) orbitar(x, -rc.top / Math.max(1, rc.height - vh));
+      const corrido = mezclar(x.entrada, -x.desborde, p);
+      if (rc && x.orbita) orbitar(x, -rc.top / Math.max(1, rc.height - vh), corrido);
       x.b.style.setProperty('--r', salida(limitar((vh - r.top) / (vh * 0.5))).toFixed(3));
-      x.t.style.transform = `translate3d(${mezclar(x.entrada, -x.desborde, p).toFixed(1)}px,0,0)`;
+      x.t.style.transform = `translate3d(${corrido.toFixed(1)}px,0,0)`;
     });
     desfases.forEach((g, i) => {
       const r = lecturasDesfase[i];
