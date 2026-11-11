@@ -7,6 +7,9 @@
   <meta name="description" content="Brandbook de Musuq Pacha: marca, signo marcario, color, tipografía, recursos gráficos, iconografía, señalética e interfaz.">
   <meta name="theme-color" content="#232323">
   <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="../favicon.ico" sizes="32x32">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png">
   <script>(function(d){d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!(location.hash&&location.hash!=='#inicio'))d.classList.add('cargando');setTimeout(function(){if(!window.marcaViva)d.classList.remove('js','cargando')},7000)})(document.documentElement)</script>
   <link rel="stylesheet" href="fuentes/space-grotesk.css">
   <link rel="stylesheet" href="marca.css?v=22">
@@ -21,6 +24,7 @@
     <symbol id="sim-logo" viewBox="0 0 1194 400"><rect class="lg-cuadro" width="400" height="400"/><use class="lg-cruz" href="#lg-cruz"/><use class="lg-nombre" href="#lg-letras"/></symbol>
     <symbol id="sim-iso" viewBox="0 0 400 400"><rect class="lg-cuadro" width="400" height="400"/><use class="lg-cruz" href="#lg-cruz"/></symbol>
     <symbol id="sim-nombre" viewBox="466 15 728 370"><use class="lg-nombre" href="#lg-letras"/></symbol>
+    <symbol id="sim-fav" viewBox="0 0 8 8"><rect class="lg-cuadro" width="8" height="8"/><path class="lg-cruz" d="M3 1h2v1h1v1h1v2H6v1H5v1H3V6H2V5H1V3h1V2h1z"/></symbol>
     <symbol id="ic-menu" viewBox="0 -960 960 960"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></symbol>
     <symbol id="ic-cerrar" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></symbol>
     <symbol id="ic-descargar" viewBox="0 -960 960 960"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></symbol>
@@ -786,18 +790,19 @@
                   <li>Favicon: 16, 32 y 48 px (ICO) más una versión SVG.</li>
                   <li>Apple touch icon: 180 × 180 px; el sistema redondea las esquinas.</li>
                   <li>Android: 192 y 512 px, con zona segura del 80 %: la chakana entra entera en el círculo.</li>
+                  <li>En el favicon y en Android, la chakana se apoya en una grilla de 8 × 8: se ve nítida a 16 px y entra en la zona segura.</li>
                   <li>Tiendas: iOS 1024 px, Google Play 512 px y el ícono del juego en Steam.</li>
                   <li>Siempre el isotipo principal, sin texto.</li>
                 </ul>
               </div>
               <div>
                 <div class="favicons">
-                  <figure><span class="fav" style="--t:16px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>16 px</figcaption></figure>
-                  <figure><span class="fav" style="--t:32px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>32 px</figcaption></figure>
-                  <figure><span class="fav" style="--t:48px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>48 px</figcaption></figure>
+                  <figure><span class="fav" style="--t:16px"><svg class="iso" data-lg="naranja" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#sim-fav"/></svg></span><figcaption>16 px</figcaption></figure>
+                  <figure><span class="fav" style="--t:32px"><svg class="iso" data-lg="naranja" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#sim-fav"/></svg></span><figcaption>32 px</figcaption></figure>
+                  <figure><span class="fav" style="--t:48px"><svg class="iso" data-lg="naranja" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#sim-fav"/></svg></span><figcaption>48 px</figcaption></figure>
                   <figure><span class="fav ios" style="--t:90px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>180 px · iOS</figcaption></figure>
-                  <figure><span class="fav android" style="--t:96px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>192 px · Android</figcaption></figure>
-                  <figure><span class="fav" style="--t:160px"><svg class="iso" data-lg="naranja" viewBox="0 0 400 400" aria-hidden="true" focusable="false"><use href="#sim-iso"/></svg></span><figcaption>512 px</figcaption></figure>
+                  <figure><span class="fav android" style="--t:96px"><svg class="iso" data-lg="naranja" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#sim-fav"/></svg></span><figcaption>192 px · Android</figcaption></figure>
+                  <figure><span class="fav" style="--t:160px"><svg class="iso" data-lg="naranja" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true" focusable="false"><use href="#sim-fav"/></svg></span><figcaption>512 px</figcaption></figure>
                 </div>
                 <p class="nota">Los tres primeros están a tamaño real; los demás, a escala.</p>
               </div>

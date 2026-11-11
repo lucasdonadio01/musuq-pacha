@@ -42,19 +42,19 @@ html {
 }
 
 .pie__logo {
-  font-family: 'Space Grotesk', Arial, sans-serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  color: var(--site-orange, #F66227);
-  text-decoration: none;
-  line-height: 1.1;
   display: inline-block;
-  transition: color 0.18s ease;
+  align-self: flex-start;
+  line-height: 0;
+  text-decoration: none;
 }
 
-.pie__logo:hover {
-  color: #ffffff;
+.pie__logo img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: 48px;
+  padding: 0;
+  aspect-ratio: auto;
 }
 
 .pie__lema {
@@ -272,10 +272,6 @@ html[data-color=contraste] .site-footer {
   background: #000000;
   color: #ffffff;
   border-top: 2px solid #ffffff;
-}
-
-html[data-color=contraste] .pie__logo {
-  color: #ffffff;
 }
 
 html[data-color=contraste] .pie__titulo {

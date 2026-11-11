@@ -9,7 +9,7 @@
   const enHome = header.dataset.home === 'true';
   const icono = nombre => `<svg aria-hidden="true" focusable="false"><use href="#main-${nombre}"/></svg>`;
   header.className = 'nav site-header';
-  header.innerHTML = plantillas.header;
+  header.innerHTML = plantillas.header.replaceAll('{raiz}', base.href);
   header.dataset.montado = 'true';
   document.body.insertAdjacentHTML('beforeend', plantillas.iconos + plantillas.accesibilidad);
   const destinos = {
