@@ -779,12 +779,12 @@ svg.logo.u-efectos{filter:drop-shadow(5px 5px 0 #6940AE) drop-shadow(0 12px 12px
 .u-invadido span{position:absolute;left:84%;top:16%;width:52%;font-size:12px;line-height:1.35;color:var(--suave)}
 
 .conv-escena{display:grid;place-items:center;min-height:340px;padding:40px 28px;background:#FFFFFF;color:#171512;overflow:hidden}
-.conv-lockup{--h:clamp(44px,5.4vw,76px);--x:calc(var(--h) / 7);position:relative;display:flex;align-items:center;gap:calc(var(--x) * 2)}
-@supports (width:1cqi){.conv-escena{container-type:inline-size}.conv-lockup{--h:min(76px,(100cqi - 8px) / 7.3)}}
+.conv-lockup{--h:clamp(39px,4.75vw,67px);--s:calc(var(--h) / .88);--x:calc(var(--h) / 7);position:relative;display:flex;align-items:center;gap:calc(var(--x) * 2)}
+@supports (width:1cqi){.conv-escena{container-type:inline-size}.conv-lockup{--h:min(67px,(100cqi - 8px) / 7.75)}}
 .conv-lockup svg.logo{flex:none;width:auto;height:var(--h)}
 .conv-linea{align-self:stretch;flex:none;width:1px;margin:calc(var(--x) * -.5) 0;background:rgba(23,21,18,.55)}
 .conv-socia{position:relative;display:grid;align-items:center;justify-items:start;height:var(--h);padding:0;border:0;background:none;cursor:pointer}
-.conv-socia img{grid-area:1/1;display:block;width:auto;max-width:none;height:calc(var(--h) * var(--a,.6));opacity:0;transform:translateY(45%) scale(.94);filter:blur(6px);transition:transform .55s cubic-bezier(.34,1.3,.64,1),opacity .35s cubic-bezier(.2,.7,.2,1),filter .4s cubic-bezier(.2,.7,.2,1)}
+.conv-socia img{grid-area:1/1;display:block;width:auto;max-width:none;height:calc(var(--s) * var(--a,.6));opacity:0;transform:translateY(45%) scale(.94);filter:blur(6px);transition:transform .55s cubic-bezier(.34,1.3,.64,1),opacity .35s cubic-bezier(.2,.7,.2,1),filter .4s cubic-bezier(.2,.7,.2,1)}
 .conv-socia img.activa{opacity:1;transform:none;filter:none}
 .conv-socia img.sale{opacity:0;transform:translateY(-45%) scale(.94);filter:blur(6px);transition:transform .38s cubic-bezier(.65,0,.35,1),opacity .3s ease-in,filter .3s ease-in}
 .conv-socia:active img.activa{transform:scale(.97)}
