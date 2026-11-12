@@ -780,6 +780,7 @@ svg.logo.u-efectos{filter:drop-shadow(5px 5px 0 #6940AE) drop-shadow(0 12px 12px
 
 .conv-escena{display:grid;place-items:center;min-height:340px;padding:40px 28px;background:#FFFFFF;color:#171512;overflow:hidden}
 .conv-lockup{--h:clamp(44px,5.4vw,76px);--x:calc(var(--h) / 7);position:relative;display:flex;align-items:center;gap:calc(var(--x) * 2)}
+@supports (width:1cqi){.conv-escena{container-type:inline-size}.conv-lockup{--h:min(76px,(100cqi - 8px) / 7.3)}}
 .conv-lockup svg.logo{flex:none;width:auto;height:var(--h)}
 .conv-linea{align-self:stretch;flex:none;width:1px;margin:calc(var(--x) * -.5) 0;background:rgba(23,21,18,.55)}
 .conv-socia{position:relative;display:grid;align-items:center;justify-items:start;height:var(--h);padding:0;border:0;background:none;cursor:pointer}
