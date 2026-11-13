@@ -210,7 +210,39 @@
   const versiones = $('[data-versiones]');
   if (versiones) chipsColor($('[data-versiones-color]'), id => $$('svg.logo', versiones).forEach(l => { l.dataset.lg = marca(id, l.dataset.lg.includes('claro') ? 'claro' : 'oscuro'); }));
 
-  $$('.uso').forEach(u => u.addEventListener('click', () => u.classList.toggle('marcado')));
+  const usos = $('[data-usos]');
+  if (usos) {
+    const tarjetas = $$('.uso', usos);
+    if (quieto) tarjetas.forEach(u => u.addEventListener('click', () => u.classList.toggle('marcado')));
+    else {
+      usos.setAttribute('data-anima', '');
+      const tactil = () => matchMedia('(hover: none)').matches;
+      const relojes = new Map();
+      const parar = u => { (relojes.get(u) || []).forEach(clearTimeout); relojes.delete(u); };
+      const mostrar = u => {
+        parar(u);
+        u.classList.remove('marcado');
+        u.classList.add('correcto');
+        relojes.set(u, [setTimeout(() => u.classList.remove('correcto'), 450), setTimeout(() => u.classList.add('marcado'), 1050)]);
+      };
+      const soltar = u => { parar(u); u.classList.remove('correcto', 'marcado'); };
+      tarjetas.forEach(u => {
+        u.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') mostrar(u); });
+        u.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') soltar(u); });
+        u.addEventListener('focus', () => { if (u.matches(':focus-visible')) mostrar(u); });
+        u.addEventListener('blur', () => { if (!u.matches(':hover')) soltar(u); });
+        u.addEventListener('click', () => { if (!tactil()) return; if (u.classList.contains('marcado')) soltar(u); else mostrar(u); });
+      });
+      if (tactil()) {
+        const vigia = new IntersectionObserver(ents => ents.forEach(en => {
+          if (!en.isIntersecting) return;
+          vigia.unobserve(en.target);
+          setTimeout(() => mostrar(en.target), (tarjetas.indexOf(en.target) % 2) * 180);
+        }), { threshold: 0.6 });
+        tarjetas.forEach(u => vigia.observe(u));
+      }
+    }
+  }
 
   const conv = $('[data-conv]');
   if (conv) {

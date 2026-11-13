@@ -760,11 +760,11 @@ svg.logo,svg.iso,svg.nombre{display:block;width:100%;height:auto;overflow:visibl
 .uso-escena>svg.logo{width:62%}
 .uso-escena::before,.uso-escena::after{content:'';position:absolute;z-index:2;left:50%;top:50%;width:118%;height:4px;margin:-2px 0 0 -59%;background:var(--error);rotate:32deg;scale:0 1;transition:scale .28s var(--curva-fuerte)}
 .uso-escena::after{rotate:-32deg;transition-delay:.06s}
-.uso:hover .uso-escena::before,.uso:hover .uso-escena::after,.uso:focus-visible .uso-escena::before,.uso:focus-visible .uso-escena::after,.uso.marcado .uso-escena::before,.uso.marcado .uso-escena::after{scale:1 1}
-.uso:hover .uso-escena,.uso:focus-visible .uso-escena,.uso.marcado .uso-escena{background:color-mix(in srgb,var(--error) 24%,var(--tarjeta));box-shadow:inset 0 0 0 2px var(--error)}
+.usos:not([data-anima]) .uso:hover .uso-escena::before,.usos:not([data-anima]) .uso:hover .uso-escena::after,.usos:not([data-anima]) .uso:focus-visible .uso-escena::before,.usos:not([data-anima]) .uso:focus-visible .uso-escena::after,.uso.marcado .uso-escena::before,.uso.marcado .uso-escena::after{scale:1 1}
+.usos:not([data-anima]) .uso:hover .uso-escena,.usos:not([data-anima]) .uso:focus-visible .uso-escena,.uso.marcado .uso-escena{background:color-mix(in srgb,var(--error) 24%,var(--tarjeta));box-shadow:inset 0 0 0 2px var(--error)}
 .uso figcaption{display:flex;gap:10px;align-items:baseline;font:500 16px/1.3 var(--sg);transition:color .19s}
 .uso figcaption::before{content:'✕';color:var(--tenue);transition:color .19s}
-.uso:hover figcaption,.uso:hover figcaption::before,.uso:focus-visible figcaption,.uso:focus-visible figcaption::before,.uso.marcado figcaption,.uso.marcado figcaption::before{color:var(--error)}
+.usos:not([data-anima]) .uso:hover figcaption,.usos:not([data-anima]) .uso:hover figcaption::before,.usos:not([data-anima]) .uso:focus-visible figcaption,.usos:not([data-anima]) .uso:focus-visible figcaption::before,.uso.marcado figcaption,.uso.marcado figcaption::before{color:var(--error)}
 svg.logo.u-deformar{transform:scale(1.34,.56)}
 svg.logo.u-rotar{transform:rotate(-13deg)}
 svg.logo.u-colores{--lg-cuadro:#2F7FD9;--lg-cruz:#FF4FA3;--lg-nombre:#2E9E5B}
@@ -777,6 +777,22 @@ svg.logo.u-efectos{filter:drop-shadow(5px 5px 0 #6940AE) drop-shadow(0 12px 12px
 .u-tipeado span{font:400 clamp(18px,1.9vw,30px)/1 var(--ar);white-space:nowrap}
 .u-invadido{position:relative;width:58%;margin-right:20%;padding:10%;border:1.5px dashed var(--lila)}
 .u-invadido span{position:absolute;left:84%;top:16%;width:52%;font-size:12px;line-height:1.35;color:var(--suave)}
+.uso{--rebote:cubic-bezier(.34,1.56,.64,1);--vuelta:cubic-bezier(.2,.7,.2,1)}
+svg.logo.u-deformar,svg.logo.u-rotar{transition:transform .6s var(--rebote)}
+svg.logo.u-efectos{transition:filter .6s var(--rebote)}
+.u-partes svg{transition:transform .6s var(--rebote)}
+.u-invadido span{transition:transform .55s var(--rebote),opacity .3s var(--vuelta)}
+.u-tipeado{position:relative}
+.u-tipeado svg.nombre{position:absolute;left:calc(26% + 12px);top:50%;width:53%;translate:0 -50%;opacity:0;transition:opacity .2s var(--vuelta)}
+.u-escrito{clip-path:inset(0 0 0 0);transition:clip-path .7s steps(11,end) .15s}
+.uso.correcto svg.logo.u-deformar,.uso.correcto svg.logo.u-rotar{transform:none;transition:transform .22s var(--vuelta)}
+.uso.correcto svg.logo.u-colores,.uso.correcto svg.logo.u-contraste{--lg-cuadro:var(--lg-color);--lg-cruz:var(--lg-tinta);--lg-nombre:#FFFFFF}
+.uso.correcto svg.logo.u-efectos{filter:drop-shadow(0 0 0 rgba(105,64,174,0)) drop-shadow(0 0 0 rgba(0,0,0,0));transition:filter .22s var(--vuelta)}
+.uso.correcto .u-partes svg.iso{transform:translate(-251.5%,30.1%);transition:transform .25s var(--vuelta)}
+.uso.correcto .u-partes svg.nombre{transform:translate(85.1%,-38.5%) scale(1.106);transition:transform .25s var(--vuelta)}
+.uso.correcto .u-invadido span{transform:translateX(60%);opacity:0;transition:transform .22s var(--vuelta),opacity .18s var(--vuelta)}
+.uso.correcto .u-tipeado svg.nombre{opacity:1}
+.uso.correcto .u-escrito{clip-path:inset(0 100% 0 0);transition:clip-path .15s var(--vuelta)}
 
 .conv-escena{display:grid;place-items:center;min-height:340px;padding:40px 28px;background:#FFFFFF;color:#171512;overflow:hidden}
 .conv-lockup{--h:clamp(39px,4.75vw,67px);--s:calc(var(--h) / .88);--x:calc(var(--h) / 7);position:relative;display:flex;align-items:center;gap:calc(var(--x) * 2)}
