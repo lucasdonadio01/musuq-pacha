@@ -121,7 +121,7 @@
     cota(cotas, 0, 7 * m, -26, '7x');
     cota(cotas, 7 * m, 8 * m, -26, '1x');
     cota(cotas, 8 * m, W, -26, '14½x');
-    cota(cotas, 0, W, H + 34, '22½x · PROPORCIÓN 3,2 : 1', true);
+    cota(cotas, 0, W, H + 34, '22½x', true);
     linea(cotas, -34, 0, -34, H, 'pl-cota');
     linea(cotas, -43, 0, -25, 0, 'pl-cota');
     linea(cotas, -43, H, -25, H, 'pl-cota');
