@@ -33,7 +33,7 @@
     return 0.2126 * f(parseInt(hex.slice(1, 3), 16)) + 0.7152 * f(parseInt(hex.slice(3, 5), 16)) + 0.0722 * f(parseInt(hex.slice(5, 7), 16));
   };
   const relacion = (a, b) => { const [x, y] = [luz(a), luz(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
-  const nivel = r => r >= 7 ? 'AAA' : r >= 4.5 ? 'AA' : r >= 3 ? 'AA grande' : 'No';
+  const nivel = r => r >= 4.5 ? 'Se lee' : r >= 3 ? 'Sólo títulos' : 'No';
   const neutro = hex => relacion(hex, '#FFFFFF') >= relacion(hex, '#1B1B1B') ? '#FFFFFF' : '#1B1B1B';
 
   const aviso = $('[data-aviso]');
@@ -166,7 +166,7 @@
     muestra.style.setProperty('--fondo-p', f);
     const r = relacion(t, f);
     const pasa = (min, txt) => `<em class="${r >= min ? 'si' : 'no'}">${txt}</em>`;
-    resultado.innerHTML = `<b>${coma(r)} : 1</b>${pasa(4.5, 'Texto común AA')}${pasa(3, 'Texto grande AA')}${pasa(7, 'AAA')}`;
+    resultado.innerHTML = `<b>${coma(r)} : 1</b>${pasa(4.5, 'Texto común')}${pasa(3, 'Títulos grandes')}`;
     Object.entries(chips).forEach(([tipo, lista]) => lista.forEach(({ b, id }) => {
       const libre = combina(id, elegido[pareja[tipo]]);
       b.setAttribute('aria-pressed', String(elegido[tipo] === id));
