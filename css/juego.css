@@ -158,4 +158,4 @@ html[data-color=contraste] .juego-codigo :is(strong,strong span,small){color:#ff
   .juego-descarga__contenido{grid-column:1/-1;grid-template-columns:repeat(8,minmax(0,1fr))}
   .juego-descarga h2{grid-column:1/6}
   .juego-descarga__acciones{grid-column:6/9}
-}
+}.juego-descarga__boton small{display:block;margin-top:2px;font-size:13px;opacity:.72}

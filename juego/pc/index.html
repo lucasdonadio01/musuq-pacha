@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex">
+    <title>Musuq Pacha · Querandí</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/brandbook/fuentes/space-grotesk.css">
+    <style>
+      :root { --placa: #232323; --lima: #e4fe44; --naranja: #f66227; --violeta: #6940ae; --blanco: #f4f2ec; }
+      html, body { margin: 0; height: 100%; background: var(--placa); color: var(--blanco); font-family: "Space Grotesk", system-ui, sans-serif; overflow: hidden; }
+      #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: var(--placa); outline: none; }
+      .capa { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: var(--placa); text-align: center; padding: 24px; box-sizing: border-box; }
+      .capa[hidden] { display: none; }
+      .marca { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--lima); }
+      h1 { margin: 0; font-size: clamp(36px, 7vw, 88px); font-weight: 700; line-height: 1; }
+      .barra { width: min(420px, 80vw); height: 14px; background: #333; display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; padding: 3px; box-sizing: border-box; }
+      .barra i { background: #444; }
+      .barra i.lleno { background: var(--lima); }
+      .nota { font-size: 14px; color: #bdbab2; max-width: 520px; line-height: 1.5; }
+      .botones { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+      button { font: 700 16px "Space Grotesk", system-ui, sans-serif; border: 0; padding: 16px 26px; cursor: pointer; background: var(--naranja); color: var(--placa); }
+      button.secundario { background: transparent; color: var(--blanco); box-shadow: inset 0 0 0 2px var(--blanco); }
+      button:active { transform: scale(.97); }
+      .teclas { display: grid; grid-template-columns: auto auto; gap: 6px 18px; font-size: 14px; text-align: left; color: #d8d5cd; }
+      .teclas b { color: var(--lima); font-weight: 700; }
+      #pantalla { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div class="capa" id="carga">
+      <div class="marca">Musuq Pacha</div>
+      <h1>Querandí</h1>
+      <div class="barra" id="barra"></div>
+      <div class="nota" id="estado">Cargando el mundo… la primera vez tarda unos minutos.</div>
+    </div>
+    <div class="capa" id="inicio" hidden>
+      <div class="marca">Musuq Pacha</div>
+      <h1>Querandí</h1>
+      <div class="teclas">
+        <b>W A S D</b><span>caminar</span>
+        <b>Mouse</b><span>mirar</span>
+        <b>E</b><span>tomar y hablar</span>
+        <b>Clic</b><span>usar o tirar</span>
+        <b>Shift</b><span>correr</span>
+        <b>Espacio</b><span>saltar</span>
+        <b>C</b><span>agacharse</span>
+        <b>1 a 9 o rueda</b><span>elegir objeto</span>
+        <b>L</b><span>abrir el Códex</span>
+        <b>Esc</b><span>soltar el mouse</span>
+      </div>
+      <div class="botones">
+        <button id="jugar">Jugar</button>
+      </div>
+      <div class="nota">Con auriculares se disfruta más. Para volver a jugar después de soltar el mouse, hacé clic en la pantalla.</div>
+    </div>
+    <div class="capa" id="celular" hidden>
+      <div class="marca">Musuq Pacha</div>
+      <h1>Querandí</h1>
+      <div class="nota">El juego necesita una computadora con teclado y mouse. Abrí esta página desde la compu.</div>
+      <div class="botones"><button class="secundario" id="igual">Cargar igual</button></div>
+    </div>
+    <button class="secundario" id="pantalla" hidden>Pantalla completa</button>
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+      const barra = document.querySelector("#barra");
+      for (let i = 0; i < 20; i++) barra.appendChild(document.createElement("i"));
+      const celdas = barra.querySelectorAll("i");
+      const movil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && !/OculusBrowser/i.test(navigator.userAgent);
+      let instancia = null;
+
+      function arrancar() {
+        document.querySelector("#celular").hidden = true;
+        document.querySelector("#carga").hidden = false;
+        const script = document.createElement("script");
+        script.src = "Build/620c8ff5a66fd931bee3128fba7dace6.loader.js";
+        script.onload = () => {
+          createUnityInstance(canvas, {
+            arguments: [],
+            dataUrl: "Build/9f7b9deb30942699908e111367e39585.data.unityweb",
+            frameworkUrl: "Build/816b39699e9a5723dd0ef0a5268db129.framework.js.unityweb",
+            codeUrl: "Build/a0242fc2c337820bb81f31ef78f66477.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            errorHandler: (e) => /pointer ?lock|NotAllowedError|exited the lock/i.test(String(e && (e.message || e))),
+            companyName: "Musuq Pacha",
+            productName: "Querandí",
+            productVersion: "0.1.0",
+          }, (avance) => {
+            const n = Math.round(avance * 20);
+            celdas.forEach((c, i) => c.classList.toggle("lleno", i < n));
+            if (avance >= 0.9) document.querySelector("#estado").textContent = "Preparando el mundo…";
+          }).then((u) => {
+            instancia = u;
+            document.querySelector("#carga").hidden = true;
+            document.querySelector("#inicio").hidden = false;
+          }).catch((mensaje) => {
+            document.querySelector("#estado").textContent = "No se pudo cargar el juego: " + mensaje;
+          });
+        };
+        document.body.appendChild(script);
+      }
+
+      document.querySelector("#jugar").addEventListener("click", () => {
+        document.querySelector("#inicio").hidden = true;
+        document.querySelector("#pantalla").hidden = false;
+        canvas.focus();
+        if (canvas.requestPointerLock) canvas.requestPointerLock();
+      });
+      document.querySelector("#pantalla").addEventListener("click", () => {
+        if (instancia) instancia.SetFullscreen(1);
+      });
+      document.querySelector("#igual").addEventListener("click", arrancar);
+
+      if (movil) {
+        document.querySelector("#carga").hidden = true;
+        document.querySelector("#celular").hidden = false;
+      } else {
+        arrancar();
+      }
+    </script>
+  </body>
+</html>
