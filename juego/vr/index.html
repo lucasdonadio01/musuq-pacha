@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex">
-    <title>Musuq Pacha · Querandí en VR</title>
+    <title>Musuq Pacha · Un viaje al origen (casco VR)</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/brandbook/fuentes/space-grotesk.css">
     <style>
@@ -13,6 +13,16 @@
       #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: var(--placa); outline: none; }
       .capa { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: var(--placa); text-align: center; padding: 24px; box-sizing: border-box; }
       .capa[hidden] { display: none; }
+      .capa { background: linear-gradient(rgba(14,14,14,.35), rgba(14,14,14,.62)), url("fondo-carga.jpg") center / cover no-repeat, var(--placa); }
+      .titulo { width: min(880px, 88vw); height: auto; display: block; overflow: visible; }
+      .titulo.chico { width: min(560px, 80vw); }
+      .titulo .g1, .titulo .g2, .titulo .g3, .titulo .g4 { animation: guarda 1.1s cubic-bezier(.22,1,.36,1) both; }
+      .titulo .g1 { --dx: 305px; --dy: 55px; } .titulo .g2 { --dx: -305px; --dy: 55px; }
+      .titulo .g3 { --dx: 305px; --dy: -59px; } .titulo .g4 { --dx: -305px; --dy: -59px; }
+      .titulo .letras { animation: letras .7s cubic-bezier(.22,1,.36,1) .55s both; }
+      @keyframes guarda { from { transform: translate(var(--dx), var(--dy)); } to { transform: none; } }
+      @keyframes letras { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) { .titulo .g1, .titulo .g2, .titulo .g3, .titulo .g4, .titulo .letras { animation: none; } }
       .marca { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--lima); }
       h1 { margin: 0; font-size: clamp(36px, 7vw, 88px); font-weight: 700; line-height: 1; }
       .barra { width: min(420px, 80vw); height: 14px; background: #333; display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; padding: 3px; box-sizing: border-box; }
@@ -32,14 +42,13 @@
   <body>
     <canvas id="unity-canvas" tabindex="-1"></canvas>
     <div class="capa" id="carga">
-      <div class="marca">Musuq Pacha</div>
-      <h1>Querandí en VR</h1>
+      <svg class="titulo" viewBox="236 40 1448 560" role="img" aria-label="Musuq Pacha, un viaje al origen" xmlns="http://www.w3.org/2000/svg"><g fill="#e4fe44"><g class="g1"><g transform="translate(256 58)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g2"><g transform="translate(1665 58) scale(-1 1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g3"><g transform="translate(256 578) scale(1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g4"><g transform="translate(1665 578) scale(-1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g></g><g class="letras" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" text-anchor="middle"><text x="960" y="251" font-size="134" fill="#e4fe44" textLength="444" lengthAdjust="spacingAndGlyphs">MUSUQ</text><text x="960" y="439" font-size="211" fill="#e4fe44" textLength="599" lengthAdjust="spacingAndGlyphs">PACHA</text><text x="960" y="504" font-size="70" fill="#ffffff" textLength="525" lengthAdjust="spacingAndGlyphs">un viaje al origen</text></g></svg>
       <div class="barra" id="barra"></div>
       <div class="nota" id="estado">Cargando el mundo… la primera vez tarda unos minutos.</div>
     </div>
     <div class="capa" id="inicio" hidden>
-      <div class="marca">Musuq Pacha</div>
-      <h1>Querandí en VR</h1>
+      <svg class="titulo chico" viewBox="236 40 1448 560" role="img" aria-label="Musuq Pacha, un viaje al origen" xmlns="http://www.w3.org/2000/svg"><g fill="#e4fe44"><g class="g1"><g transform="translate(256 58)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g2"><g transform="translate(1665 58) scale(-1 1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g3"><g transform="translate(256 578) scale(1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g4"><g transform="translate(1665 578) scale(-1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g></g><g class="letras" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" text-anchor="middle"><text x="960" y="251" font-size="134" fill="#e4fe44" textLength="444" lengthAdjust="spacingAndGlyphs">MUSUQ</text><text x="960" y="439" font-size="211" fill="#e4fe44" textLength="599" lengthAdjust="spacingAndGlyphs">PACHA</text><text x="960" y="504" font-size="70" fill="#ffffff" textLength="525" lengthAdjust="spacingAndGlyphs">un viaje al origen</text></g></svg>
+      <div class="marca">Versión para casco VR</div>
       <div class="teclas">
         <b>Stick izquierdo</b><span>caminar</span>
         <b>Stick derecho</b><span>girar</span>
@@ -55,14 +64,13 @@
       <div class="nota" id="aviso">Buscando el casco…</div>
     </div>
     <div class="capa" id="volver" hidden>
-      <div class="marca">Musuq Pacha</div>
+      <svg class="titulo chico" viewBox="236 40 1448 560" role="img" aria-label="Musuq Pacha, un viaje al origen" xmlns="http://www.w3.org/2000/svg"><g fill="#e4fe44"><g class="g1"><g transform="translate(256 58)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g2"><g transform="translate(1665 58) scale(-1 1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g3"><g transform="translate(256 578) scale(1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g4"><g transform="translate(1665 578) scale(-1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g></g><g class="letras" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" text-anchor="middle"><text x="960" y="251" font-size="134" fill="#e4fe44" textLength="444" lengthAdjust="spacingAndGlyphs">MUSUQ</text><text x="960" y="439" font-size="211" fill="#e4fe44" textLength="599" lengthAdjust="spacingAndGlyphs">PACHA</text><text x="960" y="504" font-size="70" fill="#ffffff" textLength="525" lengthAdjust="spacingAndGlyphs">un viaje al origen</text></g></svg>
       <h1>Saliste del casco</h1>
       <div class="botones"><button id="reentrar">Volver a VR</button></div>
       <div class="nota">Para seguir la partida, volvé a entrar con el casco puesto.</div>
     </div>
     <div class="capa" id="celular" hidden>
-      <div class="marca">Musuq Pacha</div>
-      <h1>Querandí</h1>
+      <svg class="titulo chico" viewBox="236 40 1448 560" role="img" aria-label="Musuq Pacha, un viaje al origen" xmlns="http://www.w3.org/2000/svg"><g fill="#e4fe44"><g class="g1"><g transform="translate(256 58)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g2"><g transform="translate(1665 58) scale(-1 1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g3"><g transform="translate(256 578) scale(1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g><g class="g4"><g transform="translate(1665 578) scale(-1 -1)"><path d="M2 1h388v37h-388zM2 37h36v17h-36zM192 37h198v17h-198zM1 53h36v13h-36zM192 53h152v13h-152zM1 65h36v35h-36zM62 65h102v35h-102zM192 65h151v35h-151zM1 99h36v34h-36zM61 99h39v34h-39zM127 99h37v34h-37zM192 99h103v34h-103zM1 132h36v25h-36zM128 132h36v25h-36zM192 132h103v25h-103zM1 157h163v41h-163zM192 157h53v41h-53z"/></g></g></g><g class="letras" font-family="'Space Grotesk', system-ui, sans-serif" font-weight="700" text-anchor="middle"><text x="960" y="251" font-size="134" fill="#e4fe44" textLength="444" lengthAdjust="spacingAndGlyphs">MUSUQ</text><text x="960" y="439" font-size="211" fill="#e4fe44" textLength="599" lengthAdjust="spacingAndGlyphs">PACHA</text><text x="960" y="504" font-size="70" fill="#ffffff" textLength="525" lengthAdjust="spacingAndGlyphs">un viaje al origen</text></g></svg>
       <div class="nota">El juego se juega con un casco VR (desde el navegador del Meta Quest) o en una compu con teclado y mouse.</div>
       <div class="botones"><button class="secundario" id="igual">Cargar igual</button></div>
     </div>
@@ -95,13 +103,13 @@
         document.querySelector("#celular").hidden = true;
         document.querySelector("#carga").hidden = false;
         const script = document.createElement("script");
-        script.src = "Build/1c01b5a6060c1d972159d27576ca34af.loader.js";
+        script.src = "Build/be6223f800bb295250f4a05242479e00.loader.js";
         script.onload = () => {
           createUnityInstance(canvas, {
             arguments: [],
-            dataUrl: "Build/77bd50dbef1a52c85c6ad8ef4f0db7fc.data.unityweb",
+            dataUrl: "Build/667f10ebfe14f6dc4c8cde7337cdc529.data.unityweb",
             frameworkUrl: "Build/0f7bc874bef578ca47e1001ced42d600.framework.js.unityweb",
-            codeUrl: "Build/ed22018fa3c68ee56a6d809fc6e0b680.wasm.unityweb",
+            codeUrl: "Build/b03a23c8a3f222999a16f95003ef4277.wasm.unityweb",
             streamingAssetsUrl: "StreamingAssets",
             errorHandler: (e) => /pointer ?lock|NotAllowedError|exited the lock/i.test(String(e && (e.message || e))),
             companyName: "Musuq Pacha",
