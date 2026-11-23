@@ -2,26 +2,146 @@
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex">
     <title>Musuq Pacha · Querandí en VR</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/brandbook/fuentes/space-grotesk.css">
     <style>
-      html, body { margin: 0; height: 100%; background: #232323; color: #f4f2ec; font-family: "Space Grotesk", system-ui, sans-serif; }
-      main { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center; padding: 24px; box-sizing: border-box; }
-      .marca { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: #e4fe44; }
-      h1 { margin: 0; font-size: clamp(36px, 7vw, 88px); line-height: 1; }
-      p { font-size: 16px; color: #bdbab2; max-width: 520px; line-height: 1.5; margin: 0; }
-      a { font-weight: 700; font-size: 16px; padding: 16px 26px; background: #f66227; color: #232323; text-decoration: none; }
+      :root { --placa: #232323; --lima: #e4fe44; --naranja: #f66227; --violeta: #6940ae; --blanco: #f4f2ec; }
+      html, body { margin: 0; height: 100%; background: var(--placa); color: var(--blanco); font-family: "Space Grotesk", system-ui, sans-serif; overflow: hidden; }
+      #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: var(--placa); outline: none; }
+      .capa { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: var(--placa); text-align: center; padding: 24px; box-sizing: border-box; }
+      .capa[hidden] { display: none; }
+      .marca { font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--lima); }
+      h1 { margin: 0; font-size: clamp(36px, 7vw, 88px); font-weight: 700; line-height: 1; }
+      .barra { width: min(420px, 80vw); height: 14px; background: #333; display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; padding: 3px; box-sizing: border-box; }
+      .barra i { background: #444; }
+      .barra i.lleno { background: var(--lima); }
+      .nota { font-size: 14px; color: #bdbab2; max-width: 520px; line-height: 1.5; }
+      .botones { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+      button { font: 700 16px "Space Grotesk", system-ui, sans-serif; border: 0; padding: 16px 26px; cursor: pointer; background: var(--naranja); color: var(--placa); }
+      button.secundario { background: transparent; color: var(--blanco); box-shadow: inset 0 0 0 2px var(--blanco); }
+      button:active { transform: scale(.97); }
+      button:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+      .teclas { display: grid; grid-template-columns: auto auto; gap: 6px 18px; font-size: 14px; text-align: left; color: #d8d5cd; }
+      .teclas b { color: var(--lima); font-weight: 700; }
+      #pantalla { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; font-size: 14px; }
     </style>
   </head>
   <body>
-    <main>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div class="capa" id="carga">
       <div class="marca">Musuq Pacha</div>
       <h1>Querandí en VR</h1>
-      <p>La versión para casco está en camino. Mientras tanto, podés jugar en la compu con teclado y mouse.</p>
-      <a href="../pc/">Jugar en la compu</a>
-    </main>
+      <div class="barra" id="barra"></div>
+      <div class="nota" id="estado">Cargando el mundo… la primera vez tarda unos minutos.</div>
+    </div>
+    <div class="capa" id="inicio" hidden>
+      <div class="marca">Musuq Pacha</div>
+      <h1>Querandí en VR</h1>
+      <div class="teclas">
+        <b>Stick izquierdo</b><span>caminar</span>
+        <b>Stick derecho</b><span>girar</span>
+        <b>Grip</b><span>tomar y hablar</span>
+        <b>Gatillo</b><span>usar o tirar</span>
+        <b>A</b><span>saltar</span>
+        <b>B</b><span>agacharse</span>
+      </div>
+      <div class="botones">
+        <button id="entrar" disabled>Entrar a VR</button>
+        <button class="secundario" id="teclado">Jugar con teclado y mouse</button>
+      </div>
+      <div class="nota" id="aviso">Buscando el casco…</div>
+    </div>
+    <div class="capa" id="volver" hidden>
+      <div class="marca">Musuq Pacha</div>
+      <h1>Saliste del casco</h1>
+      <div class="botones"><button id="reentrar">Volver a VR</button></div>
+      <div class="nota">Para seguir la partida, volvé a entrar con el casco puesto.</div>
+    </div>
+    <div class="capa" id="celular" hidden>
+      <div class="marca">Musuq Pacha</div>
+      <h1>Querandí</h1>
+      <div class="nota">El juego se juega con un casco VR (desde el navegador del Meta Quest) o en una compu con teclado y mouse.</div>
+      <div class="botones"><button class="secundario" id="igual">Cargar igual</button></div>
+    </div>
+    <button class="secundario" id="pantalla" hidden>Pantalla completa</button>
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+      const barra = document.querySelector("#barra");
+      for (let i = 0; i < 20; i++) barra.appendChild(document.createElement("i"));
+      const celdas = barra.querySelectorAll("i");
+      const movil = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && !/OculusBrowser|Quest|Pico/i.test(navigator.userAgent);
+      let enVR = false;
+      if (navigator.xr && navigator.xr.requestSession) {
+        const pedir = navigator.xr.requestSession.bind(navigator.xr);
+        navigator.xr.requestSession = (modo, opciones) => pedir(modo, opciones).then((sesion) => {
+          enVR = true;
+          document.querySelector("#inicio").hidden = true;
+          document.querySelector("#volver").hidden = true;
+          sesion.addEventListener("end", () => { enVR = false; document.querySelector("#volver").hidden = false; });
+          return sesion;
+        });
+      }
+      document.addEventListener("onVRSupportedCheck", (e) => {
+        const si = !!(e.detail && e.detail.supported);
+        document.querySelector("#entrar").disabled = !si;
+        document.querySelector("#aviso").textContent = si ? "Ponete el casco y tocá “Entrar a VR”." : "Este navegador no tiene VR. Abrí esta página desde el navegador del Meta Quest, o jugá con teclado y mouse.";
+      });
+      let instancia = null;
+
+      function arrancar() {
+        document.querySelector("#celular").hidden = true;
+        document.querySelector("#carga").hidden = false;
+        const script = document.createElement("script");
+        script.src = "Build/1c01b5a6060c1d972159d27576ca34af.loader.js";
+        script.onload = () => {
+          createUnityInstance(canvas, {
+            arguments: [],
+            dataUrl: "Build/77bd50dbef1a52c85c6ad8ef4f0db7fc.data.unityweb",
+            frameworkUrl: "Build/0f7bc874bef578ca47e1001ced42d600.framework.js.unityweb",
+            codeUrl: "Build/ed22018fa3c68ee56a6d809fc6e0b680.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            errorHandler: (e) => /pointer ?lock|NotAllowedError|exited the lock/i.test(String(e && (e.message || e))),
+            companyName: "Musuq Pacha",
+            productName: "Querandí",
+            productVersion: "0.1.0",
+          }, (avance) => {
+            const n = Math.round(avance * 20);
+            celdas.forEach((c, i) => c.classList.toggle("lleno", i < n));
+            if (avance >= 0.9) document.querySelector("#estado").textContent = "Preparando el mundo…";
+          }).then((u) => {
+            instancia = u;
+            document.querySelector("#carga").hidden = true;
+            document.querySelector("#inicio").hidden = false;
+          }).catch((mensaje) => {
+            document.querySelector("#estado").textContent = "No se pudo cargar el juego: " + mensaje;
+          });
+        };
+        document.body.appendChild(script);
+      }
+
+      const vr = () => { if (instancia) instancia.Module.WebXR.toggleVR(); };
+      document.querySelector("#entrar").addEventListener("click", vr);
+      document.querySelector("#reentrar").addEventListener("click", vr);
+      document.querySelector("#teclado").addEventListener("click", () => {
+        document.querySelector("#inicio").hidden = true;
+        document.querySelector("#pantalla").hidden = false;
+        canvas.focus();
+        if (canvas.requestPointerLock) canvas.requestPointerLock();
+      });
+      document.querySelector("#pantalla").addEventListener("click", () => {
+        if (instancia) instancia.SetFullscreen(1);
+      });
+      document.querySelector("#igual").addEventListener("click", arrancar);
+
+      if (movil) {
+        document.querySelector("#carga").hidden = true;
+        document.querySelector("#celular").hidden = false;
+      } else {
+        arrancar();
+      }
+    </script>
   </body>
 </html>
